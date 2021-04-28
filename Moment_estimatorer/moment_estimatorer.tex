@@ -1,0 +1,126 @@
+\chapter{Momentestimatorer}
+\section{Utvalgsanalogprinsippet}
+Den empiriske sannsynlighetsfordelingen gir tyngde $\frac{1}{N}$ til hver av observasjonene i utvalget, $\hat{P}_N(B) \equiv \frac{1}{N}\sum \mathbb{I}\{\mathbf{z_n} \in B \}$. Det er et sentralt resultat at dersom observasjonene er $iid$ vil $\hat{P}_N(B) \overset{p}{\to} P(B)$. Dette følger av store talls lov. La $h(\mathbf{z}_n) \equiv \mathbb{I}\{\mathbf{z_n} \in B \}$ og merk at forventningsverdi til en indikatorfunksjon tilsvarer sannsynligheten. 
+\begin{align}
+\frac{1}{N}\sum h(\mathbf{z}_n) \overset{p}{\to} \mathbb{E}[h(\mathbf{z})] \\
+\implies \frac{1}{N}\sum \mathbb{I}\{\mathbf{z}_n \in B \} \overset{p}{\to} P(B)
+\end{align}
+For spesialtilfelle der $B = (-\infty,s]$ så følger det at $\hat{F}_N \overset{p}{\rightarrow} F$, der $\hat{F}_N(s)=\frac{1}{N}\sum \mathbb{I}\{X_n < s\}$. Dette motiverer utvalgsanalogprinsippet. I mange tilfeller kan vi finne gode estimatorer ved å evaluere $\gamma$ på den empiriske sannsynlighetsfordelingen, $\hat{\gamma} = \gamma(\hat{P}_N)$. 
+\begin{align}
+\gamma(P) &= \mathbb{E}_P(x) \\
+\gamma(\hat{P}_N) &= \mathbb{E}_{\hat{P}_N}(x) = \frac{1}{N}\sum x_n \equiv \bar{x}
+\end{align}
+For å gjøre dette litt mer operativt kan vi merke at egenskaper ofte er funksjon av kumulativ fordeling, $\gamma = \gamma(F)$. Vet ikke hvor vesentlig det poenget var. Uansett, dette er en fleksibel ikke-parametrisk fremgangsmåte der vi erstatter $F$ med empirisk CDF $\hat{F}_N$ og egenskapene vi måtte være interessert i. Lurer på om vi har noen generelle fremgangsmåter til å kvantifisere usikkerhet til disse estimatene uten å pålegge mer struktur..
+\subsection{Motivere OLS som utvalgsanalog}
+Vi kan nå bruke dette rammeverket til å studere relasjonen mellom inputvektor $\mathbf{x}$ og avhengig variabel $y$. Den betingede forventningen $\mathbb{E}[y|\mathbf{x}]$ gir et godt sammendragsmål på relasjonen, men den kan være vanskelig å estimere og å tolke. I praksis estimerer vi ofte den lineære populasjonsregresjonsfunksjonen, $\gamma (P) = \mathbf{b^*}$. Hvorvidt dette gir en god tilnærming avhenger om CEF er tilnærmet lineær. Det er likevel ganske fleksibelt siden vi kan transformere inputvektor til et \textit{feature space}, $ \Phi : \mathbb{R}^K \rightarrow \mathbb{R}^L$. Da kan vi ofte få tilnærmet lineær relasjon i forhold til den transformerte inputvektoren, $\mathbb{E}[y|\Phi(\mathbf{x})]$. Kan eventuelt også transformere $y$.
+
+Dersom $\mathbb{E}(\mathbf{x}(y-\mathbf{x}'\mathbf{b}^*) = \mathbf{0}$, observasjonene er $iid$ og $\mathbb{E}(\mathbf{x}\mathbf{x}')$ er inverterbar gir utvalgsanalogsprinsippet en konsistent estimator for $\mathbf{b}^* \equiv \mathbf{\beta}$
+\begin{align}
+\widehat{\mathbf{\beta}} = \mathbb{E}_{\hat{P}_N}( \mathbf{x}\mathbf{x}')^{-1}\mathbb{E}_{\hat{P}_N}(\mathbf{x}y) =  \left(\frac{1}{N}\sum \mathbf{x_n x_n'} \right)^{-1}\frac{1}{N}\sum \mathbf{x_n}y_n
+\end{align}
+Utvalgsanalogprinsippet er intuitivt. Det er naturlig å bruke den relative andelen av observasjoner som havner i en mengde som estimat på sannsynlighet for den mengden i populasjonen. Asymptotisk kan vi da observere $P$ og lære egenskaper ved prosessen uten å måtte gjøre antagelser. Vi kan la data snakke for seg selv. Hvorfor trenger vi andre måter å utlede estimatorer? For det første har vi aldri uendelig store utvalg. Hele poenget er å generalisere fra utvalg og da må vi håndtere det faktum at $\hat{P}_N \neq P$. For det første er $\hat{P}_N$ alltid diskret selv om fordelingen er absolutt kontinuerlig. For det andre kan vi få estimatorer med bedre egenskaper ved å påføre struktur a priori. Dette motiverer empirisk risikominimering som gir oss et rammeverk for å kombinere utvalgsanlog med struktur.
+\section{Momentestimator}
+Den enkleste momentestimatoren følger direkte fra utvalgsanalogprinsippet
+\begin{align}
+\theta &= \mathbb{E}[X] = \int xf(x)dx \\
+\hat{\theta} &= \mathbb{E}_{\hat{P}_N}[X] = \sum x_n f_N(x_n) = \frac{1}{N}\sum x_n
+\end{align}
+Mer generelt kan anta parametrisk form $f(x;\theta)$ der $\theta = g(\mathbb{E}X)$. Fremgangsmåten er da å finne moment og løse ligningen med hensyn på parameter for å finne estimator. Eksempel: $X \sim geo(p)$, der $p=1/\mathbb{E}X$.
+\begin{align}
+g(p) &= \mathbb{E}[X] = \int xf(x)dx \\
+g(\hat{p}) &= \mathbb{E}_{\hat{P}_N}[X] = \sum x_n f_N(x_n) = \frac{1}{N}\sum x_n \\
+\hat{p} &= \frac{N}{\sum x_n}
+\end{align}
+Kan utvide til å estimere flere parametre som da gir oss et ligningssystem. Jeg er litt usikker på hvilken notasjon jeg ønsker å bruke.
+\subsection{Egenskaper}
+Gitt regularitetsbetingelser er estimatorene konsistente og asymptotisk normale med varians som det er mulig å beregne.
+\begin{align}
+\sqrt{N}(\hat{\theta}-\theta) \overset{d}{\to} N(0,Avar(\hat{\theta}))
+\end{align} 
+der 
+\begin{align}
+Avar(\hat{\theta}) = g\mathbb{E}[xx']g'
+\end{align} 
+tror det generelt har en sandwich form og at g består av derivater som kan gis enkel form dersom momentbetingelse er lineær, men ser på dette senere når jeg får notasjon på plass.
+
+
+\section{GMM}
+TODO: motivere GMM. Tror jeg vil motivere momentestimatorer i samme slengen.
+GMM er utvidelse av momentestimator til overdeterminerte ligningsystem der vi har flere instrument enn endogene variabler. Fordelen med å inkludere flere instrument er at vi få mer effektiv estimator (lavere asymptotisk varians) og kan bruke overidentifikasjon for å teste gyldighet til instrument siden vi kan observere $u$ med $L-1$ instrument. Det er mye notasjon, så det er viktig å være ryddig. Tenker vi har en prosess som genererer observasjoner til utvalget vårt, $\{y_n,\mathbf{x_n},\mathbf{z_n}\} = \{\mathbf{w_n}\}$ som er ergodisk og stasjonær. Jeg har en momentbetingelse som definererer verdien på parameteren jeg vil finne. I praksis er det ofte ortogonalitetsbetingelse. Kan være greit å tenke på hvordan jeg kan relatere dette til $L_2$, men annen gang. Parameter sier noe om relasjon mellom variabler i prosessen
+\begin{align}
+g_n(\delta)&=g(\mathbf{z_n}u_n(\delta)) = g(\mathbf{z_n}(y-\mathbf{x_n}'\delta) \\
+\mathbb{E}[g_n(\delta)] &= \mathbf{0}
+\end{align}
+der vi kan tenke på $g_n(\delta)$ som en tilfeldig variabel. Det korresponderene empiriske momentet er
+\begin{align}
+\mathbb{E}_{P_N}[\mathbf{g}_n(\tilde{\delta})] &= \frac{1}{N}\sum \mathbf{g}_n(\tilde{\delta}) \equiv \mathbf{g}_N(\tilde{\delta}) \\
+&= \frac{1}{N} \sum \mathbf{z_n}(\mathbf{y_n}-\mathbf{x_n}'\tilde{\delta}) \equiv \mathbf{S}_{zy} -\mathbf{S}_{zx}\tilde{\delta}
+\end{align}
+Hvis eksakt identifisert kan jeg løse dette for $\tilde{\delta}$ som da blir min estimator $\hat{\delta}$. Hvis overidentifisert er ikke $\mathbf{S}_{zx}$ inverterbar. Det er ikke mulig å få alle utvalgsmomentene lik $0$. En naturlig løsning er å minimere det samlede avviket fra $0$, altså minimerere lengden av vektoren $g_N(\tilde{\delta})$. Merk at $\| \mathbf{x} \|^2$ er $\mathbf{x}'\mathbf{x}$. Men vi få lavere asymptotisk varians ved å vekte momentene, slik at moment med lavere varians får høyere vekt. Litt analogt til vektet minste kvadrat. Uansett, i stedet for å minimere lengden av vektoren direkte setter vi opp en kvadratisk form
+\begin{align}
+J(\tilde{\delta},\mathbf{\hat{W}}) = \mathbf{g}_N(\tilde{\delta})'\mathbf{\hat{W}}\mathbf{g}_N(\tilde{\delta}) 
+\end{align}
+der vi kan finne closed form løsning på minimeringsproblemet som gir et eksplisitt uttrykk for GMM-estimatoren.
+\begin{align}
+\hat{\delta}_{GMM} &= \argmin_{\tilde{\delta}} J(\tilde{\delta},\mathbf{\hat{W}}) \\
+&= \left( \mathbf{S}_{zx}\mathbf{\hat{W}}\mathbf{S}_{zx}\right)^{-1}\mathbf{S}_{zx}'\mathbf{\hat{W}} \mathbf{S}_{zy}
+\end{align}
+Har nå funnet estimatorene. Neste steg blir å utlede den asymptotiske fordelingen. Fremgangsmåten er å substituere inn for $y$ og bruke dette til å få utrykk for utvalgsfeilen $\hat{\delta} - \delta$.
+\begin{align}
+\mathbf{S}_{zy} = \frac{1}{N}\sum \mathbf{z_n}\mathbf{y_n} &= \frac{1}{N}\sum \mathbf{z_n}(\mathbf{x_n}'\delta+u_n) \\
+&= \mathbf{S}_{zx}\delta + \bar{\mathbf{g}}
+\end{align}
+der $\bar{\mathbf{g}} \equiv \frac{1}{N}\sum g_n(\delta) = \frac{1}{N}\sum \mathbf{z_n}u_n$. Det følger da at
+\begin{align}
+\hat{\delta} = \delta + \left(\mathbf{S}_{zx}' \mathbf{\hat{W}} \mathbf{S}_{zx}\right)^{-1}\mathbf{S}_{zx}'\mathbf{\hat{W}}\bar{\mathbf{g}}
+\end{align}
+slik at $\hat{\delta} - \delta = \mathbf{A}_N\bar{\mathbf{g}}$. Den er da konsistent hvis $\mathbf{A}_N \overset{p}{\rightarrow} \mathbf{A}$ og $\bar{\mathbf{g}}\overset{p}{\rightarrow} \mathbb{E}[\mathbf{g}_n(\delta)] = \mathbf{0}$. Den asymptotiske fordelingen er da
+\begin{align}
+\sqrt{N}(\hat{\delta} - \delta) = \mathbf{A}_N\sqrt{N}\bar{\mathbf{g}} \overset{d}{\rightarrow} N(\mathbf{0},\mathbf{A}\mathbf{S}\mathbf{A}')
+\end{align}
+hvis $\{\mathbf{g_n}\}$ er \textit{mds} slik at at $\sqrt{N}\bar{\mathbf{g}}\overset{d}{\rightarrow} N(\mathbf{0}, \mathbf{S})$ og der $\mathbf{S} = var(\mathbf{g_n}) = \mathbb{E}[\mathbf{g_n}\mathbf{g_n}']$. Dette ser ganske ryddig ut, men $\mathbf{A}$ skjuler masse dritt.
+\begin{align}
+\mathbf{A} = \left( \mathbf{\Sigma}_{ZX}'\mathbf{W} \mathbf{\Sigma}_{ZX} \right)^{-1} \mathbf{\Sigma}_{ZX}'\mathbf{W}
+\end{align}
+Kan få ryddet opp hvis $\mathbf{\hat{W}} \overset{p}{\rightarrow} \mathbf{S}^{-1}$ som er den asymptisk effektive estimatoren. Følger da at
+\begin{align}
+Avar(\hat{\delta}(\hat{\mathbf{S}}^{-1}) )&= \left( \mathbf{\Sigma}_{ZX}'\mathbf{S}^{-1} \mathbf{\Sigma}_{ZX} \right)^{-1} \mathbf{\Sigma}_{ZX}'\mathbf{S}^{-1}\mathbf{S}\mathbf{S}^{-1}\mathbf{\Sigma}_{ZX}\left( \mathbf{\Sigma}_{ZX}'\mathbf{S}^{-1} \mathbf{\Sigma}_{ZX} \right)^{-1} \\
+&= \left( \mathbf{\Sigma}_{ZX}'\mathbf{S}^{-1} \mathbf{\Sigma}_{ZX} \right)^{-1}
+\end{align}
+Dette kan vi finne dersom vi finne dersom vi har konsistent estimator for $\mathbf{S}$
+\begin{align}
+\mathbf{S} &= \mathbb{E}[\mathbf{g}_n \mathbf{g}_n'] = \mathbb{E}[\mathbf{z}_n u_n(\mathbf{z}_n u_n)'] \\
+\hat{\mathbf{S}} &=\frac{1}{N}\sum \hat{u}_n^2 \mathbf{z}_n\mathbf{z}_n'
+\end{align}
+Det er ikke helt opplagt hvorfor denne estimatoren fungerer, men tror dette er white sin hetero-robuste greie som jeg ser på senere.  Problemet nå er at vi trenger $\hat{\delta}$ for å finne $\hat{u}_n$ fordi
+\begin{align}
+\hat{u}_n = y_n-\mathbf{x}_n'\hat{\delta}
+\end{align}
+men vi trenger vektematrise for å finne $\hat{\delta}$! Kan vår \textit{catch 22} med to-stegs estimator.
+\begin{enumerate}
+\item Velger en default vektematrise, som oftest $\hat{\mathbf{W}} = \mathbf{I}$ eller $\hat{\mathbf{W}} = \mathbf{S}_{zz}^{-1}$. Bruker dette til å finne $\delta(\hat{\mathbf{W}})$. Bruker dette til å finne $\hat{\mathbf{S}}$.
+\item Bruker dette til å finne $\delta(\hat{\mathbf{S}}^{-1})$
+\end{enumerate}
+Tror jeg alternativt jeg kunne brukt en algoritme som gjentar prosess til konvergens. Uansett, jeg har nå et veldig fleksibelt rammeverk som lar meg utlede asymptotisk effektive estimatorer for en stor mengde av DGPer. Hvorfor sitter ikke alle og kjører GMM? I praksis har vi ofte upresis estimering av $\mathbf{S}^{-1}$ slik at det blir lite gevinst i forhold til 2sls. Kan påføre litt ekstra antagelser og utlede de vanlig estimatorerene som special case av asymptotisk effektive GMM og slipper da 2-stegs opplegget over.
+\subsection{2SLS}
+Innfører antagelse om betinget homoskedastisitet
+\begin{align}
+\mathbb{E}[u_n^2|\mathbf{z}_n]=\sigma^2
+\end{align}
+Det følger da at
+\begin{align}
+\mathbf{S} &= \mathbb{E}\left[\mathbb{E}(\mathbf{z}_n u^2\mathbf{z}_n'|\mathbf{z}_n)\right] = \sigma^2\mathbb{E}[\mathbf{z}_n\mathbf{z}_n'] \\
+\hat{\mathbf{S}} &= \hat{\sigma}^2\frac{1}{N}\sum \mathbf{z}_n\mathbf{z}_n' =  \hat{\sigma}^2 \mathbf{S}_{zz}
+\end{align}
+Slenger dette inn i GMM-estimatoren og får 2SLS
+\begin{align}
+\hat{\delta}(\hat{\mathbf{S}}^{-1}) &= \left( \mathbf{S}_{zx}(\hat{\sigma}^2 \mathbf{S}_{zz})^{-1}\mathbf{S}_{zx}\right)^{-1}\mathbf{S}_{zx}'(\hat{\sigma}^2 \mathbf{S}_{zz})^{-1} \mathbf{S}_{zy} \\
+&= \left( \mathbf{S}_{zx}(\mathbf{S}_{zz}^{-1}\mathbf{S}_{zx}\right)^{-1}\mathbf{S}_{zx}'\mathbf{S}_{zz}^{-1} \mathbf{S}_{zy} \\
+&= \hat{\delta}(\hat{\mathbf{S}}_{zz}^{-1}) = \hat{\delta}_{2SLS}
+\end{align}
+Det at estimatoren er konsistent og asymptotisk normalfordelt følger av at det er special case av GMM. Kan finne asymptotisk varians med homoskedastisitet
+\begin{align}
+Avar(\hat{\delta}_{2SLS}) &=  \left( \mathbf{\Sigma}_{zx}'(\sigma^2 \mathbf{S}_{zz})^{-1} \mathbf{\Sigma}_{zx} \right)^{-1} \\
+\widehat{Avar(\hat{\delta}_{2SLS})} &= \hat{S}^2\left(\mathbf{\Sigma}_{zx}'\mathbf{S}_{zz}^{-1} \mathbf{S}_{zx} \right)^{-1}
+\end{align}
+Kan jo også utvide til robuste standardfeil her. Kan bruke 2SLS (og OLS) selv om antagelse om homoskedastisitet ikke er oppfylt, men da må vi leve med at estimatorene ikke er asymptotisk effektive. For spesialtilfelle med eksakt identifisering er det tilstrekkelig å bruke at $\mathbf{\Sigma}_{zx}$ er inverterbar til å utlede IV og OLS fra GMM.

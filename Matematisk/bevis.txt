@@ -1,0 +1,114 @@
+\section{Bevis}
+En \textit{conjecture} (formodning) er noe som vi tror kan være sant. Hvis vi kan bevise at det er sant kan vi kalle det er theorem. Et eksempel på conjecture er at $x^2 > x $ for alle $ x>1$. Hvordan kan vi bevise at dette er sant? Det er ikke tilstrekkelig å finne eksempelverdier $x$ der det er sant fordi det ikke gir noen garanti for at det sant for alle $x>1$.
+
+Theorem er argument som har formen at gitt premissene (hypotesene) er sanne, så er også konklusjonen sann. Premissene inkluderer ofte frie variabler og ved sett in verdier av disse får jeg et \textit{instance} av theoremet. Den fremgangsmåten vil ikke være tilstrekkelig siden jeg vil vise at det er sant for \textit{alle} instancer. På en annen side kan fremgangsmåten brukes til å vise at at theorem ikke er sant, fordi en eneste motsigelse viser at konklusjonen ikke med nødvendighet er sann dersom premissene er sanne.
+
+Jeg skal nå begynne å utvikle strategier for å bevise theorem. Det betyr å vise at argumentet er gyldig så jeg får bruk for greiene om logikk. I praksis gjøres bevis i flere steg. Stegene er ikke lineære. Det har en nested struktur for vi manipulerer strukturen, gjør ting og deretter rekonstruerer struktur slik at vi beviser opprinnelig påstand. Vi får bruk for begrepene \textit{givens} og \textit{goals} som er henholdsvis tingene vi antar er sanne og ting vi vil vise er sanne i ulike deler av beviset. Merk at premiss og konklusjon er henholdsvis given og goal på begynnelsen. Merk også at det er en viktig distinksjon mellom å \textit{anta} at P sant og å \textit{hevde} (assert) det. Hvis vi hevder at noe er sant må vi bevise det, mens vi kan anta basically hva som helst. Hvis vi deretter viser at $P \Rightarrow Q$ har vi bevist Q dersom vi hevder at P er sant, men vi kan ikke si noe om sannhetsverdi til Q dersom vi kun har antatt P.
+\subsection{Strategier}
+Jeg skal nå begynne å utvikle ulike strategier for å bevise theorem. Eksempel: Bevis $P \Rightarrow Q$
+\begin{verbatim}
+Anta at P
+	[Bevis at Q]
+Derfor vist at P medfører Q
+\end{verbatim}
+En alternativ og veldig fleksibel strategi er bevis ved motsigelse.
+\begin{verbatim}
+Anta at P
+Anta at ikke Q
+	[Bevis at ikke P]
+Derfor vist at P medfører Q
+\end{verbatim}
+Goals:
+\begin{itemize}
+\item $ P \Rightarrow Q$.
+	\begin{enumerate}
+		 \item Legg P til i given og bevis Q. 
+		\item  Legg $\neg Q$ til i given og bevis $\neg P$
+	\end{enumerate}	
+
+\item $\neg P$
+	\begin{enumerate}
+		\item Prøve å finne en ekvivalent for som ikke er negert
+		\item Legg til P i given og forsøk å finne en selvmotigelse av ting vi har antatt er sanne.
+	\end{enumerate}
+\item $\forall x P(x)$
+\begin{enumerate}
+\item La x være arbritrær og bevis P(x). Ofte er det implisitt at x er arbitrær, men vi må passe på å ikke gjøre noen antagelser. Vi tar beviset for en spesifikk x, men siden den er vilkårlig gjelder det for alle x.
+\end{enumerate}
+\item $\exists x P(x)$
+\begin{enumerate}
+	\item Vise at det er sant for en bestemt x=a som jeg finner, f.eks. ved å løse ligning.
+\end{enumerate}
+\item $P \land Q$
+\begin{enumerate}
+\item Bevise P og Q separat.
+\end{enumerate}
+\item $ P \Leftrightarrow Q$
+\begin{enumerate}
+	\item Det er bare et spesialtilfelle der vi ha $P\Rightarrow Q \land Q \Rightarrow P$
+\end{enumerate}
+\item $ P \lor Q$
+\begin{enumerate}
+\item Kan anta $\neg P$ og bevise $Q$ eller omvendt.
+\end{enumerate}
+\end{itemize}
+Har også strategier for hva jeg kan gjøre med givens
+\begin{itemize}
+\item $ P \Rightarrow Q$.
+	\begin{enumerate}
+		 \item Enten vise at P eller $\neg Q$
+	\end{enumerate}	
+\item $\neg P$
+	\begin{enumerate}
+		\item Prøve å finne en ekvivalent for som ikke er negert
+		\item Hvis målet er å finne selvmotigelse kan jeg flytte P over til mål.
+	\end{enumerate}
+\item $\forall x P(x)$
+\begin{enumerate}
+\item Plugge inn en verdi a. Finner spesifikke verdi fra de resten av beviset...
+\end{enumerate}
+\item $\exists x P(x)$
+\begin{enumerate}
+	\item Innfører en $x_0$ som er en verdi der $P(x_0)$.
+\end{enumerate}
+\item $P \land Q$
+\begin{enumerate}
+\item Behandle som to separate givens.
+\end{enumerate}
+\item $ P \Leftrightarrow Q$
+\begin{enumerate}
+	\item Det er bare et spesialtilfelle der vi ha $P\Rightarrow Q \land Q \Rightarrow P$
+\end{enumerate}
+\item $ P \lor Q$
+\begin{enumerate}
+\item Bevise separat, én med P og én med Q som given.
+\end{enumerate}
+\end{itemize}
+Intuisjonen er at vi har en liste med givens. Hvis vi med utgangspunkt i disse kan lage en motsigelse betyr det at minste én av givens ikke er sanne, men siden vi har antatt at de er sanne må den usanne være påstanden som vi la til... Utfordringen er at vi flytter negasjon av goal inn i givens, som gjør at vi ikke har et opplagt goal å jobbe mot. 
+\subsection{Eksempler på bevis}
+Mye av arbeidet skjer inne i brakkeparentes. Ulike ting man kan gjøre er å skrive ut definisjonene til de matematiske utrykkene i premissene og eventuell forsøke å utlede nye ting som er sant og som vi kan bruke. Vi kan også manipulere både givens og goals til ekvivalente representasjoner. Direkte bevis manipulerer givens slik at de ligner på goal. Eksempel: Bevis at summen av oddetall og partall er oddetall.
+\begin{align}
+x = 2z, \exists z \in \mathbb{Z},y = 2w-1, \exists w \in \mathbb{Z} \iff x+y = 2z+2w-1 = 2v-1
+\end{align}
+der $v = z+w \ in \mathbb{Z}$. Vi bruker logikk og symboler når vi utleder beviset, men det endelige resultatet skal bestå av vanlig tekst. Skal nå forsøke å skrive ut beviset
+\begin{theorem}
+La $a$ være et partall og la $b$ være et oddetall. Da er $z=a+b$ er oddetall.
+\end{theorem}
+\begin{proof}
+Siden $a$ er partall eksisterer det et heltall $n$ slik at $a = 2n$ og siden $b$ er oddetall eksisterer det et heltall $m$ slik at $b = 2m-1$. Det medfører at summen av tallene kan skrives som $2m+2n-1$. Det medfører at det eksisterer et heltall $x = 2(m+n)$ slik at $a+b=2x-1$ som er et oddetall. 
+\end{proof}
+
+\begin{theorem}
+La $A \setminus B$ være disjunkt fra C og la $x \in A$. Hvis $x\in C$ er da $x\in B$.
+\end{theorem}
+\begin{proof}
+Anta at $x\in C$. Jeg beviser med motsigelse og antar derfor at $x\notin B$. Da er $x \in A \setminus B$ og $x \in C$. Disse mengdene er disjunkte og dette er derfor en motsigelse. Jeg konkluderer derfor med at $x \in B$. Det følger derfor at hvis $x\in C$ er $x\in B$.
+\end{proof}
+
+\begin{theorem}
+Hvis $\exists x (P(x) \Rightarrow Q(x))$ så er $\forall x P(x) \Rightarrow \exists x Q(x)$.
+\end{theorem}
+\begin{proof}
+Anta at $P(x) \Rightarrow Q(x))$ er sant for $x=x_0$. Anta $P(x)$ er sann for alle x. Da er $P(x_0)$ sann. Siden $P(x_0)$ impliserer $Q(x_0))$ er $Q(x_0)$ sann. Det medfører at det eksisterer en $x$ slik at $Q(x)$ er sann. Det medfører at for alle $x$ vil P(x) implisere at det eksister en x slik at $Q(x)$.
+\end{proof}
+TODO: Tror det er god idé å ta litt flere eksempler på bevise og se litt på  hvordan de kan formuleres på en gode måte..

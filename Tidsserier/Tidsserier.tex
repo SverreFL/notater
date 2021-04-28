@@ -1,0 +1,107 @@
+\chapter{Tidsserier}
+I tidsserier gjør vi gjentagende observasjoner av samme enhet. Det kan for eksempel være utvikling i brutto nasjonalprodukt (BNP) til et land, størrelsen på populasjonen, pris på verdipapir over tid eller andre størrelser som endrer seg. Det vil være korrelasjon mellom observasjoner som er nær hverandre i tid slik at vi ikke kan bruke vanlige statistiske metoder der vi antar at de ulike observasjonene er uavhengige realiseringer fra samme fordeling.\footnote{Litt usikker på i hvilken grad det er overlapp mellom metodologi i tidsserier og i panel/hierarkisk data der det er korrelasjon mellom observasjon innad i grupper uten at det nødvendigvis er tidsdimensjon.} I likhet med statistisk analyse i krysseksjon tar vi utgangspunkt i tabell med tall som vi kan betrakte som realiserte verdier fra en datagenereringsprosses. Det er vanskelig å lese tallene direkte, så vi må lage alternative representasjoner som gjør at vi kan lære om DGP og bruke dette til å svare på spørsmål.
+
+Vi betrakter DGP som en følge av stokastiske variabler $(x_t)_{t \in T}$ der $T$ er indeks til tidspunktene. Dette er en stokatisk prosess og følgen av realiserte verdier utgjør én realisering av prosessen. Vi kan visualisere den observerte realiseringen i utvalget ved å plotte verdien opp mot tid, der vi gjerne bruker rette linjer mellom punktene som en tilnærming på den konseptuelt kontiuerlige underliggende tidsserien.\footnote{Det at tidsserien er diskret og størrelsen på tidssavstand mellom observasjoner er gjerne bare en noe arbritrær egenskap ved hvordan data er samlet inn. Merk at de estimerte og observerte egenskapene til tidsserien kan være sensistive for størrelsen på dette gapet.} Videre bruker vi modell til å beskrive DGP og bruker de realiserte verdiene til å estimere parametre i denne modellen. Det finnes ulike modeller. De bestemmer hvor glatt tidsserien er.. hm.
+\begin{enumerate}
+\item Hvit støy: Ingen korrelasjon mellom ulike ledd av følgen og konstant spredning.
+\item Moving average: Kan tenke at hver observasjon egentlig er løpende (vektet) gjennomsnitt av underliggende (uobserverte) verdier, eks: $w_t = \frac{1}{3}(v_{t-1}, v_t, v_{t+1})$.
+\item Random walk med drift: $x_t = \mu + x_{t-1}+w_t$ der $(w_t)$ er hvit støy.
+\item Signal og støy: $x_t = f(t)+w_t$. Et eller annet gjentagende mønster pluss tilfeldig avvik.
+\end{enumerate}
+\section{Deskriptivt}
+Vi begynner alltid analysen ved å plotte tidsserien. Fra denne grafiske representasjonen kan vi få inntrykk av egenskaper ved tidsserien.
+\begin{enumerate}
+\item Langsiktig trend (endring i gjennomsnittsverdi).
+\item Systematisk variasjon om den langssiktige trenden (over eller under i lengre tid). Kan ofte være syklisk etter fast mønster på grunn av årstider eller andre gjentagende fenomen.
+\item Ytterligere tilfeldig variasjon.
+\item Kan se om det er noen outliars (verdier som avviker kraftig fra resten av tidsserien). Kan skyldes målefeil eller spesielle hendelser. Kan være aktuelt å fjerne disse for at de ikke skal påvirke videre analyse (forecasting), men må være litt forsiktig med dette.
+\item Endringer i egenskapene over. Kan det for eksempel være at trenden endret seg på gitt tidspunkt? Kan indikere at det er aktuelt med separat analyse av ulike segment av tidsserie eller hm..
+\end{enumerate}
+Dette er et greit første steg, men hvordan skal vi gå videre? Jeg vil tallfeste noen egenskaper i stedet for å bare \textit{eyeballe} de fra figuren. Dessuten vil jeg dekomponere tidsserien slik at jeg kan rendyrke de ulike aspektene i ulike figurer i stedet for å ha alt i samme figur. Jeg kan for eksempel både se på den langsiktige trenden, de systematiske eller sykliske avvikene og deretter se på gjenstående tilfeldige avvikene (residualene) etter å ha forsøkt å modellere den systematiske delen. Med andre ord finner vi $y_t = f(t)+u_t$. I motsetning til i krysseksjon vil vi da gjerne observere at det er struktur i residualene ved at de er korrelert over tid og det virker som at mye i tidsserier handler om å håndtere dette. Dessuten overlapper dekomponering med modellering siden vi det ikke er en entydig måte å dekomponere tidsserien slik at vi må gjøre litt ulike valg. Har generelt tre fremgangsmåter for å fjerne trenden i tidsserie:
+\begin{enumerate}
+\item Parametrisk modell der $f(\cdot)$ er f.eks. et polynom
+\item Filtrering der vi beregner $f(\cdot)$ er beregnet ut fra vektet gjennomsnitt av nærliggende observasjoner. Må velge grad av smoothing.
+\item Kan bruke differanser mellom observasjoner til å finne avvik fra trend uten å finne $f(\cdot)$ eksplisitt.
+\end{enumerate}
+Deretter gjenstår det å modellere $u_t$...
+\subsection{Stasjonaritet}
+Det er et problem for vår inferens at vi bare har én observasjon for hvert tidspunkt $t$. For å komme noen vei må vi anta at egensakpene til tidsserien er stabile over tid slik at vi får flere observasjoner til å lære egenskapene fra. Stasjonaritet er en påstand om sammenhengen mellom en delmende av observasjonene og en forskjøvet delmengde, altså om
+\begin{align}
+(x_t,x_{t+1},\dots, x_{t+k})\text{ og } (x_{t+h},x_{t+h+1},\dots, x_{t+h+k}).
+\end{align}
+I sterk form er hele simultanfordelingen på to delmengdene den samme. Dette er sterkere enn vi trenger, lite realistisk og vanskelig å vurdere om det holder i praksis. Vi trenger bare svak stasjonaritet som kun legger begrensnigner på første to moment. Med svak stasjonaritet er
+\begin{enumerate} 
+\item $\mu_t = \mu$ for alle $t$. Forventningsverdien endrer seg ikke slik at vi i prinsippet får $T$ observasjoner til å lære $\mu$.\footnote{Men merk at hvis de ikke er uavhengige så lærer vi ikke like mye fra nye observasjon slik at større standardfeil til estimatet, ref. clustering i økonometri.}
+\item $\gamma(s,t)=gamma(s+h, t+h)$. Størrelsen til autokovarians avheneger bare i avstand i tid mellom to observasjoner, $h = |t-s|$, ikke absolutt posisjon i tid. Det medfører at vi kan betrakte det som bare en funksjon av $h$ og at vi får flere realiseringer.
+\end{enumerate}
+\subsection{Empirisk}
+Hvis tidsserien er stasjonær kan vi da konsistent estimere gjennomsnitt med $\bar{x}$ og autokorrelasjon med lag $j$ ved
+\begin{align}
+\hat{\rho}(j) = \frac{\widehat{cov}(y_t, y_{t-j}}{\widehat{var}(y_t)}
+\end{align}
+der 
+\begin{align}
+\widehat{cov}(y_t, y_{t-j}) = \frac{1}{T-1} \sum_{t=1}^{T-j}(y_t-\bar{y})(y_{t-j}-\bar{y})
+\end{align}
+og
+\begin{align}
+\widehat{var}(y_t) = \frac{1}{T-1} \sum_{t=1}^{T-j}(y_t-\bar{y})^2.
+\end{align}
+Disse empiriske (eller utvalgs-) størrelsene kan vi alltids beregne for en tidsserie og det kan være et godt sted å begynne før vi gjør noe modellering. Vi kan plotte autokorrlasjon for laggene $h=1,\dots, H$ for å undersøke strukturen. Hvis det kun er korrelasjon med perioden foran så kan det for eksempel være rimelig å bruke MA(1).
+\section{Modellering}
+Sammenhengen mellom fordelingen til de ulike leddene i den stokastiske prosessen er fullt ut beskrevet av simultanfordelingen som er gitt ved $F:(x_1,\dots, x_T)\mapsto \mathbb{R}$. Dette er et veldig komplisert objekt og umulig å få noe godt estimat fra én observasjon. Vi kan i stedet ta utgangspunkt i de marginale fordelingene til hvert av leddende $F_t$ og betrakte forventningsverdien $\mu_t := E[x_t]=\int f_t(x_t)x_tdx_t$. Videre kan vi se på kovarians mellom variabler på ulike tidspunkt, $\gamma(s,t):=cov(x_s,x_t)=E((x_s-\mu_s)(x_t-\mu_t))$. Eller korrelasjonen. 
+
+
+I praksis er de fleste tidsserier ikke-stasjonære fordi gjennomsnittet endrer seg over tid ut fra en eller annen trend $\mu_t$ eller fordi spredningen endres. Vi kan dekomponere tidsserien slik at den består av trend og avvik fra trend, der avviket kan være en stasjonær tidsserie med $\mu=0$ og autokovarians som vi konsistent kan estimere. Vi kan spesifisere en parametrisk form for trenden, for eksempel
+\begin{align}
+\mu_t = \beta_0 + \beta_1 t
+\end{align}
+og estimere funksjonen med minste kvadrats metode slik at vi får estimerte residualer $\hat{u}_t := y-\hat{\mu}_t$ som utgjør en realisering av tidsserie med egenskaper vi kan estimere. Det finnes selvsagt alternative måter å dekomponere i trend og avvik; vi kan bruke ikke-parametriske (\textit{smoothing}) estimatorer for å håndtere vilkårlig ikke linearitet i trend som funksjon av tid, eller vi kan også bruke tidligere realiserte verdier av egen og andre tidsserier som argument i funksjonen. \footnote{Litt usikker på first differencing... får ikke trend, men får dekomponert tror jeg.}
+Vi har sett på korrelasjon mellom variabler med ulike lag $h$. Dette er en deskriptiv egenskap ved verdiene i utvalget og vi kan betrakte det som et estimat på egenskap til simultanfordelingen som genererte data. Jeg ønsker å gå videre fra denne egenskapen til å modellere prosessen som genererer data. Vi kan bruke parametrisk spesifikasjon og estimere parametre slik at avhengighetsstrukturen samsvarer til dels med den observerte avhengigheten i utvalget. Det er fordel at fordeling til gitt variabel $y_t$ avhenger av tidligere realiserte variabler slik at vi kan bruke modellen til å forutsi fremtidig variabler. For å forenkle notasjon med laggede variabler introduserer vi en såkalt \textit{backshift operator} $B$ der $B^k x_t = x_{t-k}$.
+\subsection{AR(p)}
+En mulig fremgangsmåte for å skape avhengighet er å ta regresjon på egne laggede verdier.\footnote{Merk at auto betyr self, eg autofellatio}
+\begin{align}
+y_t = \theta_1 y_{t-1}+\theta_2 y_{t-2} + \dots + \theta_p y_{t-p}+u_t
+\end{align}
+\subsection{Autoregressiv, AR(k)}
+I autoregressiv modell blir noe av utfall i forrige periode dratt med over til neste. Hvis det er spesielt høy verdi i én periode (høy $\epsilon_t$) så blir det propagert videre i kommende perioder. Vi modellerer det med lagged utfall,
+\begin{align}
+Y_t = \alpha + \rho Y_{t-1}+\epsilon_t
+\end{align}
+Hvor stor del av verdi som blir propagert videre avhenger av parameter som vi estimerer fra observert data. I praksis er det ofte enklere å jobbe med avvik fra gjennomsnitt, $y_t := Y_t-E[Y_t]$, og kan vises at
+\begin{align}
+y_t = \rho y_{t-1}+\epsilon_t
+\end{align}
+Vil beskrive egenskap ved simultanfordeling til prosessen. Den er karakterisert ved såkalt autokovarians; korrelasjon mellom utfall på ulike tidspunkt.. Kan finne $var(y_t), cov(y_t,y_{t-1})$ og $cov(y_t,y_{t-k})$..
+\subsection{MA(q)}
+Dette er en alternativ måte å beskrive sammenhengen mellom realisering på ulike tidspunkt. I stedet for at hele utfallet blir propagert videre er det nå bare selve sjokket $\epsilon_{t-1}$ som blir med å bestemme verdi i neste periode. Dette medfører at sjokket ikke påvirker verdi inn i evigheten,
+\begin{align}
+Y_t = \mu+\alpha \epsilon_{t-1}+\epsilon_t
+\end{align}
+\subsection{ARMA(p,q)}
+\section{Tidsserier}
+Vi skal nå se på data der vi har gjentatt observasjon av samme enhet. Så langt har vi modellert sammenheng mellom variabler som blir realisert samtidig, $y=f(x)+u$. Hvis vi ønsker å predikere fremtidig verdi $y_{t+k}$ når vi er i $t$ så hjelper det oss ikke så mye å ha god $f$ siden vi uansett må predikere $x_{t+k}$ for å bruke den. En alternativ fremgangsmåte er å modellere stokastisk prosess $(y_t)_{t \in \mathbb{N}}$. I de fleste tilfeller vil fordeling til realisering $t$ avhenge av realisering i tidligere perioder. Jeg skal begynne med å se på enkle måter å modellere denne avhengigheten. Deretter skal jeg inkludere andre forklaringsvariabler..
+\subsection{Lineær trend}
+Kanskje den enkleste måten å beskrive trenden er med en enkel lineær sammenheng der vi lar tidsperiode $t$ være uavhengige variabel,
+\begin{align}
+y_t = \alpha_0+\alpha_1 t + \epsilon_t
+\end{align}
+der parametrene er definert slik at de konstruerer feilledd med egenskap $E[t\epsilon_t]=0$ og $E[\epsilon_t]=0$. Kan jo også påstå at $E[\epsilon_t|t]=0$ men det er en ganske sterk påstand siden gjennomsnittlig utfall i hver periode sjeldent endrer seg helt linært. Dersom vi har få perioder så kunne vi gitt en indikator for hvert tidspunkt som gir fullstendig fleksibel beskrivelse av $E[y|t]=\alpha_t d(t)$,
+\begin{align}
+y_t = \sum_t \alpha_t d_t + \epsilon_t
+\end{align}
+der $E[\epsilon_t|t]=0$, men har jo bare én observasjon per tidspunkt så blir like mange parametre som observasjoner. Denne fremgangsmåten blir mer hensiktsmessig med paneldata der jeg har mange observasjoner i hver $t$. Vil da modellere trend for å \textit{de-trende}, fjerne trend fra sammenheng mellom behandling og utfall jeg interessert i. Kan enkelt utvide til eksponentiell trend ved å ta logaritmisk transformasjon av sammenheng slik at den blir lineær,
+\begin{align}
+&y_t = e^{\beta_0+\beta_1t+\epsilon_t} \\
+&\log y_t = \beta_0+\beta_1t+\epsilon_t
+\end{align}
+
+\section{Annet}
+Vi kan bruke stokastiske prosesser med avhengighet til å modellere feilleddet i en regresjonsmodell dersom vi av ulike grunner ikke kan anta at de er uavhengige. Den observerte autokorrelasjonen mellom residualer kan skyldes feilspesifikasjon av modellen, for eksempel at den ikke fanger opp all ikke-linearitet og at det er korrealsjon mellom uavhengige variabler som blir samplet på ulik tidspunkt. Vi har i utgangspunktet to fremgangsmåter for å håndtere dette:
+\begin{enumerate}
+\item Bruke generalisert minste kvadrat for å utnytte at ikke alle observasjonene er like informative om sammenhengen vi er interessert i. Transformerer modell slik at den oppfyller $iid$ antagelse slik at vi både får mer effektive estimat og riktige standardfeil. Disse gode egenskapene forutsetter at vi treffer riktig på strukturen. Tror det er noe kobling til (bayesianske) hierarkiske modeller som modellerer avhengighetsstruktur mer eksplisitt.
+\item Vi kan observere at MKM-estimatene fortsatt er konsistente så lenge den stokastiske prosessen til feilleddene er stasjonær. Hver observasjon vil være mindre informativ enn ved uavhengige feilledd slik at standardfeilene til estimatene blir større, men vi kan ta hensyn til dette ved å bruke autokorrelasjons-robuste feilledd som gir asymptotisk konsistente estimat av standardfeilene.\footnote{Litt usikker på om det er noe kobling til clustering her.}
+\end{enumerate}
+Alternativt kan vi bruke stokastiske prosesser til å modellere forventningsverdi av en univariat tidsserie. En enkel fremgangsmåte ville vært å modellere $E[y|t] = f(t)$, for eksempel ved en lineær trend. Deretter kunne vi predikert fremtidige verdier $\hat{y}_{t+j}$ med $\hat{f}(t+j)$. Dette er sikkert en grei tilnærming hvis vi ser på tidspunkt langt inn i fremtiden, men hva hvis $t+j$ er i nær fremtid? Da vil det gjerne være sånn at hvis $y_t$ ligger over trenden så er det kanskje også mer sannsynlig at $y_{t+j}$ også ligger over? Dette gjelder spesielt hvis det er store rigiditer i tidsserien. Eller kanskje vi også vil ta hensyn til momentum i tidsserien? Hvis den holder på å enten vokse eller synke så er det kanskje større sannsynlighet for at den vil fortsette med dette?
+\subsection{Mer annet}
+Tidsserier består av gjentagende observasjoner av en størrelse. Konseptuelt kan tidsserien være kontinuerlig, men vi observerer verdier på diskret tidspunkt. Den kan være verdi på gitte tidspunkt eller aggregering av verdi i intervallet mellom tidspunkt.

@@ -1,0 +1,220 @@
+\chapter{Inferens}
+I sannsynlighetsteori tar vi utgangspunkt i et veldefinert stokastisk forsøk som er beskrevet av sannsynlighetsrommet $(\Omega, \mathscr{F},\mathbb{P})$ og bruker dette til å beregne sannsynlighet for ulike hendelser.\footnote{I praksis jobber vi ofte med $\Omega = \mathbb{R}$ slik at vi kan bruke funksjoner $f:\mathbb{R}\to\mathbb{R}$ til beregne sannsynlighet for ulike hendelser gitt fordelingen $P:\mathcal{B}(\mathbb{R}\to\mathbb{R}$}. Dette forutsetter at fordelingen er kjent. I statistikk er fremgangsmåten omvendt; vi observerer utfall og med utgangspunkt i dette vil vi si noe om egenskapene til fordelingen som genererte utfallene. De realiserte utfallene gir ikke tilstrekkelig informasjon til å entydig bestemme egenskaper ved fordelingen $P$; ulike fordelinger kan generere samme observasjoner og hvis vi observerer nye realiseringer fra samme fordeling vil det være tilfeldig variasjon. Det er derfor vesentlig å kvantifisere usikkerheten til våre mål på egenskapene til $P$.
+\section{Motivasjon}
+Bedrifter, myndigheter og andre organisasjoner samler inn store mengder av data. Det er i hovedsak tabeller med verdier til observasjoner langs ulike egenskaper. Dette kan betraktes som et råstoff som må bearbeides og analyseres for å skape verdi. Det overordenede målet er å lære fra data. For å gjøre det må vi skape alternative representasjoner av tabellen med tall.\footnote{Representasjon brukes her som en deterministisk transformasjon av tabellen til et annet objekt.} Vi kan grovt skille mellom to typer representasjoner ut fra om de er enkle eller komplekse.
+\subsubsection{Enkle representasjoner}
+Dette er representasjoner som kan tolkes av mennesker og bidra til å skape innsikt og gi bedre informasjonsgrunnlag for å fatte beslutninger. Eksempler på dette er tabeller med sammendragsmål, visuelle fremstillinger eller enkle regresjonsmodeller. Vi kan her bruke at tabulær data definerer en (empirisk) fordeling. Det er en utfordring at hele simultanfordelingen er et veldig komplisert objekt og at vi har begrenset med dimensjoner til rådighet. Vi kan visualisere univariate fordelinger og betingede fordelinger. Vi kan også visualisere hvordan sentraltendensen i de betingede fordelingene avhenger av verdien vi betinger av. Generelt er vi ofte opptatt av hvordan et utfall avhenger av andre observerte egenskaper. Regresjonsmodeller gir et sammendragsmål på denne sammenhengen.
+\subsubsection{Komplekse representasjoner}
+Det kan også være hensiktsmessig å bruke mer komplekse representasjon som er mer fleksible og kan avdekke mer subtile mønstre i data. Disse er ofte ikke så enkle for mennesker å tolke og vil ikke på samme måte bidra til å skape innsikt og forståelse for sammenhengene mellom variablene i datasettet, men de kan blant annet være bedre egnet til å predikere verdien av en utfallsvariabel når vi kun observerer en delmengde av egenskapene til en gitt observasjon. Dette kan betegnes som maskinlæring. 
+\subsection{Generalisering}
+Representasjoner av (den empiriske fordelingen i) utvalget er ikke hele fortellingen. Generelt er vi ikke (bare) interessert i å lære om data som foreligger, men å lære om egenskaper til fordelingen som genererte dataene. Dette kan være fordi vi kun har data om et utvalg av observasjoner fra en veldefinert populasjon av potensielle observasjoner. I så fall vil vi gjerne være interessert i fordelingen i denne populasjonen. Mer generelt kan vi betrakte observasjonene i datasettet som realiserte verdier fra en datagenereringsprossess som også vil generere nye verdier i fremtiden. Vi må derfor også ta hensyn til at egenskapene til den empiriske fordelingen vi observerer kan avvike fra den teoretiske fordelingen som genererte datasettet. Dette kan vi betegne som \textit{stokastisk usikkerhet}. Denne usikkerheten kan vi behandle på systematisk måte under gitte antagelser. Videre vil det være \textit{induktiv usikkerhet} knyttet til om data som foreligger og representasjone vi bruker faktisk gir oss svar på det vi spør om.
+\subsubsection{Stokastisk usikkerhet}
+Dette er usikkerhet i estimering av modellen gitt at den er riktig spesifisert. Denne usikkerheten skyldes at vi har begrenset antall observasjoner slik at vi ikke er helt sikre på egenskapene i prosessen; nye utvalg av samme størrelse ville gitt annen føyning og det er en kvantifiserbar usikkerhet som følge av dette. Vi kan i prinsippet håndtere denne usikkerheten på en konsekvent måte og dette skal jeg beskrive i resten av kapittelet.
+\subsubsection{Induktiv usikkerhet}
+Det vil også være mer generell usikkerhet om i hvilken grad det gitte utvalget og modellen gjør at vi kan svare på spørsmål vi er interessert i. Her kreves det kontekst-spesifikk kunnskap.
+\begin{enumerate}
+\item Hvordan er data generert; er det skjevheter i utvalget? Er det missing values? Målefeil?
+\item Er det riktig spesifikasjon av modell? Her er det jo mye fleksibilitet, slik at andre valg kan føre til andre konklusjoner. Viktig å være transparent og gjøre goodness of fit test på antagelser i modell som påvirker konklusjon. Konklusjoner er mer troverdig dersom de er robuste.\footnote{Robust i betydningen at de ikke er sensitive for antagelser og andre (mer eller mindre) vilkårlig valg.}
+\item Med prediksjon kan ekstern validitet i prinsippet testes direkte med kryssvalidering, men det er fortsatt vesentlig å forstå hvilke variabler/egenskaper ved observasjon som gjør at hypotesefunksjonen trekker konklusjoner om $y$ for å bygge kredibilitet og sikre at det kan generaliseres til nye settinger. En klassifier som skiller mellom ulv og husky ut i fra om det er snø på bildet kan ha gode resultater for et gitt datasett, men ikke nødvendigvis så nyttig for alle settinger. 
+\item I økonometri forsøker vi å beskrive en egenskap til den sanne prosessen som genererte utfallet $y$. Dette kan avvike fra simultanfordeling mellom variablene vi observerer. Vi kan tenke at det er en sann, deterministisk prosess $y=f(x_1,...,x_K)$ som bestemmer utfallet, men vi observer bare en delmengde av disse variablene. Utfordring blir da å si noe om den kausale $\frac{\partial f}{\partial x_k}$ gitt den doble utfordringen at vi kun har delmengde av variabler og begrenset antall observasjoner. Teori om inferens kan brukes til å håndtere det siste. For førstnevnte trenger vi forskningsdesign med tilfeldig variasjon $x_k$.
+\end{enumerate}
+\section{Formelt rammeverk}
+Målet er å lære fra data. Vi vil lære om egenskaper til den prosessen som genererte de observerte verdiene i datasettet. For å formalisere dette slik at vi kan anvende sannsynlighetsteori vil jeg innføre noen begreper og notasjon,
+\begin{itemize}
+\item Vi observerer realiserte verdier $\mathbf{z}_n \in Z = \mathbb{R}^d$, der $Z$ er \textit{utfallsrommet} til observasjonene.
+\item \textit{Utvalget} består av $N$ observasjoner $Z_D = (\mathbf{z}_1, \dots ,\mathbf{z}_N) \in Z_D = \times_{n=1}^N Z = \mathbb{R}^{N\times d}$, der $Z_D$ er \textit{utvalgsrommet}.
+\item I praksis velger vi ofte å dekomponere observasjonene i $\mathbf{z}_n = (\mathbf{x}_n, y_n)$ og undersøke hvordan (den betingede fordelingen til) \textit{utfallet} $y$ avhenger av \textit{input} $\mathbf{x}$.\footnote{Merk at det finnes veldig mye ulik terminologi for å betegne disse variablene...}
+\end{itemize}
+Observasjonene er realiserte verdier fra en fordeling $\mathcal{L}(\mathbf{z}_n) = P_0$.\footnote{Vi kan bruke subskript 0 for å betegne sanne verdier.} Denne sanne fordelingen er ukjent. Selv om fordelingen er ukjent vil vi ofte gjøre antagelser om egenskaper den oppfyller. Med andre ord avgrenser vi oss til å betrakte en delmengde av mulige fordelinger $\mathscr{P}=\{P_{\theta}:\theta\in\Theta\}$. Dette er \textit{modellen} vår.
+\subsection{Modell}
+Dersom den inneholder den sanne fordelingen, $P_0 \in \mathscr{P}$, er modellen riktig spesifisert. (I praksis ikke siden modell er forenkling, men mange god grunner til å påføre struktur. Kan også være fordel å være agnostisk.. siden konklusjon avhenger av antagelse.. Kanskje flytte diskusjon av modell til annet avsnitt og knytte til bias varians tradeoff..?). Rammeverket er generelt og omfatter både parametriske og ikke-parametriske tilnærminger
+\begin{itemize}
+\item Parametrisk hvis fordeling kan blir indekset med parametervektor $\theta$ med endelig dimensjon.
+\item Ikke-parametrisk hvis $\theta$ trenger uendelig dimensjon for å karakterisere fordeling.
+\item Semi-parametrisk hvis vi kan dekomponere $\Theta = \Theta_0 \times \Theta_1$, der kun den første rommet har endelig dimensjon og inneholder parameter vi er interessert i.
+\end{itemize}
+\subsubsection{Valg av struktur}
+... Motivere med eksempler. Generalisere til delmengder av utfallsrommet der vi har få observasjoner. Bruker informasjon vi har fra før. Kombinere data med prior kunnskap.
+\subsubsection{Identifiserbarhet}
+En modell er identifiserbar hvis det eksisterer en injektiv (én-til-én) funksjon $g:\theta \mapsto \mathbb{P}_{\theta}$. Hvis den ikke er injectiv kan vi ikke vite parameteren selv om vi observerer selve fordelingen som har generert observasjonene. Eksempler:
+\begin{itemize}
+\item $X \sim bern(g(\theta))$, kan bare lære $\theta$ dersom $g:\theta \mapsto \rho$ er injektiv.
+\item $Y = I\{X>a/2\}$ og $X\sim U(0,a)$. Vi observerer bare $Y$; kan vi lære $a$ fra cdf til $Y$? Nei, fordi $P(Y=1) = 1 - P(X<a/2) = 1 - \int_0^{a/2}\frac{1}{a}dx = 1-(\frac{a/2}{a} = 1/2$ for alle $a$.
+\end{itemize}
+\subsection{Lære egenskaper til fordeling}
+Generelt kan vi betrakte egenskaper til fordeling $P$ som alle størrelser som vi kan beregne når fordelingen er kjent. Med andre ord, alle $\gamma (P)$, der $\gamma : \mathcal{P} \rightarrow S$. Eksempler på egenskaper er mål på sentraltendens som forventningsverdi og median, samt mål på spredning som standardavvik. I multivariate fordelinger er vi ofte interessert i å lære den betingede forventningen av én variabel som funksjon av de andre. Vi kan også være interessert i å lære hele fordelingen slik at $\gamma$ er identitetsfunksjonen, eller vi kan ønske å lære sannsynlighet for spesifikk hendelse. Merk at hvis vi har avgrenset $\mathcal{P}$ til en spesifikk parametrisk klasse så vil det være tilstrekkelig å lære $\gamma(P) = \theta$ siden alle andre egenskaper vil være en deterministisk funksjon av $P_{\theta}$.
+
+Hvordan kan vi lære om egenskapene når $P$ er ukjent? Vi må ta utgangspunkt i utvalget av realiserte verdier fra $P$ og finne er representasjon som er informativ om den egenskapen vi vil lære om. Denne representasjonen er verdien av en funksjon av utvalget, $T(\mathbf{z}_D)$. Vi betegner funksjoner som er definert på utvalgsmengden som \textit{statistikker}.\footnote{Tror det også er krav om at de ikke må avhenge av parameter...} Hvis funksjonen mapper til den samme mengden $S$ som egenskapen befinner seg kan vi betegne det som en \textit{estimator} for $\gamma(P)$. Vi håper å bruke dette til å lære om $\gamma(P)$, og vi bruker notasjonen $T:=\hat{\gamma}$ for å gjøre sammenhengen eksplisitt. Merk forøvrig at det er ingenting i definisjonen av en estimator som krever at estimatoren faktisk er noe informativ om egenskapen vi er interessert. Vi skal bruke den såkalte \textit{utvalgsfordelingen} til estimatoren til å kvantifisere hvor informativ den er om egenskapen den estimerer. 
+\subsection{Utvalgsfordelingen til estimatorer}
+For et gitt utvalg tar en estimator en gitt verdi. Samtidig vet vi at i andre utvalg ville vi hatt andre observasjoner og estimatoren ville tatt en annen verdi. Utvalgsfordelingen er den teoretiske fordelingen av verdier estimatoren tar i uendelig gjentatte forsøk.\footnote{Merk analogien til stokastiske forsøk som ble beskrevet i kapittel 1.} Dette er i praksis et tankeeksperiment siden vi kun observerer vårt ene utvalg, men denne teoretiske konstruksjonen lar oss kvantifisere hvor informativt estimatoren er om egenskapen vi er interessert i. 
+
+Hele utvalget $\mathbf{z}_D$ er en tilfeldig variabel med fordeling $\mathcal{L}(\mathbf{z}_D) := P_D$. Det observerte utvalget utgjør bare én realisering fra denne fordelingen. Hvis de ulike observasjonene er uavhengige og fra identitisk fordeling $P$ kan vi skrive fordelingen til utvalget på produktform\footnote{Hadde vært enklere å gjøre dette mer eksplisitt hvis jeg brukte pdf; vurder å omskrive.}
+\begin{align}
+P_D = \Pi_n\mathcal{L}(\mathbf{z}_n)=\Pi_nP
+\end{align}
+Estimatoren er en deterministisk transformasjon av utvalgsrommet. Siden utvalget er en tilfeldig variabel er den også en tilfeldig variabel med en fordeling $\mathcal{L}(\hat{\gamma})$. Evaluert på en mengde $A\subset S$ gir det
+\begin{align}
+\mathcal{L}(\hat{\gamma})(A)= P_D\{\mathbf{z}_D \in Z_D : \hat{\gamma}(\mathbf{z}_D) \in A\}.
+\end{align}
+Merk at fordelingen er entydig bestemt av $P_D$ og $T$, og det er i prinsippet mulig å utlede denne analytisk. Utfordringen er at $P$ og dermed $P_D$ er ukjente. Vi skal nå se hvordan vi kan estimere utvalgsfordelingen med utgangspunkt i det éne realiserte utvalget.
+\subsection{Estimere utvalgsfordelinen}
+Vi har tre ulike fremgangsmåter. Den første er å anta en parametrisk form på fordelingen $P$. Da kan vi få en form på $P_D$ som gjør at vi kan utlede utvalgsfordelingen analytisk for vilkårlig utvalgsstørrelse $N$. Den andre måten er å estimere $P_D$ gjennom å bruke den empiriske fordelingen $P_N$ som estimator for $P$. Da kan vi være mer agnostisk om funksjonell form til fordelingen, men det krever større utvalg for at det skal gi godt estimat på utvalgsfordelingen. Den tredje måten er å bruke asymptotisk teori.
+\subsubsection{Anta parametrisk klasse}
+Ta bernoulli til binomial.. for gjennomsnitt.
+
+Ta normalfordeling og knytt til t-fordeling fordi vi må estimere $\sigma^2$. 
+\subsubsection{Bootstrap}
+Metoden over krever ganske sterke antagelser. I praksis er modellen ofte feilspesifisert. Hvor store konsekvenser det har avhenger i hvilken grad modellen er tilstrekkelig fleksibel til å tilnærme den sanne funksjonelle formen til fordelingen av $P$. En alternativ fremgangsmåte er å anta at observasjone er $iid$ og bruke den empiriske fordelingen fra de $N$ realiseringene i utvalget som estimator på $P$. Den empiriske utvalgsfordelingen er
+\begin{align}
+\mathcal{L}_{\hat{P}_N}(\hat{\gamma}) := \text{ fordelingen til }\hat{\gamma}(z_1,...,z_N) \text{ når } z_1,...,z_N \overset{iid}{\sim} \hat{P}_N
+\end{align}
+Denne fordelingen vil avvike fra den sanne fordelingen $\mathcal{L}_{P}(\hat{\gamma})$. Den er også litt vanskelig å jobbe med analytisk, blant annet fordi fordelingen er diskret. Løsningen er at vi kan sample fra fordelingen. Dette er veldig enkelt fordi fordelingen $\hat{P}_N$ legger lik sannsynlighetstyngde på hver av realiseringene $(z_1^0,...,z_N^0)$ slik at vi kan sample med tilbakelegging fra utvalget vårt. Algoritmen ser da slik ut
+\begin{enumerate}
+\item $\hat{P}_N$ = empirisk fordeling av observert data $(z_1^0,...,z_N^0)$
+\item for m in 1,...,M do:
+\item trekk $(x_1^b,...,x_N^b)$ fra $\hat{P}_N$
+\item set $\hat{\gamma}_m^b= \hat{\gamma}(x_1^b,...,x_N^b)$
+\item end for, returner utvalget $\hat{\gamma}_1^b,..., \hat{\gamma}_M^b$
+\end{enumerate}
+Vi har da $M$ realiseringer av estimatoren fra den empiriske fordelingen. Vi kan bruke standardavvik og forventningsverdi til denne empiriske fordelingen som estimat for de tilsvarende egenskapene til den sanne fordelingen til estimatoren. 
+
+Merk at denne tilnærmingen innebærer to steg av tilnærminger gjennom empirisk fordeling. Den første er at vi bruker $\mathcal{L}_{\hat{P}_N}(\hat{\gamma})$ som estimat på $\mathcal{L}_{P}(\hat{\gamma})$. Denne tilnærmingen er begrenset av hvor mange observasjoner vi har i utvalget. Den andre tilnærmingen er i bootstrap-samplingen av $\mathcal{L}_{\hat{P}_N}(\hat{\gamma})$. Her kan vi utgangspunktet velge antall samples $m$ vilkårlig høyt slik at vi får vilkårlig god tilnærming.\footnote{I praksis kan det være ikke-trivielle kostnader i form av tid og \textit{computational power}.}
+\subsubsection{Parametrisk bootstrap}
+I ikke-parametrisk bootstrap resampler vi direkte fra utvalget. Dette er greit siden vi ikke trenger å gjøre noen antagelser. Alternativt kan vi ha modeller med mer struktur der vi har gjort antagelser om hvordan data i utvalget har blitt generert, for eksempel ved å spesifisere en parametrisert modell. Gitt estimatene som er beregnet fra det gitte utvalget kan vi da generere nye observasjoner fra denne modellen. Vi genererer verdier fra fordeling med estimerte parametre. Jeg tror dette blant annet kan være aktuelt i regresjonsmodeller, men litt usikker på hvordan jeg gjennomfører det i praksis og hva som er fordelen med denne fremgangsmåten. 
+\subsubsection{Asymptotisk teori}
+Fordelingen til estimatorer avhenger av størrelsen på utvalget. Flere observasjoner gir mer presise estimat. Vi kan betrakte en følge av estimatorer, $(\hat{\theta}_N)_{N \in \mathbb{N}} = (\hat{\theta}_1, ..., \hat{\theta}_N,...)$, for å se på hvordan fordelingen endrer seg når utvalget vokser. I asymptotisk teori ser vi på fordelingen i grensetilfellet der $N \rightarrow \infty$ der vi kan utlede eksakt fordeling under svakere antagelser enn det som er nødvendig for å utlede fordeling som gjelder for vilkårlig $N$. Denne asymptotiske fordelingen vil være en god tilnærming så lenge vi har tilstrekkelig stort utvalg...
+\section{Egenskaper til estimatorer}
+Nå som vi har betegnet utvalgsfordelingen og sett på hvordan vi kan estimere den fra et utvalg, kan vi gå videre til å kvantifisere hvor informativ en estimator er om en egenskap. Vi vil at tyngden i utvalgsfordelingen skal være konsentrert om egenskaper $\gamma(P)$. Dette medfører at det er lite sannsynlig at vi observerer store avvik mellom det observerte estimatet og den sanne egenskapen. 
+
+Sentrale begrep for å beskrive dette er bias og varians. Den forventningsrette estimatoren med lavest varians omtales ofte som den \textit{effektive} estimatoren, men det er ikke nødvendigvis så godt begrunnet at forventningsrette estimatorer skal ha så priviligert status. I praksis er vi ofte bare interessert i å minimere forventet avvik (RMSE) og at det er en trade-off mellom varians og bias. 
+Vi kan gjøre dette litt mer formelt ved å innføre notasjon
+\begin{align}
+\lVert \hat{\gamma}-\gamma \rVert^2 = MSE(\hat{\gamma},\gamma) = E[(\hat{\gamma}-\gamma)^2]
+\end{align}
+Kan vise at dette kan dekomponeres i kvadret bias og varians ved å skrive ut uttrykket og eliminere ledd. Men dette følger av at $\gamma \in L_2(\mathbb{I}_{\Omega})$. Hvis jeg projekter $\hat{\gamma}$ ned på denne mengden finner jeg $E[\hat{\gamma}]$ som er konstanten som minimerer avstand til $\hat{\gamma}$. Denne kvadrerte avstanded er variansen. Denne konstanten avviker fra parameteren som ligger i samme mengde. Denne avstanden er biasen. Disse to differansene er ortogonale fordi den ene er i $L_2(\mathbb{I}_{\Omega})$ og den andre i det ortogonale komplementet til denne mengden. Det følger da fra pythagoras at den samlede kvadrerte avstanden er summen av kvadratene til katenene. TODO: Ta bias variance trade-off her slik at jeg er ferdig med det.
+\section{Estimering}
+Vi har innført det formelle rammeverket med estimatorer med utvalgsfordelinger som har tyngde sentrert rundt den egenskapen vi vil lære om. Hvordan skal vi kommunisere hva vi lærer fra én realisering av utvalgsfordelingen? Vi har tre generelle fremgangsmåter: punktestimat, konfidensmengder og hypotesetester.
+\subsection{Punktestimat}
+Punktestimat er den realiserte verdien av $\hat{\gamma}(\mathbf{z}_D)$ for utvalget. Dette utgjør gjerne vår beste gjetning på egenskapen $\gamma(P)$. Det er dessuten enkelt å representere og jobbe med siden det er element i samme mengde som egenskapen befinner seg i. Det betyr at vi kan bruke punktestimatet som en proxy for egenskapen. På en annen side vet vi at det vil være avvik mellom punktestimatet og egenskapen. Vi vet ikke hvor stort avviket er for vårt spesifikke utvalg, men vi kan beregne fordelingen til avviket. Dette kan vi bruke til å knytte en slags feilmargin til punktestimatet, for eksempel ved å rapportere standardfeil til estimatoren.\footnote{Som for forventningsrette estimatorer tilsvarer standardavviket til avviket.} Da kan vi fortsette å benytte punktestimatet samtidig som leseren har et inntrykk av usikkerheten knyttet til dette.
+
+Merk forøvrig at at punktestimat ikke nødvendigvis er tall eller vektorer. Egenskapen kan være hele funksjoner, for eksempel når vi er interessert i tetthetsfunksjoner eller betinget forventningsfunksjon. Da vil den estimerte funksjonen være et punktestimat. Hvis kun er interessert i ren prediksjon vil det i noen sammenhenger være tilstrekkelig å bruke $\hat{f}$ som proxy for $f:=E[y|\cdot]$, men i mange andre sammenhenger vil vi være interessert i å kvantifisere usikkerheten knyttet til prediksjonene.\footnote{Da må vi både ta hensyn til usikkerheten til estimatoren $\hat{f}$ samt fordeling til avvik fra betinget gjennomsnitt for hver observasjon. Dette er ikke helt trivielt å verken utlede eller representere...}
+\subsection{Konfidensmengder}
+En alternativ tilnærming er å konstruere en tilfeldig mengde som med stor sannsynlighet inneholder den sanne verdien av egenskapen vi er interessert i. Konfidensmengden er en funksjon fra utvalget til mengden av delmengder av $S$. Vi kan spesifisere sannsynligheten for at $\gamma(P)$ er element i realiseringen av denne mengden. Jo større sannsynlighet for at den skal inneholde egenskapen, jo større (og dermed mindre informativ) må konfidensmengden være. Vi spesifiserer et nivå $\alpha\in(0,1)$ og sier at $C(\mathbf{z}_D)$ er en $100(1-\alpha)\%$ konfidensmengde for $\gamma(P)$ dersom
+\begin{align}
+\mathbb{P}\{\gamma(P) \in C(\mathbf{z}_D)\} = P_D\{\mathbf{z}_D \in Z_D:\gamma(P) \in C(\mathbf{z}_D)\}.
+\end{align}
+Merk at dette et argument som bruker fordelingen til $C(\mathbf{z}_D)$ og at $\gamma(P)$ er konstant. For et gitt realisert utvalg er det ikke meningsfullt å snakke om sannsynlighet for at det inneholder parameteren, i hvert fall ikke i streng tolkning av klassisk statistikk. Det vi kan si er at i mange gjentatte forsøk vil $100(1-\alpha)\%$ av konfidensmengdene som blir konstruert på samme måte inneholde den sanne parameteren.
+\subsubsection{Litt intuisjon}
+Jeg tenker at det er poeng at utvalgsfordelingen til estimator gir fordeling til avviket dersom forventningsrett for parameter,
+\begin{align}
+&\hat{\theta}\sim N\left(\theta, \frac{\sigma^2}{N}\right) \\
+&\implies (\hat{\theta}-\theta):=e  \\
+&\implies \hat{\theta}=\theta + e
+\end{align}
+der $e \sim N\left(0, \frac{\sigma^2}{N}\right)$. Dette er en latent variabel som vi ikke kan observere siden vi ikke kjenner $\theta$. Men vi kjenner fordelingen. Den er symmetrisk og sentrert rundt $0$, slik at større avvik blir gradvis mindre sannsynlig. Avvikene kan i teorien ofte være vilkårlig store, men vi kan avgrense til å kun betrakte rimelige eller plausible avvik. Dette kan vi kvantifisere ved å spesifisere et intervall av avvik som blir realisert i $100(1-\alpha)\%$ av utvalg. Vi vil finne et tall $e_{max}$ der $\mathbb{P}(-e_{max}<e<e_{max}) = 1-\alpha$. Da vil konfidensmengden være bestå av det gitte realiserte punktestimatet $+-$ de største avvikene vi vil underholde,
+\begin{align}
+C(\mathbf{z}_D) = (\hat{\theta}-e_{max}, \hat{\theta}+e_{max})
+\end{align}
+\subsubsection{Utlede konfidensmengde}
+Anta at $P=N(\mu,\sigma)$, at $\sigma$ er kjent og at vi vil finne konfidensmengde for $\mu$.
+\begin{align}
+\mathcal{L}(\bar{x}_N)&=N\left(\mu,\frac{\sigma^2}{N}\right) \\
+\mathcal{L}\left(\sqrt{N}\frac{\bar{x}_N-\mu}{\sigma}\right) &= N(0,1)\\
+\end{align}
+dette medfører at: 
+\begin{align}
+\mathbb{P}\{\mid \sqrt{N}\frac{\bar{x}_N-\mu}{\sigma} \mid \leqslant z_{\alpha/2} \}\quad\text{når}\quad  z_{\alpha/2} := \Phi^{-1}\left(1-\frac{\alpha}{2}\right)
+\end{align}
+som kan brukes til å vise at 
+\begin{align}
+C(\mathbf{x})=(\bar{x}_N-e,\bar{x}_N+e)
+\end{align}
+for $e=\frac{\sigma}{\sqrt{N}}z_{\alpha/2}$. 
+\begin{align} &\frac{\bar{X}-\mu}{\sigma/\sqrt{n}} \sim N(0,1) \\
+& \implies P\left(z_{\alpha/2} < \frac{\bar{X}-\mu}{\sigma/\sqrt{n}} < z_{1-\alpha/2}\right) = 1-\alpha \\
+& \implies P\left(z_{\alpha/2}\frac{\sigma}{\sqrt{n}}-\bar{X} < -\mu < z_{1-\alpha/2}\frac{\sigma}{\sqrt{n}}-\bar{X} \right) = 1-\alpha \\
+& \implies P\left(\bar{X}-z_{\alpha/2}\frac{\sigma}{\sqrt{n}} < \mu < \bar{X} - z_{1-\alpha/2}\frac{\sigma}{\sqrt{n}} \right) = 1-\alpha \\
+\end{align}
+Er ikke happy med konfidensmengder altså. De er vanskelig å konseptualisere og representere dersom $\theta$ er i mer enn én dimensjon. Samtidig kan det være et problem at punktestimat ikke tar hensyn til usikkerheten. Skal nå se på den tredje fremgangsmåten som både er konseptuelt enkel og tar hensyn til usikkerhet.
+\subsection{Hypotesetester}
+Vi vil se om data gir tilstrekkelig bevis for å avkrefte at data generert fra modell med $\theta \in \Theta_{H_0} \subset \Theta$..
+
+Anta at vi observerer $N$ realiseringer fra $P_{\theta_0} \in \{P_{\theta}:\theta \in \Theta\}$. Dette gir ikke tilstrekkelig informasjon til å finne den sanne $\theta_0$, men vi kan jo ha lyst til å avgrense $\Theta$ der det er rimelig at den ligger. I stedet for å representere en slik konfidensmengde direkte, så kan vi spesifisere en hypotese apriori om at $\theta_0 \in \Theta_{H_0}$.\footnote{Hvis $\Theta_0$ er ett enkelt element (singleton) er den en enkel hypotese. Hvis det ugjør en mengde er den en sammensatt hypotese. Det kan entent være fordi vi har en-sidet test eller fordi det er flere parametre og vi kun vil teste avgrensing på én av de.} Dette er den såkalte nullhypotesen. Vi kan tenke at den representer status quo eller på andre måter er en konservativ påstand. I medisinske forsøk kan de for eksempel være at en eksperimentell behandling ikke har noen effekt. Deretter skal vi se om data gir sterkt nok bevis for at vi kan forkaste hypotesen om at den sanne parameteren $\theta_0 \in \Theta_{H_0} \subset \Theta$.
+
+En naiv fremgangsmåte vil være å bruke en punktestimator $\hat{\theta}$ og forkaste hypotesen dersom $\hat{\theta} \notin \Theta_{H_0}$. Problemet er at $\hat{\theta} \neq \theta_0$ slik at vi ikke kan trekke slutningen $\hat{\theta} \notin \Theta_{H_0} \implies \theta_0 \notin \Theta_{H_0}$.   Estimatoren er en tilfeldig variabel som varierer mellom ulike utvalg, slik at den kan ta andre verdier selv om hypotesen er sann. Vi trenger derfor en buffer for at det skal gi tilstrekkelig bevis til å forkaste. 
+\subsubsection{Formelt rammeverk}
+En \textit{test} er en funksjon $\psi: Z_D \to \{0,1\}$ der verdi 1 medfører at hypotesen forkastes. Verdien av testen avhenger altså av hvilke data som blir realisert. Det er litt vanskelig å konseptualisere delmengder av $\mathbb{R}^{N\times p}$, så i praksis jobber vi med en testobservator $T:Z_D\times \Theta \to \mathbb{R}$ der $T(\mathbf{z}_D, \theta_0)$ har kjent fordeling. Med andre så vet vi fordelingen gitt at nullhypotesen er riktig og kan forkaste dersom vi observerer en urimelig verdi av testobservator. Testen kan representeres som $\psi(T(Z_d)$...
+
+Hvor sannsynlig det er at vi forkaster hypotese når vi ser data avhenger av parameteren i fordeling som genererer data. Dette er beskrevet med \textit{styrkefunksjonen} $\beta_{\psi}(\theta):=\mathbb{P}_{\theta}\{\psi(\mathbf{z}_D)=1\}$. Ideelt sett så vil vi jo at $\beta_{\psi}(\theta)=0$ for $\theta \in \Theta_{H_0}$, slik at testen ikke forkaster dersom data blir generert av fordeling som er konsistent med nullhypotesen. Tilsvarende skulle vi kanskje ønske at $\beta_{\psi}(\theta)=0$ for $\theta \notin \Theta_{H_0}$ slik at hypotesen alltid ble forkastet dersom hypotesen om parameteren ikke stemmer. I praksis er ikke dette mulig siden samme utvalg kan bli generert fra fordelinger med ulike parameterverdier. Det vil derfor alltid være to typer feil vi kan gjøre:
+\begin{enumerate}
+\item Type I: Forkast hypotesen selv om $\theta \in \Theta_{H_0}$.
+\item Type II: Ikke forkast hypotesen selv om $\theta \notin \Theta_{H_0}$.
+\end{enumerate}
+Vi er mest redd for å gjøre type I feil. Hypotesen representerer status quo og bevisbyrden ligger på de som vil forkaste den. Vi vil derfor utforme testen slik at det er lite sannsynlig å gjøre den feilen. Merk at det er en tradeoff her: ved å gjøre vanskeligere å forkaste vil vi øke sannsynlighet for å beholde selv om feil. Vi spesifiserer nivået $\alpha$ til testen er den største sannsynligheten for å gjøre type I feil, $\alpha_{\psi}(\theta)=\sup_{\theta \in \Theta_0}\beta_{\psi}(\theta)$.
+\subsubsection{Old school hypotesetestning}
+I praksis konstruerer vi tester med tre steg:
+\begin{enumerate}
+\item Velger nivå ($\alpha$). I praksis 0.01 eller 0.05, avhenger litt av konsekvens hvis man tar feil.
+\item Finner en såkalt testobservator $T$ med kjent fordeling gitt $\theta$.
+\item Finner kritisk verdi $c$ slik at $\sup_{\theta \in \Theta_0} \mathbb{P}_{\theta}\{T(\mathbf{z}_D) > c\}=\alpha$
+\end{enumerate}
+ Dette gir en test som er beskrevet med $(T,c)$ og der $\psi(\mathbf{z}_D) = \mathbb{I}\{T(\mathbf{z}_D) > c\}$. Fremgangsmåten som ble beskrevet over er litt \textit{old school} og mer er relevant for klassiske eksperiment i naturvitenskap enn det jeg holder på med i praksis. 
+\subsubsection{Moderne hypotesetesting}
+I stedet for å formulere en test apriori er det mulig å ta utgangspunkt i den realiserte verdien av testobservatoren og se med hvilket nivå $\alpha$ det ville vært mulig å forkaste hypotesen. Formelt kan vi definere \textit{p-verdi} til den (implisitte) testen som
+\begin{align}
+p(\mathbf{z}_D):= \quad \text{nivået $\alpha$ slik at } c(\alpha) = T(\mathbf{z}_D)
+\end{align}
+Altså hva nivået på testen var dersom vi lot den krititiske verdien være den realiserte verdien slik at hypotesen akkurat blir forkastet. Dette tilsvarer sannsynlighet for å se en observasjon som er minst like "ekstrem" gitt at hypotesen er sann. 
+\subsubsection{Konstruksjon av test}
+Anta at vi har $X_1,...,X_N$ som er $iid$ fra $\mathcal{L}(X) = N(\mu,\sigma)$ med kjent $\sigma$. Jeg vil teste om vi kan forkaste $H_0: \mu < 0$. For å konstruere testen må jeg ta utgangspunkt i en størrelse som sier noe om $\mu$ gitt observerte data. Jeg bruker $\bar{X}_N$. 
+\begin{align}
+\psi(X_1,...,X_N) &= \mathbb{I}\{\bar{X}_N > c\} \\
+\beta_{\psi}(\mu) &= \mathbb{P}_{\mu}\left(\bar{X}_N > c\right) \\
+&= \mathbb{P}_{\mu}\left(\sqrt{N}\frac{\bar{X}_N-\mu}{\sigma} > \frac{\sqrt{N}(c-\mu)}{\sigma}\right) \\
+&= 1-\Phi\left(\frac{\sqrt{N}(c-\mu)}{\sigma}\right)
+\end{align}
+Ser litt indirekte at styrken øker når $\mu$ øker og reduseres når $c$ øker. Valg av $c$ avhenger av nivået til testen
+\begin{align}
+\alpha_{\psi}&=\sup_{\theta \in \Theta_0} \beta_{\psi}(\mu) = \beta_{\psi}(0) = 1-\Phi\left(\frac{\sqrt{N}c}{\sigma}\right)  \\
+& \implies c = \frac{\sigma \Phi^{-1}(1-\alpha)}{\sqrt{N}}
+\end{align}
+Dette medfører at vi forkaster når
+\begin{align}
+\bar{X}_N > \frac{\sigma \Phi^{-1}(1-\alpha)}{\sqrt{N}} \iff \frac{\sqrt{N}\bar{X}_N}{\sigma} > \sigma \Phi^{-1}(1-\alpha):=z_{\alpha}
+\end{align}
+I praksis bruker vi i stedet en standardnormalfordelt testobservator, men det er jo poeng at vi kan oversette til kritisk verdi av fordelingen til $\bar{X}$ for å få det i samme måleenhet. Merk koblingen til konfidensmengder: vi forkaster dersom $\mu_0$ ikke er i $1-\alpha$ konfidensmengde rundt $\hat{\mu}$.
+\subsubsection{Hvorfor ikke akseptere nullhypotse?}
+Falsifiseringsprinsipp i vitenskap.. data kan ikke bevise at hypotese er sann (endelig antall observasjon av hvite sauer beviser ikke at alle sauer er hvite..)
+
+Analogi til rettsal. hm. 
+
+Hypotesetest kan være feilspesifisert på måte som gir lavere enn oppgitt styrke. Får ikke forkastet selv om hypotese er feil.
+\subsubsection{Hypotesetest for å håndtere målefeil}
+Anta at vi er interessert i $x$, men observerer $\tilde{x}=x+u$ der $u\sim N(0,\sigma^2)$. Det kan for eksempel være promilletest der vi vil sjekke om noen har $x>0.8$. Vi vil ikke straffe noen som er uskyldig, så vil at maks $5\%$ sannsynlig at straff dersom $x\leq 0.8$. Hvor må vi da sette grense for observert $\tilde{x}$? Vel, vi tar utgangspunkt i $x=0.8$ og finner $P\left(\frac{\tilde{x}-0.8}{\sigma}<c\right) = 1-\alpha = 0.95$ og finner $c=z_{\alpha}$ og kritisk målt promille som $\tilde{x}'= z_{\alpha}\sigma+0.8$.
+\subsection{Modellering}
+Generelt er modeller er forenklede representasjoner av virkeligheten som er enklere å tolke og manipulere, og dermed kan brukes til å analysere spesifikke mekanismer og svare på gitte spørsmål. Hvorvidt en modell er "sann" eller ikke er derfor litt \textit{besides the point}; det avgjørende er hvorvidt det er egnet til sitt formål. Modeller har en struktur - altså, den består av størrelser og relasjoner mellom disse - som gjør at vi kan manipulere de på logiske konsekvente metoder og trekke entydige konklusjoner. Dette er mulig fordi vi er eksplisitt om premissene. Nedsiden med dette er at premissene nødvendigvis innebærer forenklinger og ikke er oppfylt i virkeligheten. Konklusjonene vi trekker fra modell avhenger av disse premissene. De er derfor sanne for modellen, men det er ikke gitt at konklusjonen kan overføres på virkeligheten. Her kreves det dømmekraft og tester for å vurdere om antagelsene gir en rimelig tilnærming av virkeligheten. 
+
+Modellen påfører en struktur på prosessen som genererte utvalget. Dette kan for eksempel være at regresjonslinjen $E[Y|X=x]=h(x)$ er glatt (eller enda sterkere: lineær). En fordel med denne forenklede strukturen er at den resulterende modellen blir både enkel å tolke og å manipulere. Det gjør også at vi kan bruke data fra hele utvalget til å beregne verdier av $h(x)$ for ulike $x$. Siden vi kan bruke informasjon fra flere observasjoner blir det mindre variasjon i verdiene av $h(x)$ fra ulike utvalg enn om vi kun bruker gjennomsnitt fra lokale observasjoner. Anta for eksempel at vi vil ser på sammenheng mellom gjennomittlig høyde og alder. For hver alder kan vi dekomponere høyde til gitt observasjon som gjennomsnitt for den alderen (signal) pluss avvik fra gjennomsnittet (støy). Hvis vi har få observasjoner for hver alder vil gjennomsnitt per alder i utvalget være sensitivt for mengden støy i det gitte utvalget vi observerer. Dersom vi bruker en parametrisk funksjonell form, for eksempel $E[\textit{høyde}|\textit{alder}=x]=h(x) = \beta_0 + \beta_1x+\beta_2 x^2$ vil estimatet for hver enkelt alder bruke informasjon fra hele utvalget slik at det blir mindre sensitivt for variasjon mellom utvalg. Mer formelt er det en bias-varianse tradeoff, der vi kan forbedrede estimatene ved å påføre (potensielt feil) struktur fordi det reduserer variasjon mellom utvalg. I valg av struktur vil det være en avveining som avhenger av hvor mye data vi har i utvalg og hvor mye kunnskap vi har om fordelingen fra før.\footnote{Jeg tror det er litt problemet med å forsøke å lære om struktur til fordeling fra gitt utvalg... kan finne struktur som passer til det gitte realiserte utvalget, men ikke nødvendigvis beskriver fordeling. Omtalt som p-hacking...}
+
+\section{David og Mac}
+Jeg tenker at det er poeng at utvalgsfordelingen til estimator gir fordeling til avviket dersom forventningsrett for parameter,
+\begin{align}
+\hat{\theta}\sim N\left(\theta, \frac{\sigma^2}{N}\right) \\
+\implies (\hat{\theta}-\theta):=\hat{\gamma}  \\
+\implies \hat{\theta}=\theta + \hat{\gamma}
+\end{align}
+der $\hat{\gamma} \sim N\left(0, \frac{\sigma^2}{N}\right)$. Vi kjenner fordelingen til det tilfeldige avviket, men vi kjenner ikke fordelingen til $\hat{\theta}$ siden den avhenger av ukjent $\theta$. Hvis vi kommer med et forslag eller hypotese $H_0:\theta=\theta_0$ får vi hele fordelingen. Kan da forkaste nullhypotesen dersom estimatet impliserer et usannsynlig stort tilfeldig avvik. I praksis jobber vi med testobservator standardiert fordeling,
+\begin{align}
+z=\frac{\hat{\theta}-\theta_0}{se(\hat{\theta})} \sim N(0,1)
+\end{align}
+merk at hvis sann $\theta$ er $\theta_1$ er $\hat{\theta}=\theta_1 + \hat{\gamma}$. Dette impliserer at
+\begin{align}
+z = \frac{\theta_1+\hat{\gamma}-\theta_0}{se(\hat{\theta})}=\frac{\theta_1-\theta_0}{se(\hat{\theta})}+\frac{\hat{\gamma}}{se(\hat{\theta})}\sim N(\lambda,1)
+\end{align}
+der $\lambda :=\frac{\theta_1-\theta_0}{se(\hat{\theta})}$. Hvor mye fordelingen til testestimatoren flytter på seg avhenger både av forskjellen mellom sann parameter og nullhypotesen samt variansen til det tilfeldige avviket. Vi vil at den skal flytte seg mye slik at stor sannsynlighet for at den realiserte testobservatoren havner i forkastningsregionen når $\theta_1 \neq \theta_0$. Kan knytte dette til styrken av testen så blir funksjon av $\theta$..
+
+En teststatistikk er \textit{pivotal} dersom den har samme fordeling for alle fordelingene/DGP som samsvarer med nullhypotese. Hvis det er en enkel hypotese er testobservatoren pivotal per konstruksjon, men med sammensatte hypoteser kan fordelingen avhenge av andre egenskaper ved fordelingen..
+
+Kan utlede eksakte tester under sterke antagelser, asympotiske tester under svakere antagelser. Teorien her blir fort veldig vanskelig... foretrekker å bruke simulering; veldig generelt og enkelt rammeverk og kan ha bedre egenskaper.
+
+Vi bruker tester til å avgjøre om en gitt restriksjon er kompatibel med data vi observerer i et utvalg. Alternativt kan vi bruke konfidensmengder til å beskrive avgrensinger som er kompatible. For en enkelt estimator blir dette punktestimat pluss minus kvantiler til fordelingen av avviket mellom estimator og sann parameter. Mer generelt må vi ta utgangspunkt i testobservator og vurdere om den kan forkaste nullehypoteser $\theta=\theta_0$ for ulike verider av $\theta$. Alt den ikke kan forkaste med vårt utvalg blir da med i konfidensmengden. Hadde vært greit med fremgangsmåte for å konstruere disse. Tror bootstap er fremtiden.

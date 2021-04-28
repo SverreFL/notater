@@ -1,0 +1,1 @@
+Anta at vi har $n$ uavhengige klassifiseringsalgoritmer med accuracy=0.51 som predikerer klasse til en gitt observasjon $\mathbf{x}$. Figuren viser at med tilstrekkelig antall algoritmer vil flertallet predikere riktig klasse. Dette motiverer ensemble-algoritmer.

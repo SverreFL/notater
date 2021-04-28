@@ -1,0 +1,183 @@
+\chapter{Noen kjente fordelinger}
+\section{Normalfordeling}
+Normalfordelingen dukker opp ofte som følge av sentralgrenseteoremet. Summen av tilfeldige avvik har en tendens til å jevne seg ut slik at tyngden blir konsentrert rundt sentraltendensen. Det er likevel litt fascinerende at det asymptotisk har eksakt normalfordeling uavhengig av den underliggende fordelingen til hvert avvik. Det er en familie med fordelinger som er unikt bestemt av to parametre. Tetthet til standardnormal er:
+\begin{align}
+\phi(z)=\frac{1}{\sqrt{2\pi}}\exp\{-\frac{1}{2}z^2\}.
+\end{align}
+Vi har ingen \textit{closed form} for cdf $\Phi(z) = \int_{-\infty}^z\phi(z)dz$. Vi kan konstruere andre medlemmer av familien gjennom \textit{affine} transformasjon.
+\begin{align}
+x = \mu + \sigma x \sim N(\mu, \sigma^2) \\
+z = \frac{x-\mu}{\sigma} \sim N(0,1)
+\end{align}
+Normalfordelingen har gode egenskaper
+\begin{enumerate}
+\item Alle lineære kombinasjoner av normalfordelinger er også normalfordelte.
+\item Fravær av korrelasjon impliserer uavhengighet. 
+\item Betinget forventingsfunksjon (CEF) er lineær.
+\end{enumerate}
+\subsection{Normalfordelt utvalg}
+Har nå sett på egenskaper som holder for alle $iid$ utvalg fra fordeling så lenge relevante moment er definert. For å få hele utvalgsfordelingene må vi enten bruke asymptotisk tilnærming for store utvalg eller anta at $f(\cdot)$ er kjent slik at vi i praksis kan utlede analytiske resultat for vilkårlig $N$. Den helt klart vanligste antagelsen er at $X$ er normalfordelt. Vi kan da vise noen klassiske resultat om sammendragsmålene over,
+\begin{enumerate}
+\item $\bar{X}$ og $s^2$ er uavhengige
+\item $\bar{X} \sim N(\mu, \frac{\sigma^2}{N})$
+\item $\frac{N-1}{\sigma^2}\sim \chi^2(N-1)$
+\end{enumerate}
+Bevisene for (1) og (3) er vanskelige. Kan ta bevis for (2) med mgf. Merk først at
+\begin{align}
+M_{\bar{X}}(t) &= \mathbb{E}\left[\exp\left(t\left(\frac{X_1+\dots+X_N}{N}\right)\right)\right] \\
+&=\mathbb{E}[\exp(tX_1/N)]\cdot\ldots\cdot\mathbb{E}[\exp(tX_N/N)] \\
+&= \Pi_n M_X(t/N) = m_X(t/N)^N 
+\end{align}
+som innebærer at 
+\begin{align}
+M_{\bar{X}}(t) &= \exp\left(\mu\frac{t}{N}+\frac{\sigma^2(t/N)^2}{2}\right)^N \\
+&= \exp\left(\mu t + \frac{(\sigma^2/N)t^2}{2}\right)
+\end{align}
+som betyr at $\bar{X} \sim N(\mu, \frac{\sigma^2}{N})$.
+
+\subsection{Truncated normalfordeling}
+Generelt er en truncated fordeling betinget av at variabelen tar utfall i et gitt intervall. Vi vil for eksempel finne betinget tetthet til en variabel $y$ gitt at vi vet at $y>c$. Det kan vises at dette bare er ubetinget tetthet til $y$ skalert med sannsynligheten for å være i intervallet slik at det integrerer til 1,
+\begin{align}
+f(y|y>c) = \frac{f(y)}{P(y>c)} = \frac{f(y)}{1-F(c)}
+\end{align}
+som gir mening siden 
+\begin{align}
+\int_c^{\infty}f(y)dy = 1- \int_{-\infty}^{c}f(y)dy = 1-F(c)
+\end{align}
+Dersom $y$ er standardnormalfordelt kan vi utlede enkle uttrykk for hvordan momentene til den avkuttede fordelingen til $y$ avhenger av $c$,
+\begin{align}
+\mathbb{E}[y|y>c]=\frac{\phi(c)}{1-\Phi(c)}
+\end{align}
+og har også et uttrykk for varians. Disse vil jeg utlede og det vil også være enkelt å utvide andre normalfordelte variabler.
+\subsection{Multivariat normalfordeling}
+En vektor kan også være normalfordelt. Normalfordeling i én dimensjon (skalar) er bare en special case, så alle resultatene under har analog for skalarer. 
+\begin{align}
+\mathbf{x} =& \mathbf{A}\mathbf{z} \implies V(\mathbf{x})=E[\mathbf{x}\mathbf{x}']=\mathbf{A}E[\mathbf{z}\mathbf{z}']\mathbf{A}'=\mathbf{A}\mathbf{A}'
+\end{align}
+\section{Fordelinger assosiert med normalfordeling}
+I statistisk inferens dukker normalfordeling ofte opp fordi vi har mange uavhengige observasjoner. Vi bruker testobservatorer til å undersøke om det er rimelig at de observerte data kan ha blitt generert av en avgrenset modell. Disse testobservatorene har ofte en fordeling som har sammenheng med normalfordelte størrelser i utvalget... hm.
+\subsection{$\chi^2$-fordeling.}
+Den kvadrerte lengden til en normalfordelt vektor,
+\begin{align}
+y = \lVert \mathbf{z}\rVert^2=\mathbf{z}'\mathbf{z}=\sum_{m=1}^Mz_m\sim \chi^2(M)
+\end{align}
+I praksis har vi ofte normalfordelinger uten standardisert varians, $\mathbf{x}\sim N(\mathbf{0}, \Sigma)$ der $\Sigma = \mathbf{A}\mathbf{A}$.\footnote{Det eksisterer en slik dekomponering av positiv definitt (analog til kvadratrot), kan bruke Cholesky til å finne.} Vi kan likevel utlede $\chi^2$ fordeling fra dette ved å bruke kvadratisk form. I praksis skalerer det ned vektoren før vi tar lengden..
+\begin{align}
+\mathbf{x}'\Sigma^{-1}\mathbf{x}&=\mathbf{x}'(\mathbf{A}\mathbf{A}')^{-1}\mathbf{x} \\
+&=\mathbf{x}'(\mathbf{A}')^{-1}\mathbf{A}^{-1}\mathbf{x} \\
+&=(\mathbf{A}^{-1}\mathbf{x})'\mathbf{A}^{-1}\mathbf{x} \\
+&= \mathbf{z}' \mathbf{z}\sim \chi^2(M)
+\end{align}
+der $\mathbf{A}^{-1}\mathbf{x}=\mathbf{z}$ følger av at lineære kombinasjoner av normal er normal og at
+\begin{align}
+V(\mathbf{A}^{-1}\mathbf{x})&=E[\mathbf{A}^{-1}\mathbf{x}(\mathbf{A}^{-1}\mathbf{x})'] \\
+&=\mathbf{A}^{-1}E[\mathbf{x}\mathbf{x}'](\mathbf{A}')^{-1} \\
+&=\mathbf{A}^{-1}\mathbf{A}\mathbf{A}'(\mathbf{A}')^{-1} 
+\end{align}
+\subsection{t-fordeling}
+hm
+\subsection{F-fordeling}
+hm
+\section{Fordelinger fra bernoulli-prosess}
+\subsection{Binomialfordeling}
+Sannsynlighet for $k$ treff av $N$ uavhengige $Y_n \sim Bernoulli(P)$ er 
+\begin{align}
+P_x(k) = \binom{N}{k} p^k(1-p)^{(N-k)}
+\end{align}
+Merk at vi kan visualisere utfallene med et tre (graf) siden det deler i to i hvert steg. Forventningsverdi er
+\begin{align}
+\mathbb{E}X := \mu_X= \mathbb{E}g(Y_1,...,Y_N) = \mathbb{E}\sum Y_n = \sum \mathbb{E}Y_n = np
+\end{align}
+Variansen er 
+\begin{align}
+\mathbb{V}X := \sigma_X^2 = \mathbb{V}g(Y_1,...,Y_N) = \sum \mathbb{V}Y_n = np(1-p)
+\end{align}
+\subsection{Negativ binomialfordeling}
+Sannsynligheten for $x$ antall forsøk før vi oppnår $r$ treff er
+\begin{align}
+p(x;r,p)=\binom{x-1}{r-1}p^{r-1}(1-p)^{x-r}p
+\end{align}
+Intuisjonen er at vi må ha $r-1$ treff på $x-1$ forsøk og deretter treffe på siste. 
+\subsection{Geometrisk fordeling}
+Dette er bare spesialtilfelle av negativ binomialfordeling der $r=1$,
+\begin{align}
+p(x;p) = p(1-p)^{x-1}
+\end{align}
+Formelen blir enklere fordi det bare er én måte vi kan bomme $x-1$ ganger på $x-1$ forsøk. Da bommer vi hver eneste gang inntil vi treffer. Tror jeg vil vise at det er en fordeling uten hukommelse...
+\subsection{Multinomialfordeling}
+Generalisering av binomialfordeling der det er $K$ kategorier i stedet for bare 2. Kan tenke på det som sannsynlighet for antall baller med ulike farger fra en urne etter $N$ trekk med andeler $p_1,p_2,...,p_K$. Tenker at det er en tilfeldig vektor $(X_1, X_2, ..., X_K)$ som angir antall i hver kategori og at vi kan beskrive pmf til denne. 
+\section{Fordelinger fra poisson-prosess}
+\subsection{Poissonfordeling}
+Poissonfordeling gir oss sannsynlighet for antall treff per tidsenhet,
+\begin{align}
+p(x;\lambda) = \frac{\lambda^x}{\lambda!}e^{-\lambda}
+\end{align}
+der $\lambda$ er en intensitetparameter. Vi kan utvide til å finne antall treff på lengre intervall ved å skalere intensiteten, $\lambda'=\lambda\cdot t$, der $t$ er antallet tidsenheter i det nye intervallet. 
+
+Kan motivere som kontinuerlig tilnærming til binomialfordeling når $p$ er lav og $N$ er høy.. 
+
+For å utlede egenskaper for vi bruk for at $e^x$ har alternativ representasjon som sum av uendelig følge
+\begin{align}
+e^x=\sum_{i=0}^{\infty}\frac{x^i}{i!}
+\end{align}
+Kan bruke dette til å vise at det er en gyldig $pmf$,
+\begin{align}
+\sum_{x=0}^{\infty}\frac{\lambda^x}{\lambda!}e^{-\lambda} = e^{-\lambda}\sum_{x=0}^{\infty}\frac{\lambda^x}{\lambda!}=e^{-\lambda}e^{\lambda}=1
+\end{align}
+\subsection{Eksponentialfordeling}
+Lengde mellom treff i poissonfordeling. Bruke til å modellere varighet av noe.
+\begin{align}
+f(x;\theta) = \theta e^{-\theta x}
+\end{align}
+\section{Andre fordelinger}
+\subsection{Uniformfordeling}
+Det er en kontinuerlig fordeling med like stor sannsynlighet for utfall i alle delmengder som er like store. I én dimensjon kan vi spesifisere $X\sim U(a,b)$, uniform på intervallet $[a,b]$. I flere dimensjoner kan vi være litt mer kreative med geometriske objekt, f.eks. disk eller kradrat. Tetthetsfunksjonen vil uansett være en konstant siden den ikke avhenger av hvor i mengden vi er. For å finne denne konstanten i én dimensjon kan vi bruke
+\begin{align}
+\int_a^b k dx = k(b-a)=1 \implies k = \frac{1}{b-a}
+\end{align}
+Dette følger også av at vi skal ha et rektangel der ene siden er bredde er $k$, lengde er $b-a$ og areal skal være 1. Forventningsverdi er
+\begin{align}
+\mathbb{E}X = \int_a^b x f(x)dx = \frac{1}{b-a} \int_a^b x dx = \frac{a^2-b^2}{2(b-a)} = \frac{a+b}{2}
+\end{align}
+Kan også merke oss at cdf til enhetsuniform er $F(x) = \int f(x) = \int 1 = x$. Hvis jeg har $N$ uavhengige uniforme variabler og jeg vil finne forventningsverdi til $Y=\max\{X_1,...X_N\}$ kan jeg bruke at
+\begin{align}
+F(Y_n=y) &= P(X_1<y,...,X_N<y) = \Pi F_X(y)=y^N \\
+\mathbb{E}Y &= \int_0^1 y f(y)dy = \int_0^1 Ny^{N-1}ydy = \int_0^1 Ny^{N}dy \\
+&= \frac{N}{N+1}
+\end{align}
+\subsection{Gammafordeling}
+Vi har en funksjon $\Gamma(a)$ som er en slags generalisering av factorial til postive reelle tall,
+\begin{align}
+\Gamma(a)=\int_0^{\infty}t^{a-1}e^{-t}dt
+\end{align}
+Denne funksjonen har mange nyttige egenskaper som det sikkert er mulig å utlede,
+\begin{itemize}
+\item $\Gamma(1)=1$
+\item $\Gamma(n)=(n-1)!$
+\item $\Gamma(n+1) = n\Gamma(n)$
+\end{itemize}
+Vi kan bruke denne funksjonen til å konstruere en $pdf$,
+\begin{align}
+f(t;\alpha) = \frac{t^{\alpha-1}e^{-t}}{\Gamma(\alpha)}
+\end{align}
+I praksis bruker vi en annen representasjon siden vi også vil ha parameter som justerer skala til fordelingen. Vi oppnår dette ved å definere en ny variabel $x:=t/\beta$ og se på fordelingen til denne
+\begin{align}
+f(x;\alpha,\beta)=\frac{1}{\Gamma(a)\beta^\alpha}x^{\alpha-1}e^{-x/\beta}
+\end{align}
+Dette er en veldig fleksibel parametrisk familie og jeg kan vise at vi kan få andre fordelinger som spesialtifelle ved å spesifisere verdi på parametre...
+\subsection{Betafordeling}
+Det er en betafunksjon,
+\begin{align}
+B(\alpha,\beta)=\int_0^1x^{\alpha-1}(1-x)^{\beta-1} = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
+\end{align}
+og vi kan bruke dette til å konstruere en $pdf$,
+\begin{align}
+f(x;\alpha,\beta) = \frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}
+\end{align}
+Denne funksjonen er bare definert på begrenset intervall, $x\in (0,1)$. Dette er veldig praktisk siden vi kan bruke fordelingen til å beskrive sannsynlighet til parametre med begrenset intervall. Det er også en veldig fleksibel parametrisk familie som kan ha mange ulike former avhengig av parameterverdier...
+\subsection{Hypergeometrisk}
+Ligner litt på binomialfordeling fordi vi er interessert i sannsynlighet for $x$ antall treff på gitt antall trekk, men relativ andel som er gunstige i populasjonen blir påvirket av observasjonene som blir trukket. Vi kan betrakte det som er urne-modell uten tilbakelegging. Sannsynlighet for $x$ treff på $K$ trekk fra en populasjon der $M$ av $N$ er gunstige er
+\begin{align}
+p(x;K,M,N) = \frac{\binom{M}{x}\binom{N-M}{K-x}}{\binom{N}{K}}
+\end{align}
+Denne funksjonen er litt vanskelig å jobbe med. Foretrekker kontinuerlige funksjoner så vi unngår slitsom kombinatorikk.

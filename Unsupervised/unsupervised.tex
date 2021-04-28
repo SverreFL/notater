@@ -1,0 +1,88 @@
+\chapter{Læring uten tilsyn}
+Data uten labels.
+\section{Dimensjonalitetsreduksjon}
+Vi kan ønske å finne en lavere dimensjonal representasjon av data som bevarer mest mulig informasjon.\footnote{Når vi klassifiserer siffer så er mange av pixlene hvite for alle bildene slik at de ikke er så informative. Vi kunne droppet disse og få færre variabler (dimensjoner) per observasjon uten at vi taper info.} Hva som utgjør informasjon har ikke en eksakt definisjon og tenker at det avhenger litt av kontekst.\footnote{Ren unsupervised eller preproccesing i supervised... hvilke variabler er informative i en regresjon liksom.} En måte å redusere dimensjonene er å droppe variabler som vi anser som irrelevante. Vi skal nå se på nye fremgangsmåte som i stedet konstruerer nye variabler som fanger opp informasjon fra de eksisterende variablene, slik at vi kan finne lavere dimensjonal representasjon som bevarer mest mulig info.
+\subsection{Principal component analysis}
+Metode for å finne et $d$-dimensjonalt underrom for datasett med $k$ variabler der $d \leq k$. Vi vil bevare mest mulig informasjon. For hver $d$ finner vi derfor underrommet som bevarer mest mulig av variansen. Dette er ekvivalent med å at det minimerer MSE av projeksjon av data ned på underrommet.\footnote{Tror jeg kan vise dette med dekomponering av varians... vil knytte til ting jeg kan om prosjektering fra før, men blir litt anderledes siden jeg nå projekterer en matrise i stedet for vektor...} Det som er veldig fint er at greedy algoritme også gir optmal løsning: kan finne $k$ principale vektorer $[\mathbf{v}_1, ..., \mathbf{v}_k]$ og for $d < k$ så velger vi bare delmengde som består av $d$ første. 
+
+For å finne disse principale komponentene kan vi bruke singulærverdidekomposisjon som er en måte å faktorisere en matrise,
+\begin{align}
+\mathbf{X} = \mathbf{U}\mathbf{\Sigma}\mathbf{V}'
+\end{align}
+der $\mathbf{V} = [\mathbf{v}_1 \ldots \mathbf{v}_k]$. Vi finner projektering ned på underrommet som er utspent av komponentene med
+\begin{align}
+\hat{\mathbf{X}}_d = \mathbf{X}\mathbf{V}_d
+\end{align}
+der $\mathbf{V}_d = [\mathbf{v}_1 \ldots \mathbf{v}_d]$. Vi kan også forsøke å gjøre invers transformasjon for å forsøke å gjenskape det opprinnelige datasettet med 
+\begin{align}
+\hat{\mathbf{X}} = \hat{\mathbf{X}}_d \mathbf{V}'_d
+\end{align}
+
+Veldig kjekt at vi kan finne andel av forklart variasjon til hver komponent slik at vi kan plotte dette og bruke til å bestemme hvor mange dimensjoner vi trenger til å representere informasjonen i datasettet. 
+\subsection{Andre metoder}
+Kan bruke noe kernel eller manifold ... for noen representasjoner er det vesentlige greier som går tapt når vi projekterer på underrom.
+\section{Clustering}
+Metoder som forsøker å konstruerer clusters og plassere observasjoner i kategori. Vi vil at de skal være homogene innad og ha distinksjon mellom andre cluster. For gitte cluster blir det litt sånn som klassifikering bare at vi ikke kjenner tolkning til cluster-label.. Kan skille mellom hard cluster og soft cluster, der sistnevne beregner sannsynlighet for at observasjon tilhører de ulike clusterene. 
+\subsection{K-means}
+Finner $K$ \textit{centroids} og angir label til observasjon ut fra nærmeste centroid. Algoritmen er enkel: bruk en tilfeldig initialisering, label data og oppdater plassering av centroids slik at det er i midten av observasjonene som ble angitt til den centroiden. Deretter angi labels ut fra oppdatert posisjon til centroids og fortsett slik til det konvergerer. Det er en utfordring at det kan konvergere mot lokal minimum som ikke er globalt optimalt, men dette kan vi håndtere ved å kjøre flere ganger og velger det som minimerer avstand innad i clusterene. 
+
+Den større utfordringen er valg av $K$. Vi har noen vektøy for å gjøre informert valg om dette: såkalt intertia og silhouette, men må se på dette en annen gang.
+\section{Tetthetsestimering}
+Vi har sett at inferens handler om å estimere egenskaper til fordelingen som genererte utvalget vi observerer. Nå skal vi forsøke å estimere selve fordelingen. Dette har vi vært inne på i MLE der vi avgrenser oss til å betrakte en enkel parametrisk familie slik at problemet reduseres til å estimere parametre som karakteriserer denne. Svakheten med denne fremgangsmåten er at det gir dårlig resultat dersom den gitte parametriske familien ikke er fleksibel nok til å tilnærme den sanne tettheten til fordelingen som genererte data. Vi skal derfor utvide til ikke-parametriske metoder som kan tilnærme tettheter med vilkårlig form (så lenge de kontinuerlige). Deretter skal jeg se på såkalte \textit{mixture models} som kan betraktes som et semi-parametrisk kompromiss; har både struktur og fleksibilitet.
+
+For å strukturere diskusjonen og vurdere de relative styrkene og svakhetene til de ulike tilnærmingene vil jeg innføre mål på avstand mellom tettheter.
+\subsection{Mål på avstand mellom tetthetsfunksjoner}
+Jeg tenker vi kan betrakte en mengde av funksjoner, for eksempel alle funksjoner $f$ der $f:\mathbb{R}^d\to \mathbb{R}$. Jeg vil si noe om avstand mellom elementene i mengden. Hva vil det si at to funksjoner er nærme hverandre? Det blir vel dersom de tar omtrent like funksjonsverdier for de ulike inputene. 
+
+For å formalisere dette kan vi definere en $p$-norm som er analog til andre vektorrom,
+\begin{align}
+\lVert f\rVert_p := \left(|f|^p\right)^{1/p}:= \left(\int |f(\mathbf{s})|^p d\mathbf{s}\right)^{1/p}
+\end{align}
+Dette gir et mål på avvik mellom funksjoner
+\begin{align}
+d_p(f,g)=\lVert f-g\rVert_p.
+\end{align}
+Når vi har definert normen kan vi betrakte mengden som et $L_p$ rom bestående av funksjoner med definert $p$-norm, $L_p = \{f:\lVert f\rVert_p < \infty$ og der $f:\mathbb{R}^d\to\mathbb{R}\}$. De vanligste valgene er $p=1$ eller $p=2$. Det kan være enklere å jobbe med $L_2$ siden normen er analog til eukledisk avstand slik at resultatet fra vanlige vektorrom kan generaliseres, men $L_1$ gir nok et bedre og mer intuitivt mål på avstand mellom funksjoner.
+
+Fremstillingen over gjelder for funksjoner generelt. Vi betrakter kun mengden av funksjoner som oppfyller egenskapene til tetthetsfunksjoner. For tetthetsfunksjoner har vi allerede sett at \textit{total variation distance} som angir den maksimale forskjellen i sannsynlighet to tetthetsfunksjoner tillegger en hendelse,
+\begin{align}
+TVD(f,g) := \sup_{A \in \mathscr{B}(\mathbb{R})}\left|\int_A f - \int_A g \right|,
+\end{align}
+og det kan vises at
+\begin{align}
+TVD(f,g) = \frac{1}{2}\lVert f-g \rVert_1
+\end{align}
+\subsubsection{Forventet avstand og konsistens}
+Jeg tenker at vi kan ha et utfallsrom $\Sigma$ som består av de ulike tetthetsfunksjonene som kan bli realisert avhengig av verdiene i utvalget, $\Sigma=\{\hat{f}(\omega):\omega \in \Omega\}$. Videre tenker jeg at vi kan definere en tilfeldig variabel på megden, $\gamma(\hat{f})=d_1(\hat{f},f)$ og finne forventningsverdi til denne med hesyn på fordelingen $f$. Dette kan vi evaluere med simulering fra et utvalg på $N$ uavhengige observasjoner fra $f$.
+
+Alternativt kan vi bruke asymptotisk teori. En følge med tilfeldige tetthetsfunksjoner $(\hat{f}_N)_{N\in\mathbb{N}}$ er $L_p$ konsistent for $f$ hvis
+\begin{align}
+\lVert \hat{f}_N-f\rVert_p \overset{p}{\to} 0 
+\end{align}
+når $n \to \infty$. Dersom modellen er feilspesifisert slik at $P_0 \notin \{P_{\theta}:\theta \in \Theta\}$ så har avviket en nedre begrensning
+\begin{align}
+\delta(P_0,\hat{P}_\theta) = \inf_{\theta \in \Theta}\lVert P_0-\hat{P}_\theta  \rVert_p
+\end{align}
+\subsection{Histogram}
+Vi observerer realiseringer $X_1,...,X_N$ på utfallsrom $Z=[0,1]$ fra en fordeling med tetthet $f$. En veldig naiv tilnærming er å bruke relativ andel av hver observasjon som estimat på fordelingen, $\hat{f}(x) = \frac{1}{n}\sum I\{X_n = x\}$. Det vil jo vanligvis være sannsynlighet for verdier vi ikke observerer i det gitte utvalget vårt, og dette gjelder spesielt siden vi antar at den sanne fordelingen er kontinuerlig. Histogram gir en litt bedre tilnærming. Vi finner en partisjonering av $Z$ som er en mendre $\{B_1,...,B_K\}$ der $\cup B_k = Z$ og $ B_k\cap B_j = \empty$ for $k\neq j$. Dette er bins med lengde $1/K$. Sannsynligheten for å få utfall i hver bin er $p_k = \int_{B_k} f(x)dx$ og estimator er $\hat{p}_k = \frac{1}{N}I\{x\in B_j\}$. Dette gir en diskontinuerlig funksjon på $Z$ som vi kan skrive som $\hat{f}(x)=\sum_k \hat{p}_kI\{x\in B_k\}$.
+
+Hyperparameteren i histogrammet er antall bins som også bestemmer lengden på intervallene. Hvis det er for få bins klarer det ikke fange mønsteret i den sanne tettheten (høy bias), mens for mange bins gjør at estimat fra ulike utvalg blir veldig forskjellige (høy varians). Dette kan man til en viss grad ta på øyemål, men analogt til estimasjon av regresjonsfunksjon/betinget sannsynlighet kan vi definere en tapsfunksjon og forsøke å velge antall bins som minimerer risiko. Tar det senere.
+
+En nedside med histogram er at det gir en diskontinuerlig funksjon. Skal nå se en måte å utlede kontinuerlig tetthetsfunksjon.
+\subsection{Kernel density estimation}
+Intuisjonen er at vi vil spre litt tetthet rundt de observerte realiseringene, der tyngden avtar mer avstand. For å gjøre dette bruker vi en kernel funksjon $K(\cdot)$ med egenskaper $\int K(x)dx=1$, $\int x K(x)dx=0$, $K(x)=k(-x)$. For hver observasjon transformerer vi input til $\frac{x-x_n}{h}$ slik at tyngden er sentrert rundt $x_n$ og der $h$ er den såkalte \textit{bandwidth} som justerer for raskt tyngden avtar... må omskrive litt senere. Som eksempel, la $K(\cdot)$ være standardnormalfordeling
+\begin{align}
+K(x) = \frac{1}{\sqrt{2\pi}}exp\left(-\frac{x^2}{2}\right) 
+\end{align}
+og der 
+\begin{align}
+g_n(x) &= \frac{1}{Nh}K\left(\frac{x-x_n}{h}\right) \\
+) &= \frac{1}{N}\frac{1}{\sqrt{2\pi h^2}}\exp\left(-\frac{(x-x_n)^2}{2h^2}\right) 
+\end{align}
+og $\hat{f}(x) = \sum_n g_n(x)$. Ikke helt opplagt for meg hvorfor vi deler på h utenfor kernel, men ser at det gir mening for at det fortsatt skal gi normalfordeling..
+\subsubsection{gammelt}
+Kernel density estimators gir en alternativ fremgangsmåte for å estimere tetthetsfunksjonen under svakere antagelsen (ie. ikke avgrenset til spesifikk parametrisk klasse). Estimatoren er en den skalerte summen av $N$ tetthetsfunksjoner som hver er sentrert på de observerte $\mathbf{x}_n$ $(n=1,...,N)$. Det er en såkalt \textit{bandwidth} som justerer spredningen på de individuelle tetthetsfunksjone og dermed glattheten (\textit{smoothness}) til summen. Med lavere bandwith blir større del av tyngden konsentrert på rundt de observerte verdiene. Formelt kan vi skrive estimatoren som
+\begin{align}
+\hat{f}_N(\mathbf{s})=\frac{1}{Nh^p}\sum K\left(\frac{\mathbf{s}-\mathbf{x}_n}{h}\right)
+\end{align}
+\subsection{Mixture models}

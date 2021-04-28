@@ -1,0 +1,122 @@
+\chapter{Stokastiske prosesser}
+En stokastiske prosesser på $\mathbb{R}^K$ er en samling tilfeldige vektorer $(\mathbf{x}_t)_{t\in T}$ definert på samme sannsynlighetsrom $(\Omega,\mathscr{F},\mathbb{P})$. Vi betegner utfallsrommet $T$  som indeksmengden og utfallsrommet til de tilfeldige vektorene er såkalt \textit{state space}. Det at de lever i samme sannsynlighetsrom medfører at de har en simultanfordeling. Denne simultanfordelingen kan ofte være ganske komplisert fordi
+\begin{align}
+f(x_1,...,x_N) &= f(x_1)f(x_2|x_1)f(x_3|x1,x2)\cdots f(x_N|x_1,...,x_{N-1}) \\
+&= \prod f(x_n|\text{historie}_n)
+\end{align}
+der historie$_n = (x_1,...,x_{n-1})$. Stort sett har vi unngått dette problemet ved å anta uavhengighet, men vi skal utvikle vektøy for å håndtere avhengighet mellom observasjoner. Først litt motivasjon
+\begin{enumerate}
+\item Det åpner for avhengighet i sampling. Dette er spesielt relevant når vi observerer samme enhet på flere tidspunkt (panel/tidsserie), men det kan også være avhengighet i krysseksjon. Tror det kan være avhengighet for observasjoner i samme gruppe (klasse,geografisk område, mm.), men veldig usikker på dette. Tror en tilnærming til dette er å skalere standardfeil med cluster.
+\item Vi kan bruke det til å studere egenskap til estimator. For utvalg med gitt $N$ kan vi utlede fordeling til estimator under gitt antagelser, men vi kan også være interessert i hvordan denne fordelingen endres når vi endrer $N$. Vi kan da betrakte det som en stokastisk følge der vi i hvert ledd observerer én ny realisering. Ved å undersøke egenskaper til følgen når $N$ går mot uendelig kan vi utlede egenskaper under svakere antagelser og bruke dette som tilnærming for store utvalg.
+\item Vi kan bruke det til å modellere systemer. Verden er dynamisk, ikke statisk. Mer om dette senere.
+\end{enumerate}
+\section{Asymptotisk teori}
+Jeg betrakter en følge av tilfeldige variabler $(X_1,X_2,\dots,X_n,\dots)=(X_n)_{N\in\mathbb{N}}$. Vi kan tenke at egenskapene til variablene avhenger av plassering i følgen, altså av $n$. Vi kan være interessert i egenskap for en gitt $n$ eller for alle $n$ som er større enn en gitt verdi. Vi sier at $\lim X_n$ har en egenskap dersom det eksisterer en $N$ slik at alle de tilfeldige variablene $X_n$ der $n \geq N$ har egenskapen... Det ble litt upresist. Uansett, grenseverdi har en formell definisjon. Følgen med tall konverger til et grenseverdien (som er et tall) dersom vi alltid kan finne en $N$ der alle $x_n, n\geq N$ er i nabolaget til tallet, uansett hvor lite vi gjør nabolaget. Skal nå se på konvergens av følge med tilfeldige variabler. Grenseverdien er nå en tilfeldig variabel... vil på en måte lage et nabolag rundt denne tilfeldige variabelen og se om alle variablene i følgen for $n\geq N$ ligger i dette nabolaget. Er ikke helt opplagt hvordan vi måler avstand mellom tilfeldige variabler og konstruerer dette nabolaget, så med tilfeldige varabler har vi litt ulike former for konvergens
+\begin{enumerate}
+\item Konvergens i sannsynlighet: $X_N \overset{p}{\rightarrow} X \iff \lim_{N\to\infty}P(\|Z_n-Z\|>\epsilon)=0, \forall \epsilon >0$
+\item Konvergens \textit{almost surely}: $X_N \overset{a.s.}{\rightarrow} X \iff P(\lim_{N\to\infty}\|Z_n-Z\|>\epsilon)=0, \forall \epsilon >0$
+\item Konvergens i fordeling: $X_N \overset{d}{\rightarrow} X \iff \lim_{N\to\infty}F_N(t)=F(t)$ for alle t der $F(\cdot)$ er kontinuerlig. 
+\item Konvergens i \textit{mean square} (L2): $X_N \overset{m.s}{\rightarrow} X \iff \lim_{N\to\infty}\mathbb{E}(X_n-X)^2$=0
+\end{enumerate}
+Konvergens i sannsynlighet impliserer konvergens i fordeling. Tror jeg bruker konvergens i m.s. til å bevise konvergens i sannsynlighet. Merk at en konstant $c$ bare er special case av R.V. $X$ der $\mathbb{P}(X=c)=1$. Det er et veldig fint resultat at konvergens er bevart av kontinuerlig transformasjoner $g(\cdot)$, slik at $Z_n \overset{p}{\rightarrow} Z \implies  g(Z_n) \overset{p}{\rightarrow} g(Z)$. Noen regneregler:
+\subsubsection{Slutskys teorem}
+$X_n \overset{d}{\rightarrow}X$ og $A_n\overset{p}{\rightarrow} a$ impliserer at
+\begin{enumerate}
+\item $X_n + A_n \overset{d}{\rightarrow} X + a$
+\item $X_nA_n \overset{d}{\rightarrow} Xa$
+\end{enumerate}
+Kan generaliseres til tilfeldige vektorer og matriser slik at $A_N\mathbf{x_N} \overset{d}{\rightarrow} A\mathbf{x}$. Medfører at dersom $\mathbf{x} \sim N(\mathbf{0},\Sigma)$ så er $A\mathbf{x} \sim N(\mathbf{0},A\Sigma A')$
+\subsubsection{Kontinuerlig mapping teorem}
+Har et veldig greit resultat som sier at for uansett hvilken konvergensmåte vi har, så vil konvergensen medfører at den samme konvergensen holder for kontinuerlige transformasjon av både grenseverdien og følgen,
+\begin{align}
+X_n \overset{p}{\rightarrow} X \implies g(X_n)\overset{p}{\rightarrow}g(X)
+\end{align}
+\subsection{Store talls lov}
+Store talls lov som sier at utvalgsmoment fra $iid$ prosess konvergerer i sannsynlighet til populasjonsmoment. Så lenge første moment er definert så vil
+\begin{align}
+\mathbb{E}_{P_N}[X_n] = \frac{1}{N}\sum X_n \overset{p}{\rightarrow} \mathbb{E}[X]
+\end{align}
+For å knytte dette til definisjonene over vil jeg bruke litt annen notasjon. Vi har en følge $(X_n)_{n\in \mathbb{N}}$ som er $iid$. Med utgangspunkt i denne følgen kan vi konstruere en ny følge med gjennomsnitt av de $N$ første variablene, $(\bar{X}_N)_{N \in \mathbb{N}}$. Vi kan nå vise at denne nye følgen konvergerer i sannsynlighet til $\mathbb{E}[X]$ som vi kan betrakte som en tilfeldig variabel der $\mathbb{P}(\{\mathbb{E}[X]\})=1$.
+\subsubsection{Bevis}
+For å bevise store talls lov vil jeg først utlede Markovs og Chebyshevs ulikheter. La $X$ være ikke-negativ tilfeldig variabel og $g(\cdot)$ er transformasjon som flytter tyngde nedover
+\begin{align}
+Y = g(X) = 
+\begin{cases}
+a, \text{ hvis } Y \geq a \\
+0, \text{ ellers}
+\end{cases}
+\end{align}
+Det følger da at
+\begin{align}
+\mathbb{E}[X] \geq aP(X\geq a) \\
+\implies P(X\geq a)\leq \frac{\mathbb{E}[X]}{a}
+\end{align}
+som er Markovs ulikhet. Kan utlede Chebyshevs ulikhet som spesialtilfelle der $X = (\bar{X}_N-\mu)^2$ og $a=\epsilon^2$. 
+\begin{align}
+P[(\bar{X}_N - \mu)^2 \geq \epsilon^2]\leq \frac{\mathbb{E}[(\bar{X}_N - \mu)^2]}{\epsilon^2}=\frac{\mathbb{V}[\bar{X}_N]}{\epsilon^2} \\
+\implies P(\lvert\ \bar{X}_N - \mu \rvert\ \geq \epsilon) \leq \frac{\sigma^2}{N\epsilon^2} \rightarrow 0
+\end{align}
+når $N \rightarrow \infty$. Okay, nå var jo beviset ferdig uten at jeg definerte Chebyshevs ulikhet... Kunne også tatt beviset fra \textit{mean square}. Uansett, LLN er et veldig fundamentalt resultat fordi det enkelt kan utvides. Det gjelder også for utvalgsmoment til kontinuerlige funksjoner av $X$.
+\begin{align}
+\frac{1}{N}\sum g(X_n) \overset{p}{\rightarrow} \mathbb{E}[g(X)].
+\end{align}
+Det kan også brukes til å bevise at relativ andel i utvalg konvergerer til sannsynlighet
+\begin{align}
+\frac{1}{N}\sum I\{X_n \in B\} \overset{p}{\rightarrow} \mathbb{E}[I\{X \in B \}] = P(B)
+\end{align}
+\subsection{Sentralgrenseteoremet}
+Store talls lov sier at i uendelig store utvalg er hele tyngden av fordelingen til utvalgsmomentet konsentrert på de populasjonsmomentet. Det har sammenheng med at empirisk fordeling konvergerer til teoretisk fordeling. Det er et viktig teoretisk resultat, men i praksis har vi aldri uendelig store utvalg så vi vil også vite noe om hvor raskt tyngden til utvalgsfordeling konvergerer: mer presist ønsker vi å angi sannsynlighet for avvik mellom utvalgsgjennomsnitt og forventningsverdi. Her kommer sentralgrenseteoremet oss til unnsetning. Det sier at så lenge $\{X_n\}$ er $iid$ og $\mathbb{E}[X^2] < \infty$
+\begin{align}
+&\sum_{n=1}^N \frac{X_n-\mu}{\sigma^2} \overset{d}{\rightarrow} N(0,1) \\ 
+&\frac{(X_1+\dots X_N)-N\mu}{\sqrt{N\sigma^2}} \overset{d}{\rightarrow} N(0,1) \\
+&\frac{\bar{X}_N-\mu}{\sqrt{\mathbb{V}[\bar{X}_N]}} \overset{d}{\rightarrow} N(0,1) \\
+&\sqrt{N}(\bar{X}_N-\mu) \overset{d}{\rightarrow} N(0,\sigma^2) 
+\end{align}
+Ser at dette er veldig nyttig siden differansen av utvalgsmoment og populasjonsmoment (oppskalert med rate of convergence) blir normalfordelt uavhengig av underliggende fordeling. 
+
+Det er veldig praktisk at vi kan bruke slutsky til å finne asymptotisk fordeling til lineære transformasjoner av normalfordelte estimatorer og at de fortsatt er normalfordelte. Kan bruke delta-metode til å generalisere dette resultatet til differensierbare funksjoner..
+\subsection{Delta-metoden}
+Husker at $A_N\overset{p}{\rightarrow} A \text{ og } \mathbf{x_N} \overset{d}{\rightarrow} \mathbf{x} \implies A_N\mathbf{x_N} \overset{d}{\rightarrow} A\mathbf{x}$. Dette er veldig nice siden CLT kan gi oss at at $\mathbf{x} \sim N(\mathbf{0},\Sigma)$. Jeg vet allerede hvordan jeg finner fordeling til lineær transformasjon. Nå skal jeg også kunne finne fordeling til transformasjoner som er lokalt lineære (ie. kontinuerlige..).
+\begin{align}
+Y_N \overset{d}{\rightarrow} N(\mu, \frac{\sigma^2}{N}) \implies g(Y_N) \overset{d}{\rightarrow} N\left(g(\mu),(g'(\mu))^2\frac{\sigma^2}{N}\right)
+\end{align}
+\subsection{LNN og CLT med flere variabler}
+\subsection{LLN og CLT med avhengighet mellom observasjoner}
+Hvis prosessen er $iid$ så er $\mathcal{L}(\mathbf{x}_t)=P, \forall t$ og simultanfordelingen er produkt av marginal. Slike følger er veldig greie å jobbe med siden vi kan bruke LLN og CLT, men det er litt restriktivt siden det kan være litt persistens i størrelse over tid. Hvis vi vil jobbe med tidsserier er det derfor relevant å få finne en større klasse av stokastiske prosesser som \textit{nesten} er $iid$ og har de samme gode egenskapene. Det viser seg at LLN holder for prosesser som er stasjonære og ergodiske. Stasjonæritet medfører at simultanfordeling til del-tupler av simultanfordelingen ikke endres av å forskyves. Altså:
+\begin{align}
+\mathcal{L}(\mathbf{x}_{t1},...\mathbf{x}_{tk}) =\mathcal{L}(\mathbf{x}_{1t+m} \mathbf{x}_{tk+m})
+\end{align}
+Det finnes litt ulike og kompliserte definisjoner av ergodisitet. Jeg velger å si at en stasjonær prosess er ergodisk dersom LLN holder. Dette flytter målposten til å si noe om tilstrekkelige betingelser for ergodisitet. En uformell definisjon på ergodisitet er at gjennomsnitt av observasjon over tid omtrent samsvarer med gjennomsnitt på et gitt tidspunkt.
+
+Det er et poeng at vi kan få CLT som kun krever at prosess er martingale difference sequence. Jeg skal forsøke å utlede litt mer formelt hva dette er for noe. Jeg vet ikke hvor relevant det er, men jeg kjører på og håper at det blir litt payoff senere. Trenger først å introdusere noen konsepter.
+\section{Markov-kjeder}
+Markovkjeder har diskret tilstandsrom og sannsynlighet for ulike tilstander i en periode kun avhenger av tilstand i perioden før,
+\begin{align}
+\mathbb{P}(X_{n}=x|X_1,...,X_{n-1})=(X_{n}=x|X_{n-1})
+\end{align}
+dette forenkler uttrykket for simultanfordelingen
+\begin{align}
+f(x_1,...,x_N) &= f(x_1)f(x_2|x_1)f(x_3|x1,x2)\cdots f(x_N|x_1,...,x_{N-1}) \\
+&= f(x_1)\prod_{n=2}^N f(x_n|x_{n-1}) 
+\end{align}
+Markovkjeder gir et rammeverk med nok struktur til at det er mulig å utlede teoretiske resultat og samtidig har det tilstrekkelig fleksibilitet til å beskrive systemer i virkeligheten.
+\subsection{Overgangssannsynlighet}
+De sentrale størrelsene i en markovkjede er tilstandsrommet og sannsynlighet for å bevege seg mellom tilstander. Hvis markovkjeden er overgangssanynlighetene uavhengig av $n$ slik at vi kan definiere
+\begin{align}
+p_{ij} := \mathbb{P}(x_{n+1}=j|x_n=i).
+\end{align}
+og organisere disse i en matrise $P$. Sentrale spørsmål: $p_{ij}(n)$ og konvergens.. mer om dette senere.
+\section{Annet}
+En filtrasjon er en økende følge av informasjonsmengder, altså $(\mathscr{F}_t) = (\mathscr{F}_1,\mathscr{F}_2,..,\mathscr{F}_t,...)$ der $\mathscr{F}_t \subset \mathscr{F}_{t+1}$ $\forall t$. Merk at en informasjonsmengde bare er en mengde av tilfeldige variabler. Filtrasjonen som er generert av $(x_t)$ er
+\begin{align}
+\mathscr{F}_0 = \varnothing \text{ og } \mathscr{F}_t = \{x_1, ..., x_t\} \text{ for alle } t \geqslant 1
+\end{align}
+En stokastisk prosess $(z_t)$ er \textit{adapted} til en filtrasjon $(\mathscr{F}_t)$ hvis $z_t$ er $\mathscr{F}_t$-measurable for alle $t$. Altså at vi kan regne ut $z_t$ fra størrelsene i informasjonsmengden som blir realisert på samme tidspunkt. Prosessen $(z_t)$ er i tillegg en martingale wrt $(\mathscr{F}_t)$ hvis 
+\begin{align}
+\mathbb{E}[z_{t+1}|\mathscr{F}_t]=z_t
+\end{align}
+La differansen $d_t = z_t-z_{t-1}$. Dette definerer en stokastisk prosess $(d_t)$ som er \textit{martingale difference sequence} wrt $(\mathscr{F}_t)$ hvis
+\begin{align}
+\mathbb{E}[d_{t+1}|\mathscr{F}_t]=0
+\end{align}
+okay... får håpe det blir noe payoff en dag LOL. Tror jeg kommer til å studere dette til høsten så forhåpentligvis blir det en søt syntese. Tidsserier og sånn.. vi får se. Men er glad for at jeg fikk sannsynlighet på litt tryggere grunn. Litt usikker på hva jeg skal gjøre fremover... får sjå.

@@ -1,0 +1,1 @@
+Med færre naboer blir funksjonen mer sensitiv for treningsdata. Fanger opp både signal og støy. Kan få bedre tilnærming ved å ta gjennomsitt av flere observasjoner slik at støy jevner seg ut og vi sitter igjen med underliggende signal. Merk skjevhet i endepunktene.

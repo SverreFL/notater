@@ -1,0 +1,1 @@
+Kan tenke at transformasjonen strekker rommet. Sannsynlighetstyngden på en delmengde og bildet av delmengden må være det samme (hvis monoton). Intuisjon: lav derivert til transformasjon, lite strekk, mer tyngde per enhet areal. Derfor proposjonal med derivert til invers.

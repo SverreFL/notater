@@ -1,0 +1,556 @@
+\pagenumbering{arabic}
+\chapter{Sannsynlighet}
+Vi kan bruke sannsynlighetsteori til å modellere situasjoner med usikkerhet eller uforutsigbarhet. Det innebærer at vi ikke kan beregne eksakte egenskaper til en tilstand med utgangspunkt i den informasjonen vi ha tilgjengelig. I statistikk observerer vi gjerne et utvalg eller delmengde av en populasjonen.\footnote{Terminologien stammer fra da statistikk var omtrent ensbetydende med biostatistikk. Mer generelt kan vi betrakte populasjonen som en datageneringsprosses og utvalget er en følge med realiseringer fra denne prosessen.} På bakgrunn av denne ufullstendige informasjonen vil vi si noe om egenskaper til hele populasjonen. Dette vil det ikke være mulig å gjøre eksakt. Sannsynlighetsteori gir oss likevel et rammeverk for å håndtere og kvantifisere usikkerheten. Mer generelt gir det oss et rammeverk for å håndtere vår ignoranse og kan brukes i veldig mange sammenhenger.
+\section{Aksiom og teknisk rammeverk}
+Sannsynlighetsteorien tar utgangspunkt i et stokastisk forsøk. Dette består for det første av et utfallsrom $\Omega$ som er mengden av alle de ulike utfallene $\omega$ som kan bli realisert i eksperimentet. Utfallsrommet er fullstendig og gjensidig utelukkene slik at ett, og bare ett, utfall blir realisert. Hvis vi tenker at forsøket blir gjentatt flere ganger vil vi gjerne observere ulike utfall. En mulig tolkning av sannsynligheten til utfall er den relative frekvensen i uendelig gjentatte forsøk.
+
+Det er en utfordring at vi kan ha utfallsrom som er ikke-tellbare. Det vil si at det ikke er mulig å liste opp de ulike utfallene som $\Omega = \{\omega_1,\omega_2,... \}$\footnote{I praksis er alle målbare utfall tellbare siden vi kun kan måle utfallene med begrenset presisjon. Vi har altså tall med begrenset antall desimaler slik at det i prinsippet ville være mulig å liste opp utfallene. Det vil likevel være praktisk å behandle utfallsrommet som om det var kontinuerlig siden vi da kan bruke kalkulus i stedet for diskret matematikk.}. Et eksempel på et slikt utfallsrom er enhetsdisken
+\begin{align}
+\Omega = \{(i,j) \in \mathbb{R}^2:|i+j|\leq1\}
+\end{align}
+Det er da ikke mulig å gi sannsynlighet til enkeltutfall $(i,j)$ siden man kan vise at sannsynligheten nødvendigvis er null. Vi tallfester derfor kun sannsynlighet til delmengder og ikke enkelt-utfall.\footnote{Sannsynlighetsteori bygger i stor grad på mengdelære. Se appendiks for definisjoner og regneregler for mengder.} Merk at hvis utfallsrommet er tellbart kan vi kan vi også angi sannsynlighet til delmengder som kun inneholder enkeltutfall, eks: $A = \{\omega_k\}$. Vi kaller delmengder for hendelser. En hendelse $A$ inntreffer hvis et utfall $\omega \in A$ blir realisert. Hvis sannsynligheten er uniform så kan vi i tellbare utfallsrom finne sannsynlighet for hendelser som antall gunstige utfall delt på antall mulige,
+\begin{align}
+\mathbb{P}(A) = \frac{|A|}{|\Omega|}
+\end{align}
+Den naturlige generalisering til ikke-tellbare mengder er det relative arealet til mengden $A$.
+\begin{align}
+\mathbb{P}(A) = \frac{\lambda(A)}{\lambda(\Omega)}
+\end{align}
+der $\lambda$ er en funksjon som gir arealet. Det er en utfordring at ikke alle delmengder har et veldefinert mål på areal. Vi avgrenser oss derfor til å se på delmengdene av $\Omega$ som oppfører seg bra. Såkalte $\sigma$-algebraer har egenskapene vi ønsker. $\mathscr{F}$ er en $\sigma$-algebra på $\Omega$ hvis
+\begin{enumerate}
+\item $A \in \mathscr{F} \implies A^C \in \mathscr{F}$	
+\item $A_1,A_2,... \in \mathscr{F} \implies \cup_n A_n \in \mathscr{F}$
+\item $\Omega \in \mathscr{F}$
+\end{enumerate}
+Dette sikrer at delmengdene oppfører seg bra, men sikrer ikke at de inneholder alle hendelser vi er interessert i. Et trivielt eksempel er $\mathscr{F} = \{\varnothing,\Omega\}$. I praksis er utfallsmengden enten tellbar slik at vi kan betrakte alle delmengder, eller den består av (en delmengde av) tallinjen $\mathbb{R}^N$ og vi betrakter borel-mengdene $\mathscr{B}(\mathbb{R}^N) = \mathscr{F}$.\footnote{Inneholder intervall i $\mathbb{R}$ og rektangler i $\mathbb{R}^N$.} Vi kan definere en \textit{probability measure} $\mathbb{P}:\mathscr{F}\rightarrow \mathbb{R}$ som angir sannsynlighet for hendelser. Den må tilfredstille aksiomene:
+\begin{enumerate}
+\item $\mathbb{P}(A) \geq 0, \quad \forall A \in \mathscr{F}$
+\item $\mathbb{P}(\Omega)=1$
+\item $\mathbb{P}(A_1\cup A_2\cup...) = \sum_{n=1}^{\infty}\mathbb{P}( A_n)$ for disjunkte delmengder
+\end{enumerate}
+Disse egenskapene korrepsonderer med tolkningen av sannsynlighet som relativt frekvens av hendelser i uendelig gjenntatte forsøk, men aksiomene er agnostisk for tolkning av sannsynligheten. Det vil også være mulig å bruke en mer subjektiv oppfatning av sannsynlighet der sannsynlighetsfunksjon tilfredstiller aksiom. Tilsammen utgjør $(\Omega,\mathscr{F},\mathbb{P})$ et \textit{probability space}. 
+\section{Sannsynlighetsregning}
+Fra aksiomene kan vi utlede diverse regneregler som kan brukes til å finne sannsynlighet for ulike hendelser. Et veldig enkelt og nyttig resultat er at
+\begin{align}
+\mathbb{P}(\Omega) &= \mathbb{P}(A\cup A^c) = \mathbb{P}(A)+\mathbb{P}(A^c) = 1 \\
+& \implies \mathbb{P}(A) = 1 - \mathbb{P}(A^c).
+\end{align}
+Samlingen av mengder $\{A,A^c\}$ er et eksempel på en partisjonering av $\Omega$ siden de er parvis disjunkt, $A \cap A^c = \emptyset$, og inneholder alle elementene i mengden, $A \cup A^c = \Omega$. Slike partisjoneringer er praktiske å jobbe med siden vi enkelt kan plusse sammen sannsynligheter.\footnote{Dette kommer vi tilbake til under lov om total sannsynlighet.} Dette medfører også at
+\begin{align}
+\mathbb{P}(\Omega \cup \Omega^c) &= \mathbb{P}(\Omega)+\mathbb{P}(\Omega^c)=1 \\
+&\implies P(\emptyset)=0
+\end{align}
+og
+\begin{align}
+\mathbb{P}(A) &\leq \mathbb{P}(A)+\mathbb{P}(A^c) = 1 \\
+&\implies \mathbb{P}(A) \leq 1
+\end{align}
+
+Vi kan være interessert i om én eller flere hendelser inntreffer. Dette er ikke helt trivielt siden hendelsene kan overlappe og vi vil ikke telle hvert utfall mer enn én gang.\footnote{Vet ikke helt hvordan jeg kan utlede det resultatet formelt...}
+\begin{align}
+\mathbb{P}(A\cup B) = \mathbb{P}(A)+\mathbb{P}(B)-\mathbb{P}(A\cap B)
+\end{align}
+Kan vise at
+\begin{align}
+A \subset B &\implies \mathbb{P}(B) = \mathbb{P}(B\cap A)+\mathbb{P}(B\cap A^c) = \mathbb{P}(A)+\mathbb{P}(B\cap A^c) \\
+&\implies \mathbb{P}(A) \leq \mathbb{P}(B)
+\end{align}
+\subsection{Betinget sannsynlighet og uavhengighet}
+Vi vil oppdatere våre sannsynlighetsberegninger når vi får mer informasjon om utfallet. Den nye informasjonen gjør det mulig å utelukke noen utfall og avgrense oss til å betrakte en delmengde $B \subset \Omega$ som det nye utfallsrommet. Vi kan likevel finne betingede sannsynligheter med utgangspunkt i sannsynlighetsfunksjonen $\mathbb{P}(\cdot)$ assosiert med det opprinnelige utfallsrommet,
+\begin{align}
+\mathbb{P}(A|B) = \frac{\mathbb{P}(A\cap B)}{\mathbb{B}},
+\end{align}
+der vi kan merke oss at  $\mathbb{P}(\cdot | B)$ er et fullverdig probability measure på en sub-$\sigma$-algebra av $\mathcal{F}$ siden det tilfredstiller aksiomene. Vi skal senere se at definisjonen over gir sammenhengen mellom simultanfordeling og betinget fordeling til til to tilfeldige variabler ettersom realiserte verdier av variablene implisitt avgrenser delmengder av utfallsrommet $\Omega$. Vi kan også merke at det den betingede fordelingen er en skalering av simultanfordeling.
+
+Vi sier at to hendelser er uavhengige dersom
+\begin{align}
+\mathbb{P}(A\cap B)=\mathbb{P}(A)\mathbb{P}(B) 
+\end{align}
+som impliserer $\mathbb{P}(A|B) = \mathbb{P}(A)$ og $\mathbb{P}(B|A) = \mathbb{P}(B)$. Det medfører at informasjon om hvorvidt den ene hendelsen har inntruffet ikke gir oss noe informasjon om sannsynligheten for den andre hendelsen. Vi kan generalisere uavhengighet til en samling av $N$ mengder, $A_1,A_2,...A_N$, ved å kreve at $P(\cap_{j \in R} A_j) = \prod_{j \in R} P(A_j)$ for alle $R \subset I = \{1,2,...,N\}$. Det er altså ikke tilstrekkelig at de er parvis uavhengige. 
+
+Det kan også være praktisk å betinge av informasjon selv om vi er interessert i en ubetinget hendelse. Dette gjør at vi kan dele problem inn i enklere delproblem og finne løsningen som en vektet sum. Begynner med å observere at
+\begin{align}
+\mathbb{P}(A) &= \mathbb{P}(A\cap \Omega) = \mathbb{P}(A \cap (B \cup B^c)) = \mathbb{P}((A \cap B) \cup (A \cap B^c) \\
+&= \mathbb{P}(A \cap B) + \mathbb{P}(A \cap B^c) \\
+&= \mathbb{P}(A|B)\mathbb{P}(B) + \mathbb{P}(A|B^c)(1-\mathbb{P}(B))
+\end{align}
+Mer generelt vil en mengde av delmengder $\{B_m\}_{m\geq1}$ utgjøre en partisjonering av $\Omega$ hvis
+\begin{enumerate}
+\item $\cup_m B_m = \Omega$
+\item $B_j \cap B_k = \emptyset$ hvis $ j\neq k$
+\end{enumerate}
+Vi kan da finne $\mathbb{P}(A) = \sum_m \mathbb{P}(A|B_m)\mathbb{P}(B_m)$. Dette resultatet er kjent som loven om total sannsynlighet. Vi kan representere fremgangsmåten grafisk med et tre. 
+
+Gitt at hendelsen $A$ inntreffer kan vi også være interessert å finne sannsynlighet for utfallet er i de ulike mengdene av partisjoneringen, for eksempel
+\begin{align}
+\mathbb{P}(B_j|A) = \frac{\mathbb{P}(A|B_j)\mathbb{P}(B_j)}{\sum_m \mathbb{P}(A|B_m)\mathbb{P}(B_m)}
+\end{align}
+som er kjent som bayes regel.
+
+I praksis er det litt tungvindt å jobbe direkte med delmengder av utfallsrommet. Vi liker bedre å jobbe med tall. Vi vil derfor finne en representasjon som gjør det enklere å få svar på de spørsmål vi er interessert i. I praksis er det enklere å jobbe med tall siden de har naturlig rangering, mål på avstand og vi kan blant annet bruke resultat fra kalkulus. Dette motiverer tilfeldige variabler.
+\section{Tilfeldige variabler}
+På tross av navnet er en tilfeldig variabel verken tilfeldig eller variabel. Det er en deterministisk funksjon $x$ som mapper fra utfallsrommet til talllinjen, $x:\Omega \rightarrow \mathbb{R}$. Vi kan illustrere bruken av tilfeldige variabler med et eksmpel. Anta at vi ser på en uendelig coin-flips og la mynt være 1 og krone være 0. Da har vi uendelig antall utfall der hvert utfall er en uendelig følge. Vi er interessert i hvor mange kast det tar før det blir en mynt.
+\begin{align}
+\Omega &= \{(a_1,a_2,...)|a_n \in \{0,1\},\text{ } \forall n \in \mathbb{N}\} \\
+x(\omega) &= min \{n \in \mathbb{N}|a_n = 1\}
+\end{align}
+Merk at vi da - for hver realisering i utfallsrommet - bare får det tallet som sier antall kast før første mynt i stedet for hele den uendelige følgen. Denne transformasjonen medfører et tap av informasjon, men vi får den informasjonen vi trenger. Det er et generelt poeng at for å løse problem må vi finne en egnet representasjon av informasjon. 
+
+Det faktum at tilfeldige variabler bare er en deterministisk funksjon og all action skjer i probability space er skjult av notasjonelle konvensjoner. Når vi skriver $\{x=1\}$ så refererer vi implisitt til delmengden av utfallsrommet $\{\omega \in \Omega | x(\omega) =1\}$. Det betyr at når vi snakker om sannsynligheten til en tilfeldig variabel $P_x$ så er det egentlig $\mathbb{P}$ som jobber under the hood.
+\begin{align}
+P_x(1) = P(\{x=1\}) = \mathbb{P}(\{\omega \in \Omega | x(\omega) =1\}) = \mathbb{P}(A)
+\end{align}
+En annen konvensjon er at sammenligninger mellom tilfeldige variabler blir gjort punktvis i utfallsrommet
+\begin{align}
+x=y \iff x(\omega) = y(\omega), \forall \omega \in \Omega
+\end{align}
+Det er altså ikke tilstrekkelig at de har samme fordeling. Eksempel: la $X\sim U(0,1)$ slik at $F(x)=x$ når $x \in (0,1)$, og la $Y = g(X) = 1-X$. Har da at $F(y) = P(1-X\leq y) = P(X \geq 1-y) = 1- P(X < 1-y) = 1-(1-y) = y$. Dette medfører at $X \overset{d}{=}Y$, men $X \neq Y$. 
+
+Kan også nevne at bineære tilfeldig variabler er mye brukt siden vi ofte er interessert i om et eller annet inntreffer eller ikke
+\begin{align}
+\mathbb{I}_A(\omega)=\mathbb{I}\{\omega \in A\}
+\end{align}
+\section{Univariat fordeling}
+Vi har sett at vi kan definere en tilfeldig variabel $x$ på et sannsynlighetsrom $(\Omega,\mathscr{F},\mathbb{P})$ som gjør at vi for hver $B \in \mathscr{B}(\mathbb{R})$ kan tallfeste $P(x \in B) = \mathbb{P}\{\omega \in \Omega | x(\omega) \in B\}$. Dette er litt omstendelig. Vi kan også bare omdefinere utfallsrommet slik at $\Omega = \mathbb{R}$. Den tilfeldig variabelen gjør denne transformasjonen eksplisitt. Alternativt kan vi abstrahere vekk fra transformasjonen og jobbe direkte med sannsynlighetsrommet $(\mathbb{R},\mathscr{B}(\mathbb{R}), P)$. \textit{Fordelingen} $P$ er \textit{probability measure} der $\Omega  = \mathbb{R}$ og $\mathscr{F} = \mathscr{B}(\mathbb{R})$. Vi sier at $P$ er \textit{supported} av $S$ hvis $P(S)=1$. 
+
+Fordelingen $P$ er i likhet med andre probability measures $\mathbb{P}$ en funksjon som mapper mengder til $[0,1]$. Det er veldig fleksibelt og generelt, men det er litt vanskelig å karakterisere funksjonen $P$. Det er enklere å jobbe med funksjoner som som mapper tall. Dermed er det veldig greit at er en-til-en korrespondanse mellom $P$ og en kumulativ fordelingsfunksjon $F$ der
+\begin{align}
+F(s) = P(x\leq s) = P((-\infty, s]), s \in \mathbb{R}
+\end{align}
+Denne funksjonen oppfyller en del egenskaper
+\begin{enumerate}
+\item $\lim_{s\to\infty} F(s) = 1$
+\item $\lim_{s\to-\infty} F(s) = 0$
+\item $b>a \implies F(a) \leq F(b)$
+\item Den er høyre-kontinuerlig, $\lim_{s\to s^+}F(s):=F(s^+)=F(s)$
+\end{enumerate}
+Merk at definisjonsmengden er hele tallinjen uavhenig av om fordelingen er supported av mindre delmengde. De fleste fordelinger er enten diskret eller absolutt kontinuerlige. Fordelingen er diskret hvis den er støttet av en tellbar mengde, altså at det eksisterer en mengde $\{s_j\}_{j\geqslant1} $ der $P(\{s_j\}_{j\geqslant1})=1$. Sannsynlighetsmengden på et gitt element $s_j$ i mengden er $p_j :=P(\{s_j\})$ og følgen $\{p_j\}_{j \geqslant 1}$ utgjør en \textit{pmf}. Hvis fordelingen derimot er absolutt kontinuerlig kan den representeres med en tetthet $f$ som er en ikke-negativ funksjon på $\mathbb{R}$ som integrerer til 1, der
+\begin{align}
+P(B) = \int_B f(s)ds,\quad \forall B \in \mathscr{B}(\mathbb{R})
+\end{align}
+Det er poeng at med lebesgue integral trenger vi ikke alltid skille mellom diskret og absolutt kontinuerlig fordeling siden vi kan integrere begge. Dette er en fordel når vi utvikler teori. På en annen side er distinksjonen vesentlig når vi anvender teori. 
+\begin{align}
+f_x(s) &= F_x'(s) \\
+p_x(s) &= F(s)-F(s^-)
+\end{align}
+Tilfeldige variabler er funksjoner som transformerer vilkårlige utfallsrom til tallinjen som er enklere å jobbe med. Vi har sett at vi kan velge hvorvidt vi vil være eksplisitt om denne transformasjonen. Hvis vi velger å være eksplisitte kan vi betegne fordelingen $P$ som fordelingen til $x$, der
+\begin{align}
+P(B) = \mathbb{P}(\{x\in B\}) 
+\end{align}
+For et gitt probability space så vil hver tilfeldig variabel definere en fordeling. Tilsvarende vil det for hver fordeling være mulig å finne en tilfeldig variabel som har denne fordelingen. Vi kan bruke notasjonen $\mathcal{L}(x)$ for å betegne fordelingen til $x$. Merk at når vi snakker om fordelingen til en tilfeldig variabel så eksisterer det alltid et underliggende sannsynlighetsrom.  
+\subsection{Momenter}
+Vi har lyst på sammendragsmål som beskriver egenskap til funksjon. Forventningsverdi er første moment
+\begin{align}
+\mathbb{E}[X] = \int x d(f(x)) = 
+\begin{cases} 
+\int x f(x) dx ,\quad \text{hvis kontinerlig} \\
+\sum x f(x),\quad \text{hvis diskret}
+\end{cases}
+\end{align}
+Det første integralet er noe lebesgue integral som i prinsippet kan evalueres, men jeg bruker det bare for enhetlig notasjon. Forventningsverdi gir et vektet gjennomsnitt av utfallene til tilfeldig variabel og er Fet mål på sentraltendensen. Det er forholdsvis enkelt å finne forventnignsverdi til transformasjoner av $X$ dersom vi kjenner fordelingen til denne, fordi
+\begin{align}
+\mathbb{E}[Y]=\mathbb{E}[g(X)] = \sum_x g(x)p_X(x)
+\end{align}
+For å få et mål på spredningen kan vi definere en ny variabel som angir avvik fra forventningsverdi og se på hvor stor størrelsen på dette avviket er i gjennomsnitt.
+\begin{align}
+\mathbb{E}[Y^2]= \mathbb{E}[(X-\mu)^2] = \mathbb{E}[X^2]-\mu^2
+\end{align}
+Merk generelt at forventningsverdien til en transformasjon av $X$ ikke tilsvarer transformasjonen evaluert i forventningsverdien, altså
+\begin{align}
+\mathbb{E}f(X) \neq f(\mathbb{E}X)
+\end{align}
+Forsikringsselskap tjener penger fordi $\mathbb{E}f(X)<f(\mathbb{E}X)$ er lavere når $f$ er konkav. Folk er derfor villig til å betale for å redusere variasjon i $X$. Kan knytte dette til \textit{Jensens ulikhet}.
+\subsection{Kvantiler}
+Vi har sett at vi kan karakterisere fordelinger med den kumulative fordelingen
+\begin{align}
+F_x(s)= 
+\begin{cases}
+\int_{-\infty}^s f_x(t)dt, \text{hvis absolutt kontinuerlig}\\
+\sum_{j:x_j\leq s} p_j, \text{hvis diskret}
+\end{cases}
+\end{align}
+Litt usikker på hvilken notasjon jeg vil bruke. Tenker at det er greit å spesifisere hvilken variabel vi betrakter fordelingen til slik at vi ikke må bruke så mange ulike bokstaver til å betegne funksjonene. Tror også jeg foretrekker å betegne tilfeldige variabler med stor bokstav. Må avklare dette senere. Uansett, vi kan ofte være interessert i å finne $\zeta$ der $F_X(\zeta) = \tau$. Det finner vi ved å evaluere den inverse av cdf i $\tau$. For å håndtere tilfellet der cdf ikke er strengt voksende kan vi definere
+\begin{align}
+F_X^{-1}(\tau)=\inf \{s:F_X(s)\leq \tau\}
+\end{align}
+Vi får blant annet bruk for kvantilfunksjonen når vi vil finne kritisk verdi i hypotesetester. Anta at vi har en standardnormalfordelt testobservator $Z$. Vi vil finne et (sentrert) intervall $(l,u)$ der $P(l\leq Z \leq u)=1-\alpha$. Vi utnytter at fordeling er symmetrisk slik at $F_Z(-z)= 1-F(z)$. Dette medfører at 
+\begin{align}
+F_{|Z|}(s)=P(-s\leq Z \leq s)= F_Z(s)-F_Z(-s)=F_Z(s)-(1-F_Z(s))=2F_Z(s)-1
+\end{align}
+La $F_{|Z|} := F$. Vi vil finne kritisk verdi $c$ der
+\begin{align}
+c = F^{-1}(1-\alpha/2) 
+\end{align}
+\begin{align}
+P(|Z| \leq c) = 2F(c)-1 = 2F[F^{-1}(1-\alpha/2)]-1 = 1-\alpha
+\end{align}
+Vi betegner ofte $c := z_{\alpha/2}:=\Psi^{-1}(1-\alpha/2)$
+\section{Multivariat fordeling}
+Vi kan definere flere funksjoner $X_1(\cdot),\dots,X_N(\cdot)$ på det samme sannsynlighetsrommet. Hvert utfall $\omega$ kan være en ganske omfattende representasjon av den tilstanden som blir realisert slik at det ikke trenger å være noe deterministisk sammenheng mellom de ulike transformerte utfallene. Til sammen utgjør de en tilfeldig vektor,
+\begin{align}
+X&: \Omega \to \mathbb{R}^N \\
+&:\omega \mapsto 
+\begin{bmatrix}
+X_1(\omega) \\
+\vdots \\
+X_N(\omega)
+\end{bmatrix}
+\end{align}
+Vi kan forholdsvis enkelt generalisere konspetene om fordeling og support fra én dimensjon til flere dimensjoner. Samtidig er det nye konspeter knyttet til fordeling betinget av informasjon... Jeg begynner med å utlede for bivariate transformasjoner og utvider deretter til $N$ dimensjoner.
+\subsection{Simultanfordeling}
+Vi kan definere flere tilfeldige variabler på samme utfallsrom $\Omega$. Anta for eksempel at vi kaster et kronestykket to ganger slik at $\Omega = \{HH,HT,TH,TT\}$ og la $X$ være antall heads på første kast og $Y$ være antall heads totalt. Vi kan ordne disse tilfeldige variablene i en tuple slik hver realisering utgjør et punkt i $\mathbb{R}^2$, f.eks: $(X(HT),Y(HT)) = (1,1)$. På samme måte som med én variabel har denne vektoren en fordeling $\mathcal{L}(X,Y) = P$ som angir sannsynlighet til delmengder av $\mathbb{R}^2$. Vi kan finne
+\begin{align}
+P((X,Y)\in A) = 
+\begin{cases}
+\sum_{(x,y)\in A}p(x,y) \\
+\int \int_A f(x,y)dxdy
+\end{cases}
+\end{align}
+der $p(\cdot)$ og $f(\cdot)$ er henholdsvis den simultane punktsannsynligheten og tettheten. Tetthetsfunksjonen må tilfredstille $f(x,y)>0 \forall (x,y) \in S(X,Y)$ og at $\int \int_{S(X,Y)} f(x,y)dxdy=1$ (og analogt for diskret). Det er en rett fram generalisering. Utfordringen er å bestemme grenseverdiene i integrasjonen for at den skal samsvare med $A \subset S(X,Y)$ dersom dette ikke bare er en enkel rektangel.
+
+Vi kan også ha fordelinger der vektingen av punktene (tetthet) bare avhenger av én variabel, men der supporten avhenger av begge variablene. Eksempel:
+\begin{align}
+g(y)=e^{-y}, \quad S(x,y)=\{(x,y):0<x<y<\infty\}
+\end{align}
+For å gjøre det mer eksplisitt at dette er en simultanfordeling kan vi skrive det på formen
+\begin{align}
+f(x,y)=e^{-y}I\{(x,y) \in S(x,y)\}
+\end{align}
+som opplagt også avhenger av $x$ siden funksjonen tar verdi $0$ når $(x,y) \notin S(x,y)$. Vi kan vise at dette er en gyldig pdf ved å integrere over mengden $S(x,y)$. 
+\begin{align}
+\int_0^{\infty}\int_0^ye^{-y}dxdy = \int_0^{\infty}ye^{-y}dy=1
+\end{align}
+\subsubsection{Kumulativ fordeling}
+Denne kan beskrives med en kumulativ fordeling $F$ som tar vektor som argument og der
+\begin{align}
+F(x,y) &= P(\{X \leq x\} \cap \{Y \leq y\}) \\
+&= \mathbb{P}\{\omega \in \Omega : X(\omega)<x \land Y(\omega)<y\}
+\end{align}
+Denne delmengden tilsvarer et rektangel med øvre høyre hjørne i $(x,y)$. Hvis fordelingen er kontinuerlig er det en simultanfordeling $f(x,y)$ der
+\begin{align}
+F(x,y) = \int_{\infty}^x \int_{-\infty}^y f(w_1,w_2)dw_1dw_2
+\end{align}
+Hvis fordelingen derimot er diskret er sammenheng mellom simultan og kumulativ gitt ved
+\begin{align}
+F(x,y) = \sum_{w_1<x} \sum_{w_2<y} p(w_1,w_2)
+\end{align}
+\subsubsection{Marginal fordeling}
+Vi kan utlede de marginale fordelingene ved å observere at
+\begin{align}
+P(X \in A) = \int_A \int_{\mathbb{R}} f(x,y)dydx
+\end{align}
+eller..
+\begin{align}
+P(X=x) &= P(\{X=x\}\cap \{Y < \infty\} = \mathbb{P}(\{X=x\}\cap \Omega \\
+&= \sum_y p(x,y)
+\end{align}
+Hm. Integrerer ut de andre variablene. Det er poeng at vi kan få ut all mulig informasjon fra simultanfordelingen. Det er også poeng at vi ikke nødvendigvis kan rekonstruere simultanfordelingen fra informasjon om de marginale fordelingene fordi disse ikke inneholder informasjonen om hvordan de ulike variablene er relatert til hverandre. 
+\subsection{Betinget fordeling}
+Vi har nå definert simultanfordeling og sett hvordan vi kan få ut igjen marginal fordeling fra dette. Det er veldig interessant å betrakte fordelingen til én av variabelene gitt verdien av de andre... 
+Det kan også
+\begin{align}
+P(A|B)=\frac{P(A\cap B)}{P(B)} \implies p_{X|Y}(x,y) = \frac{p_{X,Y}(x,y)}{p_Y(y)}
+\end{align}
+Den betingede fordelingen er en fullverdig fordeling. Vi kan selvfølgelig finne dens momenter. 
+\begin{align}
+E[Y|X=x]&=\int y f(y|x)dy \\
+V[Y|X=x]&=\int y^2f(y|x)dy-\left(\int y f(y|x)dy\right)^2
+\end{align}
+For gitt $X=x$ er dette et uttrykk som i prinsippet kan evalueres og gir oss et tall. Før $X$ er realisert er den betingede forventningen en tilfeldig variabel der $\mathbb{E}[Y|X=x]=g(X)$. I tillegg til betinget forventning har vi også betinget varians
+kan dekomponere den samlede variansen i ..
+\begin{align}
+\mathbb{V}(Y) = \mathbb{E}[\mathbb{V}(Y|X)]+\mathbb{V}[\mathbb{E}(Y|X)
+\end{align}
+\subsubsection{Bruk av betinget fordeling i statistisk modellering}
+Veldig viktig i statistisk modellering. Har én output og mange input. Har i teorien en egen betinget fordeling for hver verdi av input, men vanskelig å jobbe med. Kan bruke sentraltendens av betingede fordelinger som sammendragsmål og se på hvordan sentraltendens endrer når vi endrer input. 
+
+Det er også praktisk dersom vi modellerer en univariat fordeling.
+\begin{enumerate}
+\item Partisjonere utfallsrom ut fra verdi til andre variablene
+\item Modellere sannsynlighet for hver av delmengdene
+\item Modellere den betingede sannsynligheten for utfallet vi er interessert i på hver av delmengdene
+\item Aggregere betingede sannsynligheter med vekting ut fra sannsynlighet for delmengdene
+\end{enumerate}
+Dette er eksempel på anvendelse av lov om total sannsynlighet der vi bruker tilfeldige variabler. For å se koblingen kan vi betrakte
+\begin{align}
+\mathbb{P}(A)=\mathbb{P}(A|B_1)\mathbb{P}(B_1)+\mathbb{P}(A|B_2)\mathbb{P}(B_2)
+\end{align}
+og
+\begin{align}
+p(y) &= P(y|x_1)p(x_1) +  P(y|x_2)p(x_2) \\
+&= \sum_x P(y|X=x)p(x)
+\end{align}
+\subsection{Uavhengighet}
+Vi har sett på uavhengighet av hendelser. Vi kan utvide til uavhengighet mellom tilfeldige variabler. Disse er uavhengige hvis simultanfordelingen tilsvarer produktet av de marginale fordelingene,
+\begin{align}
+f(x,y) = f(x)f(y) \implies f(x|y)=\frac{f(x,y)}{f(y)}= f(x)
+\end{align}
+Uavhengige variabler har egenskaper som gjør de enkle å jobbe med. Blant annet er forventningsverdien av produktet lik produktet av forventningsverdier,
+\begin{align}
+E[XY]&=\int\int xyf(x,y)dxdy \\
+&= \int y f(y) \left[\int x f(x)dx\right]dy \\
+&= \int y f(y) E[X] dy \\
+&= E[X]E[Y]
+\end{align}
+\subsection{Generalisering til $N$ dimensjoner}
+Vi kan utvide til flerdimensjonale fordelinger der $P:\mathscr{B}(\mathbb{R}^N) \to [0,1]$, $\mathbf{x}:\Omega \to \mathbb{R}^N$ og
+\begin{align}
+F_\mathbf{x}: &\mathbb{R}^N \to [0,1] \\
+& \mathbf{s} \mapsto P(\times^N(-\infty,s)) 
+\end{align}
+som karakteriserer fordelingen med den simultane kumulative fordelingen. For absolutt kontinuerlig fordelte variabler er det også en simultan tetthetsfunksjon $p(\cdot)$ som oppfyller egenskapen
+\begin{align}
+P(B) &= \int_B p(\mathbf{s})d\mathbf{s} \\
+&= \int_{-\infty}^{\infty}\cdots \int_{-\infty}^{\infty}\mathbb{I}_B(s_1,...,s_N)p(s_1,...,s_N)ds_1...ds_N
+\end{align} 
+Den marginale fordelingen til variabel $n$ i vektoren og dens marginale cdf er gitt ved
+\begin{align}
+&P_n(B)=P(\mathbb{R}\times \cdot \times \mathbb{R} \times B \times \mathbb{R} \cdot \times \mathbb{R}) \\
+& F_n(s)=P_n((-\infty,s))
+\end{align}
+Den simultane kumulative fordelingen karaktersierer hele fordelingen. Med utgangspunkt i denne kan vi finne marginale kumulative fordelinger. Vi kan også finne betingede fordelinger ved å skalere simultanfordelinger med marginale. Det er derimot som oftest
+\subsubsection{Betinget fordeling}
+Har simultanfordeling til $(x_1,\dots,x_N)$. Kan finne betinget fordeling til delvektor med $K$ komponenter for gitte realiseringer av de resterende $N-K$ komponentene. Det gir en funksjon $f:\mathbb{R}^K\to\mathbb{R}$. Eksempler:
+\begin{align}
+f(s_2,\dots,s_N|x_1=s_1) = \frac{f(\mathbf{s})}{f(s_1)} \\
+f(s_1|s_2,\dots,s_N) = \frac{f(\mathbf{s})}{f(s_2,\dots,s_N)}
+\end{align}
+\subsubsection{Uavhengighet}
+\subsubsection{Momenter}
+Forventningsverdi til $\mathbf{x}=(x_1,...,x_N)$ er bare en vektor der hver komponent er forventningsverdi til den tilhørende tilfeldige variabelen. Variansen er
+\begin{align}
+var(\mathbf{x}):= \Sigma &= \mathbb{E}[(\mathbf{x}-\mu)(\mathbf{x}-\mu)']  \\
+&=\mathbb{E}\mathbf{x}\mathbf{x}'-\mu\mu'
+\end{align}
+der elementene $\Sigma_{ij} = cov(x_i,x_j)$. Denne matrisen er positiv semi-definitt og har egenskaper som følger av dette.
+\begin{align}
+var(A\mathbf{x}) = A\Sigma A'
+\end{align}
+Kovariansen til to variabler er forventningsverdien til produktet av avviket fra forventningsverdi til hver av variablene
+\begin{align}
+cov(X,Y) :=\sigma_{X,Y}= \mathbb{E}[(X-\mu_X)(Y-\mu_Y)]
+\end{align}
+Kan få litt intuisjon av at kovarians er positiv hvis det er tendens til at positive avvik skjer samtidig i begge variablene. Fanger opp om det er lineær sammenheng. Kan skalere ved å dele på produktet av standardavvikene og få korrelasjonskoeffisient som er begrenset av (-1,1)
+\begin{align}
+\rho := :=\frac{\sigma_{X,Y}}{\sigma_X \sigma_Y}
+\end{align}
+\subsection{Tilfeldig utvalg}
+Vi kan definere et utvalg som $N$ observasjoner av en variabel med en gitt fordeling, $(X_1, \dots , X_N)$ der $X_n$ har samme pdf $f(\cdot)$ for alle $n$. I praksis antar vi at det er en parametrisert fordeling $f(\cdot;\theta)$. Utvalget er tilfeldig dersom observasjonene er uavhengige.\footnote{Tilfeldige utvalg kan betegnes som representative fordi store talls lov sikrer at andelen av observasjoner med gitte egenskaper i utvalget konvergerer mot andelen i populasjonen. Skal formalisere dette i kapittel om inferens.} Da er simultanfordeling $f(x_1,\dots, x_N) = \prod_n f(x_n)$. I statistikk er utfordringen at vi ikke kjenner $f(\cdot)$ og vi forsøker å lære egenskaper ved denne fra utvalget...
+\subsubsection{Spørsmål om utvalg}
+Vi tenker gjerne at hver observasjon i utvalget er en person, men rammeverket er mer generelt. Kan være helt andre ting vi observerer. Med utgangspunkt i simultanfordelingen kan vi svare på spørsmål om sannsynlighet for ulike hendelser. Uavhengighet og identiske fordelinger gjør det ganske enkelt å jobbe med. Vi kan for eksempel finne sannsynlighet for at alle observasjonene tar høyere verdi enn $a$ med
+\begin{align}
+P(\{X_1 > a\}\cap \dots \{X_N > a\}) = \prod_n (1-F(a))
+\end{align}
+\subsubsection{Sammendragsmål}
+I praksis jobber vi gjerne med sammendragsmål på utvalget. Vi konstruerer disse med såkalte \textit{statistikker}(?) som er funksjoner fra utvalget $T:\mathbb{R}^N\to\mathbb{R}^k$.\footnote{I praksis mapper til $\mathbb{R}$. Eneste restriksjon er at de ikke kan avhenge av parametre.} Vi bruker gjerne gjennomsnittet i utvalget som sammendragsmål på sentraltendensen. 
+\begin{align}
+\bar{X} &:= \frac{1}{N}\sum_n X_n \\
+\mathbb{E}[\bar{x}] &= \mathbb{E}[\frac{1}{N}(X_1 +\dots + X_N)] = \mu \\
+\mathbb{V}[\bar{x}] &= \mathbb{V}[\frac{1}{N}(X_1 +\dots + X_N)] = \frac{\sigma^2}{N}
+\end{align}
+der vi kun for siste resultat trenger uavhengighet. Så lenge observasjonene er fra samme fordeling kan vi i gjennomsnitt estimere sentraltendensen, men vi må ta hensyn til eventuell avhengighet for å vurdere presisjonen til målet på sentraltendensen...
+
+Vi vil også ha et sammendragsmål på spredningen i utvalget,
+\begin{align}
+s^2 &= \frac{1}{N-1}\sum(X_n-\bar{X})^2\\
+\mathbb{E}[s^2] = \sigma^2
+\end{align}
+der beviset er litt vanskelig.
+\subsection{Hierarki}
+En variabel har én fordeling, men det kan være lurt å bygge denne opp stegvis og bruke ulike fordelinger underveis. Dette gjør det enklere å motivere valg av endelig fordeling (som blir vår modell) og denne fordelingen blir enklere å tolke siden den gjerne avhenger av parametre i fordelingene over i hierarkiet. Jeg tenker at hierarkiske modeller blir viktige i statistisk modeller og at det kan være lurt å bruke bayesiansk statistikk siden det gjør det enklere å propagere usikkerheten assosiert med estimatene av de ulike parametrene i den hierarkiske strukturen. Jeg tar kort gjennomgang her siden med gitte parameterverdier så er det er rent sannsynlighetsprobkem.
+
+La oss illustrere med eksempel. Vi vil modellere hvor mange barn de samlet vil få. Vi kunne forsøkt å finne en parametrisert fordeling på dette direkte. Alternativt kan vi modellere antallet kvinner som i det hele tatt får barn og antallet barn dersom de gjør det..
+\begin{align}
+&Y \sim bern(p)\\
+& X|Y \sim poisson(\lambda) \\
+& f_X(x) = \sum_y f(x|y)f(y)dy
+\end{align}
+Kan forsøke å finne analytisk uttrykk for $f_X(x)$, men det kan være litt komplisert. Det i hvert fall enkelt å finne uttrykk for sentraltendens. Substituerer inn utrykket for $f_X(\cdot)$ inn i $E[\cdot]$
+\begin{align}
+E[X]&=\int x f_X(x)dx \\
+&= \int x \int f(x|y)f(y)dy dx \\
+&= \int\left[x \int f(x|y)dx\right]f(y)dy \\
+&= \int E[X|y]f(y)dy \\
+&= E[E[X|Y]]
+\end{align} 
+\subsubsection{Mixture model}
+Tror dette er special case av hierarkisk fordeling der parameter i fordeling selv har fordeling.. hmhmm.
+\section{Transformasjon av tilfeldig variabel}
+Tilfeldige variabler er funksjoner som mapper elementer av utfallsrommet til tallinjen, $X:\Omega \to \mathbb{R}$. Vi har sett hvordan jeg kan utlede verdimengden til transformasjonen samt sannsynligheten til delmengder av denne verdimengden fra den eksplisitte formen til $X(\cdot)$ samt sannsynlighetsrommet $(\Omega, \mathscr{F}, \mathbb{P})$ den er definert på. Vi har også sett at dette induserer et nytt sannsynlighetsrom $(\mathbb{R}, \mathbb{B}(\mathbb{R}), P)$ slik at vi kan abstrahere vekk fra den eksplisitte transformasjonen samt det opprinnelige, underliggende sannsynlighetsrommet.\footnote{Det induserte sannsynlighetsrommet inneholder all informasjon om fordelingen til den tilfeldige variabelen, men kan medføre informasjonstap i forhold til opprinnelig sannsynlighetsrom.} Vi skal nå se at vi kan definere en ny tilfeldig variabel $Y:\mathbb{R}\to\mathbb{R}$ på dette induserte sannsynlighetsrommet og finne et eksplisitt uttrykk for fordelingen $f_Y(y)$ med utgangspunkt i $f_X(x)$ samt $Y(\cdot)$. Selv om $Y$ egentlig er en funksjon vil jeg betegne den transformerte tilfeldige variabelen som $Y=g(X)$..
+\subsection{Fordeling til transformert variabel}
+Når vi gjør transformasjoner er det viktig å beholde oversikt over verdimengdene til transformasjonene, som samsvarer med \textit{supporten} til fordeling. La $S(X)=\{x:f_X(x)>0\}$ og $S(Y)=\{y:y=g(x), \exists x \in S(X)\}$ være support til henholdsvis $X$ og $Y$. Vi kan finne fordelingen til $Y$ hvis vi for alle delmengder $A \subset S(Y)$ kan finne en korresponderende delmengde $B=\{x:g(x) \in A\} \subset S(X)$. Vi kan gjøre dette mer operativt ved å definere en invers mapping $g^{-1}:\mathbb{B}(S(Y)) \to \mathbb{B}(S(X))$, som mapper delmengder av supporten og er derfor definert selv om transformasjonen $g(\cdot)$ ikke er strengt monoton. Har da at 
+\begin{align}
+P(g(X) \in A) = P(x \in g^{1}(A)
+\end{align} 
+Vi kan nå finne uttrykk for den kumulative fordeingen til $F_Y(t)$ ved å betrakte $A = (-\infty,t)$.
+\begin{align}
+F_Y(t) = \int_{g^{-1}((-\infty,t))}f_X(x)dx
+\end{align}
+Det er enklere å jobbe med strengt monotone transformasjoner siden det er enklere å beskrive grenseverdiene i integrasjonen. Hvis strengt voksende reduserer problemet til
+\begin{align}
+F_Y(t) = \int_{-\infty}^{g^{-1}(t)}f_X(x)dx=F_X(g^{-1}(t))
+\end{align}
+Ved å betrakte $A = (-\infty,t)$ kan vi finne $f_y(t)$ til transformasjon av kontinuerlig fordelt $X$.
+\subsection{Kontinuerlig}
+\begin{align}
+F_Y(y) &= P(Y \leq y) = P(g(X) \leq y) = P(X \leq g^{-1}(y)) = F_X(g^{-1}(y)) \\
+f_Y(y) &= \frac{\partial}{\partial y} F_X(g^{-1}(y)) = f_X(g^{-1}(y)) \frac{dx}{dy}
+\end{align}
+der $\frac{dx}{dy} = \frac{d}{dx} g^{-1}(y)$. Hvis funksjonen derimot er monotont avtagende må vi snu ulikhetstegnet,
+\begin{align}
+F_Y(y) &= P(Y \leq y) = P(g(X) \leq y) = P(X > g^{-1}(y)) = 1-F_X(g^{-1}(y)) \\
+f_Y(y) &= \frac{\partial}{\partial y}[1- F_X(g^{-1}(y))] = -f_X(g^{-1}(y)) \frac{dx}{dy}
+\end{align}
+Merk at $\frac{dx}{dy}<0$ slik at uttrykket er positivt. Vi kan få felles uttrykk for begge tilfellene med 
+\begin{align}
+f_Y(y) = f_X(g^{-1}(y)) \lvert \frac{dx}{dy}\rvert
+\end{align}
+Dette gir oss en formel med størrelser vi må plugge inn. Vi trenger inverse og den deriverte av den inverse. Eksempel: $f(x)=x^2/9, x\in(0,3), y=g(x)=x^3$
+\begin{align}
+&g^{-1}(y) = y^{\frac{1}{3}}, \quad \frac{dx}{dy}  = \frac{1}{3}y^{-\frac{2}{3}} \\
+f_Y(y) &= \frac{\left(y^{\frac{1}{3}}\right)^2}{9} \frac{1}{3}y^{-\frac{2}{3}}=\frac{1}{27}, \quad y\in(0,27) \\
+\end{align}
+Husk at vi kan finne $f(x)$ ved å transformere tilbake, så ingen unnskyldning for å gjøre feil!
+\subsection{Diskret}
+For diskret variabler trenger vi ikke gå gjennom kumulativ fordelingsfunksjon..
+\begin{align}
+p_Y(y) = P(Y=y) = P(g(X)=y) = P(X = g^{-1}(y)) = p_X(g^{-1}(y))
+\end{align}
+La oss ta antall kast før første kron som eksempel. Ha da $p_X(x) = 0.5^x$. Anta nå at vi allerede vet at første kastet aldri gir treff. Vi vil derfor finne fordeling til $Y = g(X) = X+1$. Begynner med å finne $g^{-1}(c) = c-1$. Det medfører da at
+\begin{align}
+p_Y(y) = p_X(g^{-1}(y)) = 0.5^{g^{-1}(y)} = 0.5^{y-1}
+\end{align}
+Intuisjonen er at vi evaluerer pmf til $X$ i det tallet som mapper til $y$-verdien vi er interessert i, altså i $g^{-1}(y)$.
+\subsection{Bivariat transformasjon}
+Vil utvide til å se på fordeling til en bivariat transformasjon $g:\mathbb{R}^2\to\mathbb{R}^2$, der\footnote{Sikkert god idé å sette det opp som kolonnevektorer..}
+\begin{align}
+g(X_1, X_2) = [g_1(X_1,X_2),g_2(X_1,X_2)] = (Y_1,Y_2)
+\end{align}
+Vi kan fortsatt i prinsippet finne
+\begin{align}
+P((Y_1,Y_2) \in A) = P((X_1,X_2) \in \{(x_1,x_2):[g_1(x_1,x_2),g_2(x_1,x_2)] \in  A\}
+\end{align}
+Antar at det er en invers transformasjon $J$ der 
+\begin{align}
+J(y_1,y_2) = [g_1^{-1}(y_1,y_2),g_2^{-1}(y_1,y_2)]
+\end{align}
+Skalerer med determinant av jacobi til denne inverse transformasjonen og finner...
+\begin{align}
+f_{Y_1,Y_2}(y_1,y_2)=f_{X_1,X_2}([g_1^{-1}(y_1,y_2),g_2^{-1}(y_1,y_2])|J|
+\end{align}
+\subsubsection{Eksempel}
+Har to variabler $X_1, X_2 \sim NID(\mu, \sigma^2) \implies f(x_1,x_2) = \frac{1}{\sqrt{2\pi}}\exp(\left(-\frac{x_1^2}{2}\right)\frac{1}{\sqrt{2\pi}}\exp(\left(-\frac{x_1^2}{2}\right)$. Transformasjonen $g(\cdot) := [g_1(\cdot),g_2(\cdot)]:\mathbb{R}^2\to\mathbb{R}^2$ er gitt ved
+\begin{align}
+Y_1 &= g_1(X_1,X_2) = X_1 + X_2 \\
+Y_2 &= g_2(X_1,X_2) = X_1 - X_2 
+\end{align}
+For å finne den inverse transformasjonen må jeg løse ligningsystemet med hensyn på $X_1$ og $X_2$ som gir
+\begin{align}
+X_1 &= h_1(Y_1,Y_2) = (Y_1+Y_2)/2 \\
+X_2 &= h_2(Y_1,Y_2) = (Y_2-Y_1)/2 
+\end{align}
+... trenger bare determinant til jacobi til transformasjon $h(\cdot) := [h_1(\cdot),h_2(\cdot)]$..
+\section{Momentgenererende funksjoner}
+Den momentgenererende funksjonen til en tilfeldig variabel er gitt ved
+\begin{align}
+M(t) = \mathbb{E}[e^{tX}], \quad \text{for } t \in (-h,h)
+\end{align}
+Funksjonen er definert dersom uttrykket over konvergerer for verdier av $t$ på et åpent intervall om $0$. Kan ta et raskt eksempel på utledning av $mgf$. La $p(x) = \frac{1}{6}\left(\frac{5}{6}\right)^{x-1}$ være sannsynlighet for antall kast det tar å få sekser på terningen.
+\begin{align}
+\mathbb{E}[e^{tX}] &=\sum_{x=1}^{\infty} \frac{1}{6}\left(\frac{5}{6}\right)^{x-1} e^{tx}\\
+&=\frac{1}{6}e^t \sum_{x=1}^{\infty} \left(\frac{5e^t}{6}\right)^{x-1} \\
+&=\frac{e^t}{6}\left(1-\frac{5e^t}{6}\right)^{-1}
+\end{align}
+som konvergerer dersom 
+\begin{align}
+\frac{5e^t}{6} < 1 \implies \log(t)<\log\left(\frac{6}{5}\right)
+\end{align}
+For fordelingene med definert $mgf$ er det én-til-én korrespondanse mellom fordeling og $mgf$.\footnote{Det har noe sammenheng med laplace-transformasjon av funksjon. Det finnes også en såkalt karakteristisk funksjon som er en generalisering som er definert for alle fordelinger som har sammenheng med fourier-trasnformasjon.} Med andre ord så vil 
+\begin{align}
+&M_x(t) = M_y(t), \quad \forall t \in (-h,h) \\
+&\implies F_x(s)=F_y(s), \quad \forall s \in Z
+\end{align}
+Vi kan bruke denne alternative representasjonen til å beskrive egenskaper til fordelingen. Merk at\footnote{Har brukt at vi kan flytte derivasjonstegn inn og ut av sum og intergral. Er noen tekniske betingelser som må være oppfylt for at dette skal være gyldig operasjon (i betydning at uttrykkene har samme løsningsmengde).}
+\begin{align}
+M'(t) &= \frac{\partial}{\partial t} \mathbb{E}[e^{tX}]\\
+&\begin{cases}
+\int_Z \frac{\partial}{\partial t} e^{tx}f(x)dx = \int_Z x e^{tx}f(x)dx\\
+\sum_{x\in Z}\frac{\partial}{\partial t} e^{tx}p(x) = \sum_{x\in Z}x e^{tx}p(x)
+\end{cases}
+\end{align}
+som medfører at $M'(t)|_{t=0}=\mathbb{E}[x]$ og mer generelt at $M^{(k)}(t)|_{t=0}=\mathbb{E}[x^k]$. Det kan i praksis være litt vanskelig å finne mgf siden det er litt vanskelig å integrere og sånn. Men gitt at vi har en mgf kan vi også finne mgf til affine transformasjon $Y = a + bX$,
+\begin{align}
+m_Y(t) = E[e^{(a+bX)t}]=E[e^{at}e^{bXt}] = e^{at}M_x(bt)
+\end{align}
+Dersom to variabler er uavhengige kan vi finne mgf til deres sum, $Z=X+Y$,
+\begin{align}
+m_Z(t)=E[e^{(X+Y)t}]=E[e^{tX}]E[e^{tY}]=m_X(t)m_Y(t)
+\end{align}
+\subsubsection{Flervariabel}
+Kan merke oss kort at $mgf$ til tilfeldig variabel $\mathbf{x}=[x_1,...,x_N]$ er
+\begin{align}
+M(\mathbf{t})=\mathbb{E}[exp\{\mathbf{t}'\mathbf{x}\}] = \int\dots\int exp\{\mathbf{t}'\mathbf{x}\}f(\mathbf{x})dx_1\dots dx_N
+\end{align}
+og det følger at vi kan bruke dette til å finne marginal $mgf$ til $x_n$ ved evaluere den i $\mathbf{t}=(t_1,\dots,t_n,\dots,t_N) = (0,\dots,t_n,\dots,0)$.
+\section{Projeksjon av tilfeldige variabler}
+Det er mulig å konstruere vektorrom som består av andre objekter enn tradisjonelle vektorer (tupler av reelle tall). Skal nå konstruere vektorrom og utvikle analoge resultat for ortogonal projeksjon og minimering av avstand mellom objekter i rommet.
+
+Vi betrakter en mengde av tilfeldige variabler. Det hadde vært veldig greit å ha et mål på avstand mellom objektene i mengden. Et naturlig mål er $RMSE(x,y) = \sqrt{E[(x-y)^2]}$. Hvis vi definerer indre produkt mellom objekter som $\langle x,y\rangle = E[xy]$ får vi det analoge resultat at $\lVert x \rVert = \sqrt{\langle x,x \rangle}$ og vi kan definiere $x \perp y = 0 \iff E[xy]=0$. På tilsvarende måte utgjør delmengder underrom dersom de er lukket for skalering og addisjon. La $\mathbbm{1}_{\Omega} := \mathbbm{1}$ være tilfeldig variabel som tar verdi 1 med sannsynlighet 1. Et eksempel på underrom er da
+\begin{align}
+span(X)=\{\alpha \mathbbm{1}+\beta x : \alpha,\beta \in \mathbb{R}\}
+\end{align}
+På samme måte som i tradisjonelle vektorrom har ortonormale basiser gode egenskaper. En mengde $U$ er ortonormal basis for S hvis
+\begin{align}
+E[u_j u_k] = \mathbbm{1}\{j=k\} \quad \text{og} \quad span\{u_1,...,u_k\}=S
+\end{align}
+Jeg vil derfor lage en ortonormal basis for $S=span\{\mathbbm{1},x\}$. I tråd med gram schmidt algoritmen trekker jeg fra komponenten til $x$ som går i retning til den konstante tilfeldige variabelen, nemlig $E[x]:=\mu$. Da sitter jeg igjen med residualen $x-\mu$. Lengden til denne variabelen, i henhold til normen som ble definert over, er $\sigma_x:=\sqrt{E[(x-\mu)^2]}$. Bruker dette til å skalere og har ortonormal basis
+\begin{align}
+U=\{\mathbbm{1},\frac{x-\mu}{\sigma_x}\}, \quad span(U)=S
+\end{align}
+Ser da at ved å standardisere variablene i data så er det utvalgsanalog til å lage ortogonal basis for de tilfeldige variablene. Gitt definisjonene over er det ortogonale projeksjonstheoremet helt analogt så gidder ikke gjenta dette. Det er veldig kult at vi kan overføre teori om vektor til R.V siden vi får veldig mye gratis og det gir oss geometrisk intuisjon. Tenk for eksempel at jeg vil projektere $y$ på $S$ som jeg har gitt en ortonormal basis. La den være $u_1,u_2$. Det følger da at 
+\begin{align}
+\mathbf{P}y&=\langle y, u_1 \rangle u_1 + \langle y, u_2 \rangle u_2 \\
+&=E[y]+E\left[\frac{x-\mu}{\sigma_x}y\right]\frac{x-\mu}{\sigma_x} \\
+&= E[y] + \frac{cov(x,y)}{var(x)}(x-\mu) \\
+&= (E[y]-\beta\mu) + \beta x
+\end{align}
+merk at $E[(x-\mu)y]=cov(x,y)$ fordi $E[x-\mu]=0$. Dette er populasjonsversjonen av den bivariate lineære regresjonslinjen der jeg brukte ortonormal basis. Skal nå generalisere til å finne $\mathbf{P}y=proj_S y=\mathbf{x}'\beta$. Merk at jeg alltid kan slenge inn en konstant tilfeldig variabel i mengden siden vi alltid "observerer" denne uavhengig av hvilke data vi har.
+\begin{align}
+&E[(y-\mathbf{x}'\beta)\mathbf{x}]=0 \\
+&\implies \beta = E[\mathbf{x}\mathbf{x}']E[\mathbf{x}y]
+\end{align}
+veldig nice. TODO: knytte til prediksjon, informasjonmengde og utvide til arbitrære funksjoner ved å definere underom $L_2(X)$.
+\subsection{Projektering i $L_2$}
+Begynner med å definere $L_2$ som mengden av tilfeldige variabler med definert andre moment, $L_2 = \{x | \mathbb{E}(x^2) < \infty  \}$. Vi kan definere et indre produkt mellom elementer i mengden, $\langle x,y \rangle =  \mathbb{E}(xy)$ der $ \mathbb{E}(xy) = 0 \implies y \perp x. $ Normen til elementer i mengden er $\|{x}\| = \sqrt{\langle x, x \rangle}$. Merk at $\|x-y\| = \sqrt{\mathbb{E}[(x-y)^2]}$ som tilsvarer \textit{root mean square error}. Delmengder utgjør et lineært underrom hvis de er lukket under skalering og addisjon, $x,y \in S \implies \alpha x + \beta y \in S, \quad \forall \alpha, \beta \in \mathbb{R}$. For en mengde tilfeldige variabler $\mathbf{x} = (x_1, ... , x_K)$ vil $span (\mathbf{x}) = \{\mathbf{x}'\mathbf{b} | \mathbf{b} \in \mathbb{R^K}\} \equiv S(\mathbf{x})$ være et underrom som består av alle lineære kombinasjoner av $(x_1, ... , x_K)$. Mer generelt kan vi betrakte arbitrære deterministiske funksjoner av $\mathbf{x}$. En variabel $z$ er $\mathbf{x}$-\textit{measurable} hvis det finnes en funksjon $h: \mathbb{R^K}\rightarrow \mathbb{R}$, der $h(\mathbf{x}) = z \in L_2$. Mengden av disse variablene utgjør også et underrom som vi kan kalle $L_2(\mathbf{x})$.
+
+Anta nå at vi for $y \in L_2$ og et underrom $S \subset L_2$ vil vi finne elementet i $S$ som minimerer avstanden til $y$. Analogt til tradisjonelle vektorrom kan $L_2$ dekomponeres i et underrom $S$ og dets ortogonale komplement $S^{\perp}$, og der $S^{\perp} = \{z | \langle z,x \rangle =0, \forall x \in S\}$. Alle element i $L_2$ kan da skrives som en sum av et element i hvert underrom, $y = \hat{y}+\hat{u}$, der $\hat{y} \in S$ og $\hat{u}\in S^{\perp}$.  Denne $\hat{y}$ er løsningen på minimeringsproblemet $\argmin_{z \in S} \| y-z \|$. Vi vet at løsningen eksisterer, er unik og har egenskapen $\langle (y-\hat{y}), x \rangle = 0, \forall x \in S$. Det eksisterer også en lineær transformasjon $P$ slik at $P(y) = \hat{y}$. Denne transformasjonen utfører den ortogonale projeksjonen av $y$ på underrommet $S$.
+
+Betrakt tilfellet der $S=S(\mathbf{x})$. Løsningen er da gitt ved $\hat{y} = \mathbf{x}'\mathbf{b}^*$, der $\langle x_k, y-\mathbf{x}'\mathbf{b}^* \rangle = 0, k=1,...,K \iff \mathbb{E}(\mathbf{x}(y-\mathbf{x}'\mathbf{b}^*) = \mathbf{0} \iff \mathbf{b}^* = \mathbb{E}( \mathbf{x}\mathbf{x}')^{-1}\mathbb{E}(\mathbf{x}y)$, hvis $\mathbb{E}( \mathbf{x}\mathbf{x}')$ er inverterbar. 
+
+Så langt er det helt analogt til tradisjonelle vektorrom, men vi kan nå knytte ortogonal projeksjon til forventning. Vi kan definere
+\begin{align}
+\mathbb{E}(y|\mathbf{x}) \equiv \argmin_{z \in L_2(\mathbf{x})} \|y-z\|
+\end{align}
+Den betingede forventningsverdien av $y$ gitt  $\mathbf{x}$ er den $\mathbf{x}$\textit{-measurable} variabelen som minimerer avstanden til $y$. Hvis vi definerer en konstant tilfeldig variabel $\mathbbm{1}_\Omega \equiv \mathbb{I}\{\omega \in \Omega\}$, så vil ubetinget forventning være gitt ved
+\begin{align}
+\mathbb{E}(y) \equiv \argmin_{z \in L_2(\mathbbm{1}_\Omega)} \| y-z \|
+\end{align}
+Den konstante tilfeldige variabelen som minimerer avstanden til $y$.
+\subsection{Payoff}
+Okay, hva er gevinsten ved å tenke på forventning som ortogonale projeksjoner?
+\begin{enumerate}
+  \item $y = \mathbb{E}(y|\mathbf{x}) + u \implies \mathbb{E}[g(\mathbf{x})u] = 0, \forall g$ følger direkte av at $\mathbb{E}(y|\mathbf{x})$ er ortogonal projeksjon av $y$ på $L_2(\mathbf{x})$. Alle andre variabler $g(\mathbf{x})$ ligger i underromet $L_2(\mathbf{x})$ og $u$ er derfor ortogonal med disse. Siden $\mathbb{E}(u) = 0$ er $u$ ukorrelert med alle deterministiske funksjoner av $\mathbf{x}$. 
+  \item $y = \mathbf{x}'\mathbf{b}^* + u \implies \mathbb{E}[\mathbf{x}'\mathbf{\gamma}u] = 0, \forall \mathbf{\gamma} \in \mathbb{R^K}$. Av samme argument er feilledd fra projeksjon på $S(\mathbf{x})$ ortogonal på alle lineære kombinasjoner av $\mathbf{x}$. 
+\item Har generelt at hvis underrommene $V_2 \subset V_1$ så vil det være ekvivalent om man projektererer $y$ direkte på $V_2$ eller først projekterer på $V_1$ og deretter på $V_2$. Ettersom $S(\mathbf{x}) \subset L_2(\mathbf{x})$ vil da $\mathbf{x}'\mathbf{b}^*$ være beste lineære tilnærming til $\mathbb{E}(y|\mathbf{x})$.
+\item Kan bruke et tilsvarende argument for å utlede \textit{law of iterated expectations}. Merk at $L_2(\mathbbm{1}_\Omega) \subset L_2(\mathbf{x})$ slik at $\mathbb{E}[\mathbb{E}(y|\mathbf{x})] = \mathbb{E}(y)$.
+\item Kan bruke ortogonal dekomponering av underrom,$S(\mathbf{x}) \subset L_2(\mathbf{x}) \subset L_2$, og pythagoras' setning til å dekompene den forventede feilen ved å predikere $y$ med $\mathbf{x}'\mathbf{b}$. La $\mathbb{E}(y|\mathbf{x}) \equiv f^*(\mathbf{x})$
+\begin{align}
+\| y- \mathbf{x}'\mathbf{b} \|^2 &= \| y-  f^*(\mathbf{x})\|^2 + \| f^*(\mathbf{x}) - \mathbf{x}'\mathbf{b}^*\|^2 + \| \mathbf{x}'\mathbf{b}^* - \mathbf{x}'\mathbf{b} \|^2 \\
+\mathbb{E}[(y- \mathbf{x}'\mathbf{b})^2]&=\mathbb{E}[(y-  f^*(\mathbf{x})^2] + \mathbb{E}[(f^*(\mathbf{x}) - \mathbf{x}'\mathbf{b}^*)^2] + \mathbb{E}[(\mathbf{x}'\mathbf{b}^* - \mathbf{x}'\mathbf{b})^2]
+\end{align}
+\item Kan tilsvarende dekomponere \textit{mean square error} mellom en estimator og parameter i varians og kvadrert bias ved å projektere på  $L_2(\mathbbm{1}_\Omega)$
+\begin{align}
+\| \hat{\theta} - \theta \|^2 = \| \hat{\theta} - \mathbb{E}(\hat{\theta}) \|^2 + \| \mathbb{E}(\hat{\theta})-\theta \|^2
+\end{align}
+\item Linearitet til forventning følger av linearitet til ortogonale projeksjoner.
+\end{enumerate}

@@ -1,0 +1,202 @@
+\chapter{Lineær algebra}
+\section{Vektorer}
+En vektor er en tuple med reelle tall, $\mathbf{x} = (x_1,...,x_N)$, der $x_n \in \mathbb{R}$ for $n=1,...,N$. De er to grunnleggende operasjoner som er definert på vektorer: skalering og summering. I tillegg er det definert noen andre konsept som ikke lager nye vektorer
+\begin{itemize}
+\item Indre produkt: $\langle \mathbf{x},\mathbf{y} \rangle = \sum x_ny_n$
+\item Eukledisk norm : $\|\mathbf{x}\| = \sqrt{\langle \mathbf{x},\mathbf{x} \rangle}$
+\end{itemize}
+Det er noen grunnleggende ulikheter som gjelder for disse
+\begin{itemize}
+\item Triangelulikheten: $\|\mathbf{x}+\mathbf{y} \| \leq \|\mathbf{x}\|+\|\mathbf{y}\|$
+\item Cauchy-Schwarz-ulikheten: $|\langle \mathbf{x},\mathbf{y} \rangle | \leq \|\mathbf{x}\|\|\mathbf{y}\|$
+\end{itemize}
+Det er mulig å uttrykke nye vektorer som lineær kombinasjon av eksistererende. Hvis vi har en mengde av vektorer $X = \{\mathbf{x_1},...\mathbf{x_K}\} \subset \mathbb{R}^N$ så finnes det en mengde 
+\begin{align}
+\{y\in \mathbb{R}^N|y=\sum \alpha_k x_k \text{ der } \alpha_k \in \mathbb{R} \text{ og } \mathbf{x_k} \in X \text{ for } k=1,..K\}
+\end{align}
+Denne mengden av vektorer som kan uttrykkes som lineær kombinasjon av vektorene i X betegnes som $span(X)$. Som vi skal se er dette vesentlig for å vurdere eksistens av løsning på lineære ligningssystem, altså om det eksisterer en $\mathbf{x}$ slik at $y = \sum \alpha_k x_k $ for en gitt $y$. Løsningen eksister hvis og bare hvis $y \in span(X)$.
+
+En mengde av vektorer er lineært uavhengige hvis
+\begin{align}
+\sum \alpha_k x_k =\mathbf{0} \implies \mathbf{a} = \mathbf{0}
+\end{align}
+Dette impliserer også at ingen vektorer i mengden kan uttrykkes som en lineær kombinasjon av de resterende vektorene. Det er vesentlig for unikhet av løsning siden hvis $X$ er en lineær uavhenig mengde vil
+\begin{align}
+y = \sum \alpha_k x_k = y = \sum \alpha'_k x_k \implies y = \sum (\alpha_k-\alpha'_k) x_k = \mathbf{0} \implies \alpha_k=\alpha'_k  
+\end{align}
+En mengde av lineært uavhengige vektorer $Z$ utgjør en basis for $span(X)$ hvis $span(Z) = span(X)$. For øvring utgjør $span(X)$ et underrom av $\mathbb{R}^N$ siden det er lukket under skalering og addisjon. Generelt er en mengde S et underrom av $\mathbb{R}^N$ hvis det for alle $\alpha \in \mathbb{R}$
+\begin{itemize}
+\item $\mathbf{x} \in S \implies \alpha \mathbf{x} \in S$
+\item $\mathbf{x},\mathbf{y} \in S \implies \mathbf{x} +\mathbf{y} \in S$
+\end{itemize}
+og dimensjonen til et underrom er antall vektorer i basisen.
+\section{Matriser}
+Kan bruke matriser til å \textit{stacke} linære ligningssystem,
+\begin{align}
+a_{11}x_1 + a_{12}x_2 &= y_1 \\
+a_{21}x_1 + a_{22}x_2 &= y_2
+\end{align}
+tilsvarer
+\begin{align}
+\begin{bmatrix}
+a_{11}x_1 + a_{12}x_2 \\
+a_{21}x_1 + a_{22}x_2
+\end{bmatrix}
+&=
+\begin{bmatrix}
+y_1 \\
+y_2
+\end{bmatrix}
+\\
+\begin{bmatrix}
+a_{11} & a_{12} \\
+a_{21}&  a_{22}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2
+\end{bmatrix}
+&=
+\begin{bmatrix}
+y_1 \\
+y_2
+\end{bmatrix}
+\\
+\mathbf{A}\mathbf{x} &= \mathbf{y}
+\end{align}
+Vi bruker $\mathbf{A}_{ij}$ til å referere til komponent fra $i$'te rekke og $j$'te kolonne. Ofte har vi lyst til å gi en representasjon av $\mathbf{A}$ uten å beskrive alle de individuelle komponentene. Vi kan da gruppere de inn i rekke- og kolonnevektorer. Jeg er litt usikker på hvilken notasjon jeg bruker.\footnote{En mulighet er å bruke $\mathbf{A}_i$ til å betegne rekke og $\mathbf{A}_j$ for kolonne. Et mulig problem er at det er ambigiuøst om jeg betrakter $\mathbf{A}_i$ som en kolonnevektor; altså transponerte av rekken i matrisen. Også problem om jeg vil referere til spesifikk tall. Kan bruke$ \mathbf{a}_{\bullet 1}$ og $\mathbf{a}_{1\bullet}$ til å referere til henholdsvis første kolonne og rekke. hmm} Jeg kan da gi alternativ representasjon av matrisemultiplikasjon med utgangspunkt i disse blokkene,
+\begin{align}
+\mathbf{A}\mathbf{x} &=
+\begin{bmatrix}
+\mathbf{a}_1 & \mathbf{a}_2
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2
+\end{bmatrix}
+\mathbf{a}_1 x_1 + \mathbf{a}_2 x_2 \\
+&=
+\begin{bmatrix}
+\mathbf{a}_{1\bullet}\\
+ \mathbf{a}_{2\bullet}
+\end{bmatrix}
+\mathbf{x}
+ = 
+\begin{bmatrix}
+\mathbf{a}_{1\bullet}\mathbf{x}\\
+ \mathbf{a}_{2\bullet}\mathbf{x}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf{a}_1'\mathbf{x}\\
+ \mathbf{a}_{2}'\mathbf{x}
+\end{bmatrix}
+,\quad \mathbf{A} := 
+\begin{bmatrix}
+\mathbf{a}_1 ' \\
+\mathbf{a}_2'
+\end{bmatrix}
+\end{align}
+der jeg i siste likhet lar $\mathbf{a}_1$ være rekke i matrisen på kolonneform.\footnote{Notasjon kan bli ganske forvirrende}. Det er også poeng at man kan blokkpartisjonere matriser på andre måter og gjøre operasjon på blokkene så lenge de er kompatible, men det må bli en annen gang.
+\begin{align}
+A= \begin{bmatrix}
+a &\dots \\
+\vdots &
+\end{bmatrix}
+\end{align}
+\subsection{Derivasjon}
+Jeg vil nå begynne å derivere med hensyn på vektor. Det er litt som å ta partiell derivert med hensyn på hver av komponentene i en matrise og stacke de oppå hverandre,
+\begin{align}
+\frac{d}{d\mathbf{x}}f(\mathbf{x}) = 
+\begin{bmatrix}
+\frac{\partial}{\partial x_1}f(\mathbf{x}) \\
+\vdots \\
+\frac{\partial}{\partial x_K}f(\mathbf{x})
+\end{bmatrix}
+\end{align}
+Litt usikker på dimensjonene. Går ut i fra at den deriverte har samme dimensjon som $\mathbf{x}$..Noen regneregler \footnote{Merk at de resuserer til vanlige derivasjonsregler dersom matriser og vektor bare har én komponent}
+\begin{center}
+\begin{tabular}{ c|c } 
+$f(\mathbf{x})$ & $\frac{d}{\mathbf{x}}f(\mathbf{x})$\\	
+ \hline
+$\mathbf{A}\mathbf{x}$ & $\mathbf{A}$  \\ 
+$ \mathbf{a}'\mathbf{x}$ & $\mathbf{a} $ \\ 
+$\mathbf{x}'\mathbf{a}$ & $\mathbf{a}$  \\ 
+$\mathbf{x}'\mathbf{x}$ & $2\mathbf{x}$ \\
+$\mathbf{x}'\mathbf{A}\mathbf{x}$ & $2\mathbf{A}\mathbf{x}$\\
+ \hline
+\end{tabular}
+\end{center}
+\subsubsection{Eksempel: minste kvadrat}
+Har tapsfunksjon
+\begin{align}
+L = \frac{1}{N}\sum (y_n-\mathbf{x}_n'\mathbf{b})^2
+\end{align}
+Vil ha en vektor der $n$'te komponent er $\mathbf{x}_n'\mathbf{b}$. Tilsvarer $\mathbf{X}\mathbf{b}$ der $\mathbf{X}_{n\bullet} = \mathbf{x}_n'$. Kan da skrive det på matriseform,
+\begin{align}
+L &= \frac{1}{N} (\mathbf{y}-\mathbf{X}\mathbf{b})'(\mathbf{y}-\mathbf{X}\mathbf{b}) \\
+&=\frac{1}{N} (\mathbf{y}'-\mathbf{b}'\mathbf{X}')(\mathbf{y}-\mathbf{X}\mathbf{b}) \\
+&=\frac{1}{N} (\mathbf{y}'\mathbf{y}-\mathbf{y}'\mathbf{X}\mathbf{b}-\mathbf{b}'\mathbf{X}'\mathbf{y} + \mathbf{b}'\mathbf{X}'\mathbf{X}\mathbf{b} \\
+&= \frac{1}{N} (\mathbf{y}'\mathbf{y}-2\mathbf{y}'\mathbf{X}\mathbf{b} + \mathbf{b}'\mathbf{X}'\mathbf{X}\mathbf{b}
+\end{align}
+Ser bort i fra skaleringen $\frac{1}{N}$ og deriverer med hensyn på $\mathbf{b}$,
+\begin{align}
+\frac{d L}{d \mathbf{b}} = 2 \mathbf{X}'\mathbf{y} + 2\mathbf{X}'\mathbf{X}\mathbf{b} = \mathbf{0} \\
+\implies \mathbf{b} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}
+\end{align}
+gitt at $\mathbf{X}'\mathbf{X}$ er invertibel.
+\section{Lineære transformasjoner}
+En funksjon $T:\mathbb{R}^K\rightarrow \mathbb{R}^N$ er lineær transformasjon hvis
+\begin{align}
+T(\alpha \mathbf{x} + \beta \mathbf{y}) = \alpha T \mathbf{x} + \beta T \mathbf{y}
+\end{align}
+for alle $\mathbf{x},\mathbf{y} \in \mathbb{R}^K$ og $\alpha,\beta \in \mathbb{R}$. Vi skriver funksjonen med stor bokstav og uten parantes fordi den oppfører seg som en matrise. Skal vise senere at det er én-til-én korrespondanse mellom matriser og lineære trasnformasjoner mellom vektorrom. Dette er en veldig grei egenskap til lineære transformasjoner som gjør de er mye brukt i anvendt matematikk. Definisjonen over kan generaliseres til
+\begin{align}
+T\left(\sum \alpha_k \mathbf{x}_k\right) =\sum \alpha_k T \mathbf{x}_k
+\end{align}
+dette impliserer at
+\begin{align}
+T\mathbf{x} = \sum \alpha_k T \mathbf{e}_k
+\end{align}
+slik at $rng(T) = span(V)$, der $V=\{T \mathbf{e}_1,..., T \mathbf{e}_K\}$. For $T:\mathbb{R}^N\rightarrow \mathbb{R}^N$ så er det ekvivalnes mellom ikke-singularitet og masse greier. Det er en ideell situasjon siden det alltid eksisterer en unik løsning. I praksis må vi ofte finne tilnærmet løsning fordi hvis $T:\mathbb{R}^K\rightarrow \mathbb{R}^N$, der $K<N$, så kan det være slik at $\mathbf{y} \notin rng(T)$. Altså finnes det ingen $\mathbf{x}$ slik at $T\mathbf{x} = \mathbf{y}$. Vår beste løsning da er å finne $\mathbf{x}'$ som minimerer $\|\mathbf{y}-T\mathbf{x}'\|$. For å minimere avstand mellom to en vektor og et underrom får vi bruk for ortogonale projeksjoner, fordi løsningen er å gå den strakeste vegen. 
+\section{Ortogonale projeksjoner}
+To vektorer er ortogonale hvis $\langle \mathbf{x},\mathbf{y} \rangle = 0 \iff \mathbf{x} \perp \mathbf{y}$. Dette konseptet generaliserer også til andre objekt som vi kan definere indre produkt på, som f.eks. tilfeldige variabler. En vektor kan også være ortogonal på en mengde S
+\begin{align}
+\mathbf{x} \perp S \iff \mathbf{x} \perp \mathbf{z} \text{ for alle } \mathbf{z} \in S
+\end{align}
+Mengden av alle vektorer som er ortogonal på mengden S utgjør dets ortogonale komplement
+\begin{align}
+S^\perp = \{\mathbf{x}|\mathbf{x}\perp \mathbf{z},\text{ for alle } \mathbf{z} \in S \}
+\end{align}
+En mengde av vektorer $X$ er ortogonale hvis vektorene er parvise ortogonale $\mathbf{x}_j \perp \mathbf{x}_k$, $j \neq k$. Den er i tillegg ortonormal hvis $\|\mathbf{x}\| = 1$ for alle $\mathbf{x} \in X$. Dette er en veldig grei egenskap siden det gjør det enkelt å finne vektene i lineære kombinasjoner
+\begin{align}
+\mathbf{y}=\sum \alpha_k \mathbf{x}_k = \sum \langle \mathbf{y}, \mathbf{x}_k \rangle \mathbf{x}_k
+\end{align}
+Dette gjør de velegnet som basiser for vektorrom. Det eksisterer alltid ortonormal basiser og vi kan bruke algoritmer (eg. Gram-Schmidt) for å konstruere.
+
+Uansett, det store resultatet er ortogonale projeksjons theoremet! La S være et underrom av $\mathbb{R}^N$ og $\mathbf{y} \in \mathbb{R}^N$. Vi vil finne
+\begin{align}
+\hat{\mathbf{y}} = \argmin_{\tilde{\mathbf{y}} \in S} \| \tilde{\mathbf{y}}-\mathbf{y} \|
+\end{align}
+Theoremet sier da at dette har en unik løsning der $\mathbf{y}-\hat{\mathbf{y}} \perp S$. Merk at for alle andre $\mathbf{z} \in S$ så er 
+\begin{align}
+\|\mathbf{y}-\mathbf{z}\|^2 = \|\mathbf{y}-\hat{\mathbf{y}}\|^2 + \|\hat{\mathbf{y}}-\mathbf{z}\|^2.
+\end{align}
+Som et eksempel kan vi projektere $\mathbf{y}$ på $\mathbf{1}$. Vil finne $\hat{\mathbf{y}} \in span(\mathbf{1})$ som minimerer avstand til $\mathbf{y}$ og vet at $\langle\mathbf{y}-\alpha\mathbf{1},\mathbf{1}\rangle = 0$. Kan da finne $\alpha = \bar{y}_N$. Mer generelt kan vi betrakte projeksjon på et vektorrom S med flere dimensjoner. La $S=span(X)$, der $X:=\{\mathbf{x}_1,...,\mathbf{x}_K\}$.
+\begin{align}
+&\mathbf{y}-\hat{\mathbf{y}} \perp \mathbf{x}_k, \quad k=1,...K \\
+& \implies \mathbf{x}_k'(\mathbf{y}-\mathbf{X}\beta)= \mathbf{0},  \quad k=1,...,K\\
+& \implies \mathbf{X}'(\mathbf{y}-\mathbf{X}\beta) = \mathbf{0} \\
+& \implies \beta = \left(\mathbf{X}'\mathbf{X}\right)^{-1}\mathbf{X}'y
+\end{align}
+Det eksisterer en lineær transformasjon som utfører projeksjonen, $\mathbf{P}:\mathbf{y} \mapsto \hat{\mathbf{y}} = proj_S \mathbf{y}$. Fra utledningen over følger det at $\mathbf{P} = \mathbf{X}\left(\mathbf{X}'\mathbf{X}\right)^{-1}\mathbf{X}$. Denne transformasjonen har en del egenskaper som følger ganske intuitivt fra at det er en projeksjon. Ofte er vi også interessert i residualen, som vi kan finne med $\mathbf{M}:= \mathbf{I}-\mathbf{P}$.
+
+La nå $S$ ha en ortonormal basis $U$. Merk at $\mathbf{u}_j'\mathbf{u}_k = 0, j \neq k$ og lik 1 hvis $j = k$.  Det følger da at $\mathbf{U}'\mathbf{U} = \mathbf{I}$ slik at $\mathbf{P}=\mathbf{U}\mathbf{U}'$ og $\mathbf{P}\mathbf{y} = \sum \mathbf{u}_k \langle\mathbf{u}_k,\mathbf{y}\rangle$. Merk generelt at $\mathbf{y} \in span(X)$ alltid kan skrives som $\mathbf{X}\mathbf{b}$ for noen $\mathbf{b}$, men det kan være vanskelig å finne vektene i den lineære kombinasjonen. Med ortonormal basis blir dette enklere fordi vektene ikke "bidrar" i samme retninger og enhetslengde gjør det enkelt å finne riktig skalering... Har ikke helt intuisjonen på dette, men gir sånn omtrent mening.
+\section{Kvadratisk form}
+Den kvadratiske formen til en matrise $\mathbf{A}$ er $\mathbf{x}'\mathbf{A}\mathbf{x}$. Matrisen er positiv (semi-)definitt hvis $\mathbf{x}'\mathbf{A}\mathbf{x} (\geq) > 0$ for alle $\mathbf{x}$. Det er litt analog til om matrisen er positiv eller negativ...
+
+Merk at matriser på formen $\mathbf{B}'\mathbf{B}$ alltid er positiv (semi-)definitt fordi
+\begin{align}
+\mathbf{x}'\mathbf{B}'\mathbf{B}\mathbf{x} = (\mathbf{B}\mathbf{x})'(\mathbf{B}\mathbf{x})=\lVert \mathbf{B}\mathbf{x}\rVert^2 \geq 0
+\end{align}
+For hver positiv (semi-)definitt $\mathbf{A}$ er det mulig å dekomponere $\mathbf{A}=\mathbf{B}'\mathbf{B}$ der $\mathbf{B}$ ikke er unik. Kan for eksempel bruke Cholesky-dekomponering. Tror dette er litt analog til kvadratroten av positiv skalar.

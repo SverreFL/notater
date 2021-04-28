@@ -1,0 +1,707 @@
+\chapter{Økonometri}
+For meg er økonometri synonymt med programevaluering.\footnote{Økonometri omfatter også greier med (makroøkonomiske) tidsserier og estimering/kalibrering(?) av parametre i økonomiske modeller, men disse greiene vet jeg lite om. Det er forøvrig andre fagfelt som holder på med programevaluering og det er overlapp i problemstillinger og faglige tilnærminger. Det som kjennetegner økonometri er bruk av såkalte naturlige eksperiment og metoder for å analysere disse. I biostatistikk bruker de mer kontrollere eksperiment. Andre har mer naiv tilnærming for å isolere kausal effekt gjennom matching/justering for andre observerte egenskaper.} Vi bruker data til å estimere effekt av behandling på utfall til individer.\footnote{Terminologi stammer fra medisinske eskperiment. Det som betegnes som behandling kan være andre former for tiltak og reformer. Enhetene som blir eksponert for disse kan være aggregerte størrelser som foretak.} For å kvantifisere dette vil vi ideelt sett observere utfallene til hvert av individene i en verden der de blir eksponert for behandling og i en verden uten behandling. Dessverre er dette umulig siden kun ett av tilfellene kan intreffe, og vi kan dermed aldri kvantifisere individuelle behandlingseffekter. I praksis beregner vi gjennomsnittlige behandlingseffekter ved å sammeligne forskjell i gjennomsnittlig utfall til en behandlingsgruppe og en kontrollgruppe. For at denne observerte forskjellen skal gi et godt mål på behandlingseffekten må kontrollgruppen være en god \textit{proxy} for det kontrafaktiske utfallet til behandlingsgruppen dersom de ikke ble eksponert for behandling.
+\section{Programevaluering}
+Det er rimelig å betrakte kontrollgruppen som en proxy dersom de to gruppene er omtrent like bortsett fra at den éne ble eksponert for behandling. I så fall kan observerte forskjeller i utfall tilskrives denne ene dimensjonen der gruppene er forskjellig.\footnote{Noe som også impliserer at det ikke ville vært observerte forskjeller dersom de ikke fikk ulik eksponering for behandling. Med begrensede utvalg vil det alltid være litt tilfeldig variasjon, men dette abstraherer vi stort sett vekk fra når vi diskuterer kausalitet.} Det sentrale spørsmålet i programevaluering er hvorvidt dette er rimelig antagelse med de dataene som foreligger i analysen. Ettersom mange variabler som påvirker utfallet er uobserverte (og uobserverbare) kan det ikke testes med de gitte dataene, og må i stedet sannsynliggjøres gjennom en beskrivelse av hvordan data er generert. Vi skal nå se på tre ulike typer beskrivelser av hvordan eksponering for behandling er bestemt.
+
+Den første kategorien er tilfeldige eksperimenter der eksponering for behandling blir bestemt av forskere i henhold til en randomiseringsregel.\footnote{Kan være tilfeldig på hele utvalget eller tilfeldig innad i strata definert av observert egenskap, for eksempel kjønn.} Ettersom eksponeringen er tilfeldig vil det ikke være systematiske forskjeller mellom gruppene langs noen egenskaper, hverken observerte eller uobserverte. Tilfeldige eksperiment regnes som gullstandard i programevaluering siden antagelsen om at kontrollgruppen er god proxy er veldig troverdi. Det er likevel vesentlige begrensinger ved slike eksperiment. Det er mange interessante kausale spørsmål som ikke kan besvares på denne måten, enten fordi det er praktisk umulig, for dyrt eller uetisk. Det er også mange mange praktiske utfordringer, og det kan argumenteres for at de kan ha begrenset ekstern validitet.\footnote{For eksempel kan det være at folk oppfører seg annerledes hvis de vet at de er med på et eksperiment (den såkalte Hawthorne-effekten). Det er praktisk utfordring å få randomisert utvalg; for de som er med er det enkelt å dele inn i behandling og kontroll, men kan være systematisk skjevhet fra resten av populasjonen som vi vil generalisere til.} På tross av dette er det gjennomført en del eksperiment i stor skala og det har blitt gradvis mer fremtredende også i økonometri.\footnote{Eksempler på store eksperiment i er STAR som undersøkte effekt av klassestørrelse på barns utfall og noe greier med effekt av helseforsikring på pasientenes utgifter i USA. Eksperimenter er viktig i atferdsøkonomi og har blitt viktig del av utviklingsøkonomi.}
+
+En alternativ fremgangsmåte er å utnytte at ytre omstendinger kan skape variasjon i behandling selv om det ikke er planlagt som et tilfeldig eksperiment.\footnote{Tror vi betegner det som eksogen variasjon.} Det faktum at individene ikke selv velger egen eksponering for behandling gjør det ofte mer kredibelt at det ikke er systematiske forskjeller i uobserverte egenskaper. Et eksempel på en slik situasjon er at egenskaper ved institusjoner at eksponering for en behandling er bestemt ved om individ havner over eller under en noe abritrær \textit{cut-off}.\footnote{Noen eksempel er karakterkrav for å komme inn på skole og helsetiltak som avhenger av nyfødt barns vekt.} I den grad det er vanskelig for individ å strategisk velge side så blir behandling som om tilfeldig fordelt i populasjonen i nærheten av cut-off. Dersom hele grupper blir eksponert for ulike behandlinger avhengig av geografi (fordi ulike policy på ulik sted) eller fødselsalder (fordi endring i policy som rammer personer født etter gitt dato) har vi også verktøy for å sammenligne forskjeller og vurdere i hvilken grad det skyldes effekt av ulik eksponering for behandling. Vi kan også håndtere omstendigheter som skaper noe variasjon i behandling uten å bestemme det eksakt. Ved hjelp av såkalte instrumentelle variabler kan vi i store utvalg isolere variasjonen i behandling som skyldes den ytre omstendigheten.\footnote{Liker dårlig denne formuleringen siden IV i praksis bare er skalering av redusert form..}
+
+I fravær av slik eksogen variasjon kan det være fristende å stratifisere observasjonsdata og aggregere forskjell mellom behandling og kontroll innad i hvert strata. Selv om behandlings- og kontrollgruppen samlet sett er systematisk forskjellig kan vi konstruere delutvalg der individer med ulik eksponering for behandling er omtrent like langs andre observerte egenskaper. Vi kan da estimere behandlingseffekter innad i hvert delutval og forsøke å aggregere dette til en gjennomsnittlig behandlingseffekt i populasjonen. Denne fremgangsmåten kan motiveres med at individer som er like langs observerte egenskaper forhåpentligvis også er ganske like langs uobserverte egenskaper som kan påvirke utfallet. Problemet er at det alltid er en grunn til at individene velger ulik eksponering for behandling innad i hvert strata og det er lite kredibelt at denne grunnen ikke også påvirker utfallet.\footnote{Individer er sånn omtrent rasjonelle og vi kan betrakte eksponering for behandling som løsning på et optimeringsproblem. Det er lite rimelig at forskjellene bare er tilfeldig. Det kan skyldes ulike preferanser: de som spiser vitaminer større preferanse for 'sunnhet' og vil gjerne dermed være sunnere uavhengig av eventuell behandlingseffekt. Eller kanskje de kompenserer for usunt kosthold. Uansett: vanskelig å isolere behandlingseffekt fra andre systematiske forskjeller.} For å publisere i gode tidskrift er det nødvendig å ha et forskningsdesign som isolerer eksogen variasjon i behandling. Ellers regnes det som lite troverdig at kontrollgruppen er proxy for det kontrafaktiske utfallet til behandlingsgruppen i fravær av behandling, slik at de observerte forskjellene i utfall ikke samsvarer med kausal effekt av behandling.\footnote{Dette er til dels en konsekvens av den såkalte kredibilitetsrevolusjonen.}
+
+Jeg skal nå utlede et rammeverk som formaliserer idéen om kontrollgruppe som proxy.
+\subsection{Potensielle utfall}
+Vi har nå et rammeverk som lar oss beskrive relasjon mellom variabler og estimere dette fra data. Denne relasjonen består både av en eventuell kausal relasjon mellom variablene og spuriøs korrelasjon som følge av andre variabler som er korrelert med både utfall og forklaringsvariabler. Den kausale effekten kan defineres som differansen i de potensielle utfallene med og uten behandling. Det grunnleggende problemet er at kun én av tilstandene blir realisert for hver observasjon. Vi innfører notasjonen
+\begin{align}
+y_i = 
+\begin{cases}
+y_i^0, D_i = 0 \\
+y_i^1, D_i = 1 
+\end{cases}
+\end{align}
+som også kan skrives som
+\begin{align}
+y_i=y_i^0+D_i(y_i^1-y_i^0)
+\end{align}
+Det er ikke mulig å estimere individuell kausal effekt siden vi aldri kan observere de kontrafaktiske utfallene $y_i^1|D_i=0$ og $y_i^0|D_i=1$, men vi kan forsøke å estimere gjennomsnittlig effekt for en avgrenset populasjon ved å se på differansen i utfall til de som blir eksponert for behandlingen og kontrollgruppen som ikke blir eksponert. Intuisjonen bak denne sammenligningen er at utfallet til kontrollgruppen gir en proxy for det kontrafaktiske utfallet til behandlingsgruppen slik at den observerte differansen tilsvarer differanse i potensielle utfall. Uten randomisering vil observert differanse bestå av både kausal effekt og seleksjonsskjevhet.
+\begin{align}
+E[y_i|D_i=1]-E[y_i|D_i=0] =& E[y_i^1|D_i=1]-E[y_i^0|D_i=1] \\
++& E[y_i^0|D_i=1]-E[y_i^0|D_i=0]
+\end{align}
+For at denne naive sammenligningen mellom behandling og kontroll skal isolere kausal effekt trenger vi randomisering av behandling. Dette sikrer at potensielle utfall er uavhengig av behandling. Sagt på en annen måte; observert behandling gir oss ikke noe informasjon om kontrafaktisk utfall.
+\begin{align}
+(y_i^1,y_i^0) \indep D_i \implies E[y_i^j|D_i]=E[y_i^j], j=0,1
+\end{align}
+Vi kan utvide til setting der randomiseringen skjer betinget av observerbar egenskap\footnote{For eksempel at tilfeldig utvalg av 40\% av menn og 60\% av kvinner får behandling. Gitt at vi vet kjønn til observerasjon vil ikke informasjon om behandlingsstatus gi oss ny informasjon om forventet potensielle utfall med ulik eksponering for behandling}
+\begin{align}
+(y_i^1,y_i^0) \indep D_i|X \implies E[y_i^j|D_i,X]=E[y_i^j|X], j=0,1
+\end{align}
+Vi kan da bruke matching eller regresjon til å estimere denne effekten, noe jeg skal se på senere. I praksis er dette som oftest lite troverdig siden det er en grunn til at observasjonene i hver kategori valgte ulik behandling og det er lite troverdig at dette ikke også påvirker potensielle utfall. Vi trenger derfor et forskningsdesign som skaper tilfeldig (eksogen) variasjon i behandling. Vi kan analysere variasjon i behandling $D$ direkte dersom vi har randomisert eksperiment eller vi kan se på variasjonen som skyldes et instrument $Z$. En viktig kilde til eksogen variasjon er såkalte \textit{naturlige eksperiment}. En viktig kilde til slike eksperiment er kunnskap om institusjonelle regler... som vi skal analysere med regression discontinuity. Senere skal jeg også se på paneldata som lar oss kontrollere for uobservert heterogenitet som er konstant over tid.
+\subsection{Matching}
+Matching er strategi for å estimere behandlingseffekt ved å konstruere undergruppe med samme covariates, finne forskjell i gjennomsnittlig utfall til behandling og kontroll innad i hver undergruppe og aggregere forskjellene ved å finne et vektet gjennomsnitt av forskjellene. La $x$ være en diskret variabel og anta at CIA er oppfylt slik at $E[Y_i^j|D_i,X_i] = E[Y_i^j|X_i]$, $j=0,1$. Matching er fint siden vi kan knytte det direkte til CIA og finne estimator som er enkel utvalgsanalog. 
+\begin{align}
+\delta_{ate} &= E(y_i^1-y_i^0) \\
+&= E[E(y_i^1-y_i^0|x)] \\
+&=E[E(y_i^1|,D_i=1,x)-E(y_i^0|D_i=0,x)] \\
+&=E[E(y_i|,D_i=1,x)-E(y_i|D_i=0,x)] \\
+&= E[\delta_x] \\
+&= \sum_x \delta_x P(X=x)
+\end{align}
+Åpner for heterogenitet i behandlingseffekt avhengig av covariates (hvilken undergruppe). Vi er interessert i gjennomsnittlig behandlingseffekt for hele populasjon så gir større vekt til større undergrupper. Kan tilsvarende finne gjennomsnittlig behandlingseffekt for de som blir behandlet ved å i stedet vekte på betinget fordeling i stedet for marginal,
+\begin{align}
+\delta_{att} = \sum_x \delta_x P(X=x|D=1)
+\end{align}
+Kan finne utvalgsanalog til forventningene for å evaluere. Matching er greit å gjøre operativt dersom vi har et fåtall veldefinerte undergrupper, men hva hvis covariate er kontinuerlig? Hva hvis inndeling blir for fin slik at mange grupper der vi ikke både oppserverer behandling og kontroll? Kan delvis håndteres ved å minimere avstand. For hvert inidivid kan vi finne kontroll individ(er) som er mest mulig lik bortsett fra behandlingsstatus og aggregere opp individuelle behandlingseffekter,
+\begin{align}
+\hat{\delta}_{ATT} = \frac{1}{N_T}\sum_{i:d_i=1}\left(y_i-\sum_{j\in N(i)}w_{ij}y_i\right)
+\end{align}
+der $N(i)$ er indeksene til observasjon i et nabolag til observasjon $i$ og det vektene $w_{ij}$ avhenger av avstand til observasjon. Summerer til én slik at det blir et vektet gjennomsnitt.
+\subsection{Dårlig kontroll}
+Av og til kan det være fristende å kontrollere for variabler som er bestemt etter behandlingen. Dette er som oftest en dårlig idé siden behandling endrer sammensetning av undergruppene vi ser på slik at forskjellene i utfall ikke kan tilskrives en kausal effekt av behandlingen. Anta at myndighetene innfører et tiltak der et tilfeldig utvalg får gratis personlig trener ($D_i = 1$) og samtidig observerer utfallene til en kontrollgruppe ($D_i=0$). Vi kan se på gjennomsnittlig effekt av tiltaket på ulike utfall $y$ ved å beregne $E[y_i|D_i=1]-E[y_i|D_i=0]=E[y_i^1-y_i^0]$. Det er ikke nødvendig å betinge for andre variabler, men det kan øke presisjon til estimat og vi kan også bruke stratifisering til å undersøke heterogentitet i behandlingseffekt. Anta nå at vi vil undersøke effekt av tiltaket på undergruppen av observasjoner som trener etter at tiltaket blir iverksatt $(T_i = 1)$. Denne beslutningen kan avhenge av $D_i$ så vi kan skrive det opp i potensielt utfall rammeverk,
+\begin{align}
+&y_i = y_i^0 + D_i(y_i^1-y_i^0) \\
+&T_i = T_i^0 + D_i(T_i^1-T_i^0) 
+\end{align}
+Finner differanse i gjennomsnitt i undergruppe,
+\begin{align}
+&E[y_i|D_i=1,T_i=1]-E[y_i|D_i=0,T_i=1] \\
+&=E[y_i^1|T_i^1=1]-E[y_i^0|T_i^0=1] \\
+&=E[y_i^1|T_i^1=1]-E[y_i^0|T_i^1=1] \\
+&+E[y_i^0|T_i^1=1]-E[y_i^0|T_i^0=1]
+\end{align}
+der siste linje er seleksjonseffekt. I dette tilfelle vil seleksjonseffekten sannsynligvis være negativ siden gruppen som trener uavhengig av eksponering av tiltak gjerne har bedre utfall en gruppen som trener på tiltak. Dette skaper seleksjonseffekt selv om behandling i utgangspunktet var tilfeldig fordelt. Analogt så bør man være forsiktig med å legge til utfallsvariabler som kontroll i regresjoner også på observasjonsdata.
+\subsubsection{Propensity score matching}
+I stedet for å matche på $\mathbf{x} \in \mathbb{R}^k$ kan vi modellere sannsynlighet for at observasjon mottar behandling, $E[D_i=1|\mathbf{x}]:=p(\mathbf{x}) \in \mathbb{R}$, og matche på dette. Tror det kan forenkle problemet litt og det er i mange tilfeller enklere å modellere hvordan $\mathbf{x}$ påvirker sannsynlighet for behandling enn utfallet. På en annen side er fremgangsmåten litt mer \textit{non-standard}. Det er ulike valg av vekting, konstruering av feilledd mm. slik at konklusjon kan avhenge av valg til forsker. Noe av fordelen med regresjon er at alt er standardisert!
+\subsubsection{Regresjon som matchinng}
+Hvis vi har modell er saturert i diskret x og antar homogen behandlingseffekt,
+\begin{align}
+y= \sum_x d_{xi}\alpha_x+\delta_R D + u_i,
+\end{align}
+så kan det vises at 
+\begin{align}
+\delta_R = \frac{E[\sigma_D^2(X_i)\delta_X}{E[\sigma_D^2(X_i)}
+\end{align}
+der $\sigma_D^2(X_i) := E[(D_i-E[D_i|X_i)^2|X_i]$, betinget varians av $D_i$ gitt undergruppe $X_i$. Dette betyr at regresjon - siden det er type effektiv estimator som utnytter informasjon - legger mer vekt på grupper der det er større variasjon i behandling. Med dummy behandling vil den legge mer vekt på grupper der $P(D=1,X=x) \approx 0.5$.. i stedet for å bare se på størrelsen av gruppen. Har ikke så mye å si dersom behandlingseffekt er omtrent homogen, men hvis regresjon og matching gir veldig ulike resultat kan det være grunn til å tenke litt på hvorfor. 
+\subsection{Knytte potensielle utfall til regresjonsligning}
+For å knytte dette til kausalitet kan vi bruke potensielle utfall der parameter kan korrespondere med (gjennomsnittlig) kausal effekt. Anta først at $y_i^1-y_i^0 = \delta$.
+\begin{align}
+y_i &= y_i^0 + \delta D_i \\
+&= E[y_i^0]+\delta D_i + y_i^0-E[y_i^0] \\
+&= \alpha + \delta D_i + u_i \\
+\end{align}
+Ser nå at feilleddet har konkret innhold og hvis vi nå sier at $cov(D_i,u_i)=0$ så er dette en veldig sterk antagelse som impliserer at $cov(y_i^0,D_i) = 0$. Hvis vi åpner for heterogen behandlingseffekt får vi en tilfeldig koeffisient $\delta_i := y_i^1-y_i^0$ og ligningen kan skrives som
+\begin{align}
+y_i = E[y_i^0]+(E[y_i^1]-E[y_i^0])D_i + y_i^0-E[y_i^0]+ D_i\{(y_i^1-y_i^0-(E[y_i^1]-E[y_i^0])\}
+\end{align}
+der feilledd kan være korrelert med behandling vis de som har større effekt av behandling i større grad velger å eksponerer seg for den. Da vil lineær regresjon gi skjevt estimat av gjennomsnittlig behandlingseffekt $\delta := E[y_i^1]-E[y_i^0]$. Kan utvide til behandling med flere nivåer. La den nå være gitt ved $s$ der $s \in \{0,1,\ldots,\bar{s}\}$
+\begin{align}
+y_i = 
+\begin{cases}
+y_i^0, s_i = 0 \\
+y_i^1, s_i = 1 \\
+\vdots \\
+y_i^{\bar{s}}, s_i = \bar{s}
+\end{cases}
+\end{align}
+som mer kompakt kan skrives $y_i = f_i(s_i)$. Hvert individ har sin egen kurve med potensielle utfall $f_i(s)$, men vi observerer bare utfallet assosert med den realiserte eksponeringen $s=s_i$. Kan saturere modell og ha parameter for hvert nivå, men i praksis så modellerer vi med lineær funksjon som gir estimat av gjennomsnittlig behandlingseffekt ved å øke eksponering med ett nivå.
+\subsection{Målefeil}
+\subsection{Utelatte variabler}
+Jeg har lyst til å undersøke sammenhengen mellom antall år med skolegang $s$ og inntekt $y$. Det finnes ingen deterministisk funksjon som forklarer relasjonen siden personer med lik skolegang kan ha ulik lønn av andre grunner. Vi setter derfor opp en modell
+\begin{align}
+y=\alpha+\beta s + \epsilon
+\end{align}
+der det stokastiske feilleddet $\epsilon$ blir et mål på vår uvitenhet. Koeffisientene i ligningen over er ikke entydig bestemt siden vi får enhver $f(\cdot)$ kan definere $\epsilon = y-f(\cdot)$. Generelt så vil vi finne $f(\cdot)$ som minimerer $\| \epsilon \|$ og jeg har vist over at dette er CEF. På en annen side vil vi ha en enkel funksjon med parametre som vi kan tolke. Jeg har derfor avgrenset til å se på lineære funksjoner som er parametrisert med $\beta$. Ved å påføre restiksjonen $cov(s,\epsilon)=0$ korresponderer parameteren i ligningen over med PRF som er beste lineære tilnærming til CEF. Dette kan vi konsistent estimere med OLS og gir oss et greit sammendragsmål på \textit{assosiasjonen} mellom skolegang og inntekt. Gitt at CEF er tilnærmet lineær vil $\beta$ kunne tolkes som differansen i forventet inntekt mellom to individer med ett års differanse i skolegang. Denne differansen fanger både opp en eventuell kausal effekt av skolegang på inntekt og at individer med ulik skolegang er systematisk forskjellig på måter som påvirker inntekt. Det kan for eksempel tenkes at individ som velger lengre utdanning har høyere evner og motivasjon som vi kan benevne som $a$. Jeg skal nå undersøke mulighet til å isolere kausal effekt av skolegang og undersøke tolkningen av parametre i regresjonsmodeller.
+
+Vi har formelt definert kausal effekt som differanse i potensielle utfall. For å muliggjøre estimering av kausale effekter fra observasjonsdata der behandling ikke er tilfeldig kan det være lurt å beskrive den kausale prosessen som genererer utfallet. I et laboratorium kan vi i noen sammenhenger beskrive eksakt hvordan et utfall avhenger av egenskaper ved eksperimentet, $y=f(\mathbf{x})$. På grunn av målefeil kan det være små avvik fra sammenhengen. Hvis dette er tilfeldig støy så er $y=f(\mathbf{x})+\epsilon$ og $E[y|x]=f(\mathbf{x})$ slik at forventningsverdien gjenfanger den deterministiske, kausale sammenhengen. Det reduserer problemet til å estimere CEF. Virkeligheten er langt mer komplisert, men vi kan tenke på det som Guds laboratorium. I utgangspunktet kan vi tenke at fremtidige utfall er deterministisk bestemt av en fullstendig beskrivelse av verdens tilstand på et tidspunkt. La oss tenke på hva som bestemmer personers lønn.
+\begin{align}
+y=f(\mathbf{z})=\delta s +\gamma a + \beta ' \mathbf{x} + \epsilon
+\end{align}
+Vi antar at den deterministiske $f(\cdot)$ eksisterer, men den kan være vilkårlig komplisert. Det er bare fantasien som setter grenser. Jeg har forenklet den ved å anta at inntekt avhenger lineært av skole, evne og noen andre variabler $\mathbf{x}$. På et eller annet tidspunkt må vi nesten slutte å liste opp variabler. Samler sammen bidraget til resten av variablene i et tilfeldig støyledd $\epsilon$, der $E[\epsilon|s,a,\mathbf{x}]=\alpha$. Anta nå at vi observerer $(s,a,\mathbf{x})$. Ved å kjøre regresjon
+\begin{align}
+y=\alpha+\delta s +\gamma a + \beta ' \mathbf{x} + \epsilon
+\end{align}
+kan vi gjenfinne hele den kausale sammenhengen. Regresjon er verktøy for å estimere assosiasjon mellom variabler, men i dette tilfellet samsvarer det med den kausale sammenhengen. Anta nå at vi ikke kan observere $\mathbf{x}$. Vi legger det kumulative bidraget fra disse variablene inn i feilleddet, slik at den kausale sammenhengen nå er 
+\begin{align}
+y = \delta s +\gamma a + u
+\end{align}
+der $u:=\beta ' \mathbf{x} + \epsilon$. Hvis vi kjører regresjon
+\begin{align}
+y = \alpha +\delta s +\gamma a + u
+\end{align}
+så vil OLS bestemme parametrene ved å konstruere et feilledd $\hat{u}:=y-\hat{\alpha} +\hat{\delta} s +\hat{\gamma} a$ som er ukorrelert med $s$ og $a$. Dette vil kun samsvare (asymptotisk) med de kausale parametrene dersom feilleddet $u$ fra den kausale prosessen faktisk er ukorrelert med disse variablene. \footnote{Merk at feilleddet $u$ har en konkret tolkning utover å bare være det mekaniske avviket $y-f(\cdot)$.} Anta nå at $cov(s,u) = 0$ og $cov(a,u) \neq 0$. Kan vi fortsatt finne den kausale effekten av skolegang $(\delta)$?  Dette skjer dersom feilleddet konstruert ved OLS er ukorrelert med $s$. OLS lager et nytt feilledd $\hat{u}$.. hm... må se litt mer på dette. 
+\begin{align}
+\hat{u}=\phi a + v, cov(a,v) = 0
+\end{align}
+slik at
+\begin{align}
+y =  \alpha+\delta s + \phi a + v, \quad cov(s,v)=cov(a,v)=0
+\end{align}
+Ser at vi fortsatt finner $\delta$ ,men ikke $\gamma$. Generelt kan vi bare håpe å finne en kausal parameter og er ikke noe problem om de andre variablene er korrelert med feilledd. 
+
+Hva skjer dersom vi ikke observerer $a$, men likevel prøver å estimere kausal effekt fra observerte $(y,s)$? Vi kan vise at PRF i kort regresjon ikke samsvarer med kausale parameteren.
+\begin{align}
+\frac{cov(s,y)}{var(s)} = \frac{cov(s,\alpha + \delta s + \phi a + v)}{var(s)} = \delta + \phi \frac{cov(s,a)}{var(s)}
+\end{align}
+Merk at OLS alltid konsistent estimerer PRF, men PRF i den korte regresjonen ikke samsvarer med den kausale parameteren og at OLS derfor er forventningsskjev estimator for den parameteren vi egentlig er interessert i. Når det er selvseleksjon til behandling er det lite troverdig at vi kan obsevere alle \textit{confounding variables}. Vi trenger derfor en kilde til eksogen variasjon i behandling som gjør den ukorrelert med alle disse andre variablene. Dette bringer oss til instrumentelle variabler.
+\section{Instrumentelle variabler}
+For å kvantifisere effekt av behandling trenger vi i utgangspunktet eksogen variasjon for å unngå seleksjonsskjevhet. Når dette ikke er mulig kan vi forsøke å kontrollere for andre variabler som påvirker utfallet og som er korrelert med behandling.\footnote{Kan også bruke proxy for slike variabler; variabler som ikke selv inngår i kausal prosess, men som er korrelert med slike variabler og derfor fanger opp effekt fra disse.} Dette kan motiveres ved at det gjør CIA-antagelsen mer plausibel og det vil redusere bias fra enkle naive sammenligninger av utfall mellom behandling og kontroll, men estimatene vil ofte være lite kredible siden vi aldri kan utelukke at det er flere relevante utelatte variabler. Vi skal nå se på en alternativ fremgangsmåte som utnytter eksogen variasjon i en annen variabel enn selve behandlingen. Denne variabelen kan fungere som et instrument for behandlingen dersom den kun er assosiert med utfallet gjennom å påvirke eksponering for behandling. I den grad det eksisterer en assosiasjon mellom instrument og utfallet må dette skyldes behandlingen, og vi kan kvantifisere behandlingseffekten gjennom å skalere assosiasjonen med assosiasjonen mellom instrument og behandling.
+
+Instrumentelle variabler er derfor en helt annen strategi enn å kontrollere for utelatte variabler. I stedet for å finne variabler som er korrelert med disse, så prøver vi å finne en variabel som er ukorrelert med disse og gjerne egentlig ikke har noe med den kausale prosessen som bestemmer utfallet. Samtidig må det både være korrelert med behandling og ha eksogen variasjon. Det finnes mange kreative instrument i litteraturen, men jeg tror i praksis jeg bare vil bruke det til å analysere eksperiment med delvis compliance samt fuzzy regresjonsdiskontinuitet. 
+\subsection{Estimering}
+Formelt er det to kriterier for at en variabel $Z$ skal være et gyldig instrument for $D$:
+\begin{enumerate}
+\item Relevans: $cov(D,Z) \neq 0$
+\item Eksogenitet: $cov(D,\eta)$ = 0
+\end{enumerate}
+Kan da identifisere den strukturelle parameteren
+\begin{align}
+cov(y,Z) = cov(\alpha + \delta D + \eta,Z) = \delta cov(D,Z) \implies \delta = \frac{cov(y,Z)}{cov(D,Z)}
+\end{align}
+Dersom instrumentet er binært kan vi få et enklere uttrykk for estimatoren,
+\begin{align}
+&E[y_i|Z_i=1]-E[y_i|Z_i=0] =\\
+& \delta (E[ D_i|Z_i=1]-E[ D_i|Z_i=0]) + E[\eta_i|Z_i=1]-E[\eta_i|Z_i=0] \\
+&\implies \delta = \frac{E[y_i|Z_i=1]-E[y_i|Z_i=0]}{E[D_i|Z_i=1]-E[D_i|Z_i=0]}
+\end{align}
+gitt at $E[\eta_i|Z_i=1]-E[\eta_i|Z_i=0]=0$ og $E[D_i|Z_i=1]-E[D_i|Z_i=0] \neq 0$. Kan også motivere det som en momentestimatorer på matriseform, men synes egentlig at disse matrisegreiene ikke er så relevant for programevaluering siden jeg bare er interessert i én parameter...
+\begin{align}
+\mathbb{E}[\mathbf{z}\eta(\beta)]&=\mathbb{E}[\mathbf{z}(y-\mathbf{x}'\beta] = \mathbf{0}
+\implies \beta = \mathbb{E}[\mathbf{x}\mathbf{z}']^{-1}\mathbb{E}[\mathbf{z}y]
+\end{align}
+\subsection{Heterogen behandlingseffekt}
+Vi kan tenke at instrumentet setter i gang en kausal kjedereaksjon. Instrumentet påvirker eksponering for en behandling som igjen påvirker utfallet. I utgangspunktet kan utfallet avhenge av både verdi til instrument og behandling slik at det må skrives $y_i(d,z)$. Den første antagelsen vi gjør er at instrumentet kun påvirker utfallet gjennom behandlingen, slik at
+\begin{align}
+&y_i(d,1) = y(d,0) \\
+& \implies y_i(1,1) = y_i(1,0) :=y_i^1 \text{ og } y_i(0,1) = y_i(0,0) :=y_i^0
+\end{align}
+Denne antagelsen er ikke nødvendig for å finne kausal redusert form, altså kausal effekt av $Z$ på $y$, men er nødvendig for å isolere effekt av behandling $D$. Vi kan også skrive opp en såkalt \textit{first stage} som er analog til vanlig kausal effekt, men der \textit{behandling} er instrumentet og utfallet er behandling,
+\begin{align}
+D_i = D_i^0+Z_i(D_i^1-D_i^0) = \pi_0+\pi_{1i}Z_i+v_i
+\end{align}
+Den første antagelsen er at instrumentet er så godt som tilfeldig fordelt. Det betyr at den observerte eksponeringen ikke sier oss noen ting om de potensielle utfallene.
+\begin{align}
+[Y_i^1,Y_i^0 D_i^1,D_i^0] \indep Z_i
+\end{align}
+Dette er analog til tilfeldig fordeling av behandling og impliserer at $E[D_i|Z=j] =E[D_i^j]$ og $E[Y_i|Z=j] =E[Y_i^j]$ slik at vi kan lære kausal first stage og redusert form. For at dette skal være oppfylt i praksis må instrumentet ikke være informativt om uobserverte variabler som påvirker utfallet. Med andre ord så må observasjon med ulik eksponering for instrument ikke være systematisk forskjellige langs andre egenskaper som påvirker utfall. Vi kan utvide denne antagelsen til CIA ved å legge til covariates noen som kan gjøre det mer kredibelt hvis eksponering ikke kan betraktes som et rent eksperiment.
+
+Videre må instrumentet være relevant for behandling, altså at eksponering for instrument endrer behandling for noen av observasjonene
+\begin{align}
+E[D_i|Z_i=1]-E[D_i|Z_i=0] = E[D_i^1-D_i^0] =E[\pi_{1i}] \neq 0
+\end{align}
+Til slutt vil vi anta at first stage er monoton slik at $\pi_{1i} \geq 0$ eller $\pi_{1i} \leq 0$ for alle observasjonene. Det medfører at instrument enten øker eksponering for behandling eller reduserer det, men ikke begge deler. Vi kan dele populasjonen inn i fire kategorier ut fra hvordan instrument påvirker deres behandlingsstatus,
+\begin{enumerate}
+\item \textit{Always takers} der $D_i^1=D_i^1$ og $\pi_{1i}=0$. 
+\item \textit{Never takers} der $D_i^1=D_i^0$ og $\pi_{1i}=0$. 
+\item \textit{Compliers} der $D_i^1=1$ og $D_i^0=0$ og $\pi_{1i}=...$. hm.  
+\item \textit{Defiers} der $D_i^1=1$ og $D_i^0=0$.
+\end{enumerate}
+Når vi bruker instrument isolerer vi den variasjonen i eksponering i behandling som er skapt av instrumentet. Siden vi ekskluderer \textit{defiers} per antagelse, så vil all all variasjon skyldes compliers og vi estimerer $E[y_i^1-y_i^0|\textit{complier}]$. Med antagelse om konstant behandlingseffekt kan dette generaliseres som gjennomsnittlig behandlingseffekt for populasjonen, men i praksis kan compliers være systematisk forskjellig fra de andre gruppene. Med heterogen behandlingseffekt isolerer vi bare den lokale gjennomsnittlige behandlingseffekt for compliers. Gitt de fire antagelsene:
+\begin{enumerate}
+\item Eksklusjonskriteriet, eksklusiv kausal kanal gjennom behandling $D_i$
+\item (Betinget) uavhengighetskriteriet, instrument er så godt som tilfeldig fordelt
+\item Relevans, kausal first stage
+\item Monotoniet
+\end{enumerate}
+kan jeg vise at wald er LATE. Med andre ord:
+\begin{align}
+\frac{E[y_i|Z_i=1]-E[y_i|Z_i=0]}{E[D_i|Z_i=1]-E[D_i|Z_i=0]} = E[y_i^1-y_i^1|D_i^1>D_i^0]
+\end{align}
+For å ta beviset begynne vi med nevneren,
+\begin{align}
+&E[y_i|Z_i=1]-E[y_i|Z_i=0] \\
+&= E[y_i^0+D_i^1(y_i^1-y_i^0)|Z_i=1] - E[y_i^0+D_i^0(y_i^1-y_i^0)|Z_i=0] \\
+&= E[y_i^0+D_i^1(y_i^1-y_i^0)] - E[y_i^0+D_i^0(y_i^1-y_i^0)] \\
+&= E[(D_i^1-D_i^0)(y_i^1-y_i^0)] \\
+&= E[y_i^1-y_i^0)|(D_i^1>D_i^0)P(D_i^1>D_i^0)
+\end{align}
+Ser at den reduserte formen fanger opp effekt på \textit{compliers} skalert opp med andelen \textit{compliers}. Skal deretter se at \textit{first stage} i nevneren gir andel compliers,
+\begin{align}
+&E[D_i|Z_i=1]-E[D_i|Z_i=0] \\
+&= E[D_i^0+Z_i(D_i^1-D_i^0)|Z_i=1] - E[D_i^0+Z_i(D_i^1-D_i^0)|Z_i=0] \\
+&= E[D_i^1-D_i^0] \\
+&= E[D_i^1-D_i^0|D_i^1>D_i^0]P(D_i^1>D_i^0) \\
+& = P(D_i^1>D_i^0)
+\end{align}
+Vi trenger antagelse om monotonitet fordi ...
+
+Vi trenger ikke antagelsen dersom vi antar konstant behandlingseffekt fordi ...
+\subsubsection{Praktiske hensyn}
+Må vurdere antagelse om monotiniset som ikke kan testes. Må også vurdere antagelsen om eksogen variasjon i instrument. Dette kan ikke testes fra data. Det vi derimot kan teste er relevansen til instrumentet. Det gjør vi med hypotesetest i first stage. Vanlig huskeregel er at $F>10$, men ny studie viser at dette er for lite. Med lite relevant instrument så blir estimatet usikkert. Dette er ikke problem i seg selv, men problem at standardfeil og fordeling bygger på asymptotisk teori og tar veldig lang tid å konvergere med svak instrument slik at rapporterte størrelser er feil i små utvalg slik at inferens blir feil.
+
+Har tester for overidentifikasjon og om IV/OLS konvergerer mot ulike parametre, men er ikke så interessant.
+\subsubsection{Karakterisere compliant subpopulasjon}
+Vi finner en lokal behandlingseffekt for delpopulasjonen som faktisk responderer på instrumentet. Heldigvis for oss er dette gjerne effekten som er mest interessant fordi dette er personer som er på marginen i valg om å ta behandling og dermed er mest sensitiv for policy som gjør det enklere tilgjengelig. Vi vil uansett ønske å si noe om andelen \textit{compliers} og hvordan de skiller seg fra resten av populasjonen langs andre observerte egenskaper.
+
+Ettersom vi ikke kan observere både $D_i^1$ og $D_i^0$ kan vi aldri observere om gitt enhet er \textit{compliant} eller \textit{always-taker}. Vi kan aldri vite om en person uansett ville tatt behandlingen selv uten eksponering for instrumentet. Likevel kan vi forsøke å beskrive egenskaper til \textit{compliers}. Vi kan finne andel fra first stage og vi kan visstnok også beskrive den betingede fordelingen av andre covariates.
+\subsection{Eksperiment med delvis compliance}
+I mange eksperiment er det tilfeldig utvalg som blir plassert i gruppen som får tilbud om behandling, men det er ikke alltid mulig å tvinge observasjonene til å eksponere seg for behandling. Dette medfører selv-seleksjon og det er dermed ikke mulig å finne den kausale behandlingseffekten ved å sammenligne utfall til de som blir behandlet og de som ikke. Vi kan finne kausal effekt av å bli \textit{tilbudt} behandlings som betegnes som \textit{Intention to treat}, men dette er ofte ikke like interessant. For å finne kausal effekt kan vi bruke instrumentvariabel der tildeling til behandlingsgruppe er instrument. Dette vil da være helt analogt med den mer generelle diskusjonen over, bortsett fra at vi nå kan ekskludere \textit{always-takers} dersom kun behandlingsgruppen har tilgang på eksponering for behandling. Dette forenkler formelen til
+\begin{align}
+\frac{E[y_i|Z_i=1]-E[y_i|Z_i=0]}{P[D_i|Z_i=1]} = E[y_i^1-y_i^1|D_i=1]
+\end{align}
+Instrumentelle variabler ble først benyttet til å estimere parametre i simultane ligningssystem. Jeg begynner med å beskrive dette fordi mye av terminologien stammer derfra. I praksis brukes det som oftest til å håndtere problemet med utelatte variabler. Det er enklest å motivere det i tilfeldige eksperimenter med delvis \textit{coompliace}. Vi kan deretter bruke det til å analysere naturlige eksperimenter.
+\subsection{Simultane ligningssystem}
+Det klassiske eksempelet på simultant ligningssystem er tilbuds- og etterspørselskurven. Pris og kvantum i marked blir bestemt i samspill av tilbudskurve og etterspørselskurve,
+\begin{align}
+Q^s &= \alpha_0+\beta_0 P + \gamma_0 z + u_0 \\
+Q^d &= \alpha_1+\beta_1 P + u_1 \\
+Q &= Q^s=Q^d
+\end{align}
+der $z$ er observerbar variabel som skifter kurven og vi antar at helning er konstant over tid.\textit{Eventuelt kan vi betrakte det som en gjennomsnittlig helning og det blir litt analogt til heterogen behandlingseffekt...} Vi sier at tilbuds- og etterspørselskurven er strukturelle ligninger der parameterne at en kausal tolkning.\footnote{Vi kan også si at de inneholder såkalte \textit{atferdsparametre} som sier noe om endring i atferd dersom vi endrer egenskap ved systemet} Konkret så sier det oss endring i henholdsvis tilbudt og etterspurt kvantum dersom vi endrer pris med én enhet og holder alt annet likt. Slike strukturelle sammenhenger er ofte ikke mulig å observere fra tilgjengelig data, så da må de nødvendigvis komme fra teori. Jeg skal nå se på muligheten til å lære $(\beta_0, \beta_1)$ fra data. Utfordringen vår er at $P$ er \textit{endogen}.\footnote{Litt usikker på om endogen har en presis definisjon. Kan tenke at det er korrelert med feilledd, men endogenitet kan jo også henspille på at variabelen blir bestemt innenfor systemet...}. 
+\begin{align}
+Q &= \alpha_0+\beta_0 P + \gamma_0 z + u_0 \\
+Q &= \alpha_0+\beta_0 [(Q-\alpha_1 - u_1)/\beta_1] + \gamma_0 z + u_0 \\
+Q &= \frac{1}{1-\frac{\beta_0}{\beta_1}}\left[ \alpha_0 -\frac{\beta_0}{\beta_1}\alpha_1 + \gamma_0 z + u_0 - \frac{\beta_0}{\beta_1}u_1\right] \\
+Q &= \pi_0 + \pi_1z + v
+\end{align}
+... det er intuitivt at vi ikke kan ha eksogen variasjon i $P$ siden det også påvirker etterspørsel, men ser ikke med én gang korrelasjon i feilledd. Merk at siste ligning er såkalt \textit{redusert form} fordi vi skriver en \textit{endogen} variabel som funksjon av \textit{eksogene} variabler og parametre. De ulike parametrene i redusert form er ikke-lineære funksjoner av underliggende strukturelle parametre og har ikke interessant tolkning i seg selv. Utfordringen er å lære atferdsparameterne fra enkeltligninger og det er her IV kommer inn.
+
+Grafisk så gir det mening av vi kan bruke $z$ til å lære $\beta_1$ fordi den skifter tilbudskurven opp og ned. Vil knytte dette til IV estimator.
+Til slutt kan vi utlede estimatoren med utgangspunkt i simultant ligningssystem som beskrevet over. Vi har en strukturell ligning med en kausal parameter som vi vil estimere
+\begin{align}
+y = \alpha + \delta D + \eta
+\end{align}
+I første omgang tar jeg ikke med kontrollvariabler, men jeg kan utvide senere. Jeg tenker at motivasjonen for å inkludere disse er litt analogt til kontrollvariabler i vanlig regresjon. For det første kan det øke presisjonen til estimatoren ved å redusere feilleddet. Videre kan det gjør antagelsen om eksogenitet mer kredibel ved at instrumentet er så godt som tilfeldig fordelt innenfor hvert strata (delgruppe). Betingelsen om relevans blir da et spørsmål om \textit{partiell kovarians}; det vil si at det korrelasjon mellom instrument og behandling innenfor strata. Dette kan vi undersøke med helningskoeffisient i multivariat regresjon. Uansett, vi kan ikke lære parameter ved å konstruere residual som er ukorrelert med $D$ i utvalget fordi $D$ er \textit{endogen}. Vi modellerer eksponering for behandling i såkalt \textit{first stage},
+\begin{align}
+D = \pi_{00}+\pi_{01}z+v_0
+\end{align}
+som ikke er en strukturligning. Dette beskriver bare deskriptiv sammenheng i data og det er derfor slik at $cov(z,v_0=0$ per konstruksjon. Det er et verktøy for å finne kausal parameter. Vi finner redusert form ved å plugge first stage inn i strukturligningen,
+\begin{align}
+y &= \alpha + \delta [pi_{00}+\pi_{01}z+v_0] + \eta \\
+y &= \alpha + \delta pi_{00} + \delta \pi_{01}z   +\eta+\delta v_0 \\
+y &= \pi_{10} + \pi_{11} z + v_1
+\end{align}
+der $\pi_{11} := \delta \pi_{01} $. Merk at $cov(z,v_0)=0$ per konstruksjon, men trenger også at $cov(z,\eta)=0$ for at $cov(z,v_1)=0$ slik at vi kan lære $\pi_{11}$.\footnote{vet også at jeg trenger $\pi_{01} \neq 0$ men klarer ikke se hvordan det kommer inn her.} Kan nå se to nye strategier for å lære $\delta$,
+\begin{enumerate}
+\item Kjøre first stage og redusert form separat, $\delta = \pi_{11}/\pi_{01}$ 
+\item Plugge $\hat{D} = pi_{00}+\pi_{01}z $ inn for $D$ i strukturligning og kjøre den.
+\end{enumerate}
+\subsection{Generalisering av wald}
+Jeg kan utvide dette til å se på flere instrument der vi finner den lineære kombinasjonen som er mest mulig korrelert med $D$. Dette finner vi uansett i first stage, så ikke noe problem å legge til flere. Det er ikke nødvendigvis så interessant siden hvert instrument estimerer en instrument-spesifikk lokal behandlingseffekt, det vil si behandlingseffekt fra delpopulasjon som \text{complier} til det gitte instrument. Når vi kombinerer får vi en saus; et vektet gjennomsnitt. Jeg starter heller enkelt med å se på wald-estimatorer som er spesialtilfelle av IV der både instrument og behandling er dummyvariabler.
+\begin{align}
+\delta = \frac{E[Y|Z=1]-E[Y|Z=0]}{E[Y|D=1]-E[Y|D=0]}
+\end{align}
+\section{Regresjonsdiskontinuitet}
+Regresjonsdiskontinuitet utnytter at regler som bestemmer eksponering for behandling har vilkårlige cutoffs og at det er begrenset mulighet for observasjonene til  tilpasse seg eksakt hvilken side den havner på.\footnote{Det finnes vist to tilnærminger. Continuity based og basert på lokal randomisering. Vet ikke helt hva som er forskjell i praksis} Mer formelt er sannsynlighet for å bli eksponert for behandling. er diskontinuerlig i en verdi $s_0$ av en såkalt \textit{running variable} $s$. Dette kan for eksempel være en reform som ble innført på en gitt dato $s$, institusjonelle regler som gjør at enheter som ikke oppnår en gitt verdi av $s$ må innføre tiltak eller at man en trenger en viss score $s$ for å få en gevinst. I skarp rdd er behandlingen da for eksempel $D_i = I\{s_i \geqslant s_0)$. Hvis det er tilfeldig hvilken side av cutoff $s_0$ observasjone havner vil ikke dette si oss noe om potensielle utfall i fravær av behandling slik at differanse i utfall identifiserer kausal effekt. Dersom det ikke er mulig for enhetene å eksakt bestemme sin verdi av $s$ er det kredibelt at det er tilfeldig for et intervall rundt $s_0$.
+
+Det er en utfordring at forventet utfall uten behandling avhenger av $s$. Det kan være både fordi det eksisterer en direkte sammenheng mellom $s$ og utfallet $y$, men også fordi andre variabler som påvirker utfall er korrelert med $s$. Vi modellerer derfor sammenhengen $\mathbb{E}[y|s]$ og bruker eventuell diskontinuitet i $s_0$ som estimat på kausal effekt. Det er også mulig å knytte til potensielle utfall. Anta at $\mathbb{E}[y_i^0|s_i] = f(s_i)$ og at det er konstant effekt slik at $y_i^1=y_i^0+\rho$. Da er
+\begin{align}
+\mathbb{E}[y_i|s_i] &= 
+\begin{cases}
+\mathbb{E}[y_i^0|s_i]=f(s_i),\quad\quad\quad s_i < s_0 \\
+\mathbb{E}[y_i^1|s_i]=f(s_i) + \rho, \quad\, s_i \geqslant s_0
+\end{cases} \\
+& = f(s_i)+\rho D_i
+\end{align}
+der $D_i := I\{s_i \geqslant s_0\}$. Dette impliserer at
+\begin{align}
+y_i &= \mathbb{E}[y_i|s_i] + (y_i -\mathbb{E}[y_i|s_i]) \\
+&= f(s_i)+\rho D_i + u_i
+\end{align}
+Vi kan spesifisere en parametrisk form på $f(\cdot)$ som kan estimereres med OLS, for eksempel en polynom av orden $p$. Da blir ligningen
+\begin{align}
+y_i = \alpha +\beta_1s_{1i}+...+\beta_ps^p_{i}+\rho D_i + u_i
+\end{align}
+Det er også mulig å generalisere til ulik $f(s)$ på hver side av $s_0$. Dette kan gjøres paramterisk ved å ha ulike parametre i polynom og interkasjon med indikator for om det er over $s_0$. Blir litt sånn som splines. Ellers kan vi også bruke ikke-parametrisk lokal regresjon. I alle tilfeller er behandlingseffekten identifisert av
+\begin{align}
+\rho = \lim_{s\to s_0 ^+}E[y|s]-\lim_{s\to s_0 ^-}E[y|s]
+\end{align}
+
+Det er nødvendig å spesifisere et intervall rundt cutoff, $[s_{min}, s_{max}]$, som avgrenser hvilke observasjoner vi betrakter.\footnote{Det finnes data-driven måter å gjøre dette på slik at vi slipper å velge det ad-hoc.} Lengden på intervallet omtales som \textit{bandwidth}. Et lengre bandwith medfører flere observasjoner som kan mer presise estimat, men medfører også at observasjonene blir mer ulike. Jo lenger vekk fra $s_0$, jo mer sannsynlig at observasjoner er ulike langs andre dimensjoner. Dette gjelder spesielt hvis observasjonene kan tilpasse seg for oppnå payoff hvis $s > s_0$. 
+
+Det er viktig å treffe med funksjonell form på $f(\cdot)$ for å få riktig estimat på diskontinuiten. Hvis den modelleres som med en lineær likning vil ikke-linearitet kunne bli fanget opp som en diskontinuitet. Det er vanlig å bruke polynom, splines eller ikke-parametrisk lokal regresjon som er vektet med en kernel. Som alltid er det ikke én metode som dominerer; valg av struktur avhenger av antall observasjoner og hvor fleksibel funksjonen må være for å fange funksjonell form. Det er en klassisk bias-varians tradeoff.  
+
+For at strategien skal identifisere kausal effekt kan det ikke være slik at andre ting endres brått i $s_0$. For eksempel kan det være flere reformer som innføres samtidig, flere ting som endres når en person blir pensjonist. Da vil vi ikke diskontinuiteten identifisere akkurat den endringen vi er interessert i. Det må også være tilfeldig hvilken side observasjonen havner på. Hvis det er strategisk selv-selektering ved at observasjon bevisst velger $ s \lessgtr s_0$ kan de være systematisk forskjellig langs uobserverte variabler.
+
+Strategi for å underbygge kredibilitet til identifiserende antagelse:
+\begin{enumerate}
+\item Density test: Vil at sannsynlighetstetthet til $s$ skal være kontinuerlig rundt $s_0$. Hvis de klumper seg sammen på éne siden gir det indikasjon på strategisk selvseleksjon.
+\item Covariate balance: Vil at andre variabler ikke skal endres brått i $s_0$. Kan ikke observere alt, men kan kjøre opplegget med andre covariates vi observerer som utfall og se om det er diskontinuitet. Alternativt kan vi bare se om de har like gjennomsnitt.. men føler at vi kan håndtere at det varierer med s..
+\item Placebo-tester: Vil ikke se hopp der vi ikke forventer hopp. Kan kjøre opplegget med andre verdier av $s$ som cut-off. 
+\end{enumerate}
+\subsection{Fuzzy rdd}
+Diskontinuerlig hopp i sannsynlighet for eksponering for behandling i $s=s_0$, 
+\begin{align}
+P(D=1|x) = 
+\begin{cases} g_0(x), x < x_0 \\
+g_1(x), x \geq x_0
+\end{cases} \\
+= g_0(x) + I\{x \geq x_0\}[g_1(x)-g_0(x)] 
+\end{align}
+bruker det som first stage men er litt usikker på praktisk gjennomføring..
+\section{Paneldata}
+Paneldata er datastruktur der vi har flere observasjoner fra ulike grupper eller gjentatte observasjon av individ.\footnote{Det er litt glidende overgangs fra krysseksjonsdata siden vi ikke trenger tidsdimensjon. Poeng at vi har to (eller flere) indekser ut fra gruppetilhørighet, men kan kjøre dummy regresjons i stedet... Det finnes stor litteratur om multi-level modelling og såkalte random effects som jeg føler at ikke er så relevant for programevaluering dersom behandling ikke er tilfeldig fordelt.} Det har gode egenskaper i programevaluering siden vi kan se på forskjeller i forskjeller til behandling og kontrollgruppe i stedet for absolutte nivåer.\footnote{Ekvivalent kan vi isolere behandlingseffekt ved å se på variasjon innad i gruppe..} Dette gjør at vi kan dekomponere feilledd og se bort fra den komponeneten som er konstant for gruppen. Det gjør det mer kredibelt at behandling er ukorrelert med den gjenstående komponenenten av feilleddet og kan redusere bias, men det er fortsatt en sterk antagelse. Vi kan jo ikke kvantifisere effekt av en gitt behandling dersom den er korrelert med bruk av annen behandling som vi ikke observerer.
+
+Det er også en utfordring at det kan være lite variasjon i behandling innad i gruppen slik at estimatene blir usikre. Det medfører også at de kan være mer sensitive for målefeil en krysseksjonsdata..
+\subsection{Dekomponering av feilledd}
+Anta at marginal kausal effekt av behandling $x$ på utfall $y$ er konstant $\partial y/\partial x = \beta$, som verken avhenger av mengden behandling eller andre egenskaper til enheten. Dette medfører at 
+\begin{align}
+y=\beta x + (y-\beta x) = \beta x + u
+\end{align}
+der $u :=(y-\beta x)$ representerer det kumulative bidraget til utfallet av alle andre variabler. Jeg vil at feilleddet skal ha forventning lik null, så jeg sentrerer variabelen og omdefinerer,
+\begin{align}
+y = \beta x + \mathbb{E}[u]+(u-\mathbb{E}[u]) = \beta x + \alpha + u_c
+\end{align}
+der jeg heretter lar $u_c := u$.
+La $d(i)$ være dummy som indikerer om observasjonen tilhører gruppe $i$. Vi kan da dekomponere feilleddet,
+\begin{align}
+u = \mathbb{E}[u|d(i)] + (u-\mathbb{E}[u|d(i)] ) = \alpha_i+\epsilon
+\end{align}
+slik at ligningen kan skrives som
+\begin{align}
+y_{it} = \alpha + \beta x_{it}+\alpha_i+\epsilon_{it}
+\end{align}
+der $\alpha_i$ er en parameter som fanger opp uobservert heterogenitet. Det er bidraget av uobserverte variabler som er felles innad i gruppe. Tror jeg kan tenke på det som konkrete variabler eller bare dekomponering og projektering av tilfeldig variabel... Betegnes som fast-effekt fordi den er konstant innad i gruppe, f.eks. alle egenskaper innadd i familie som ikke varierer (foreldres utdanningsnivå?). Jeg kan estimere $\beta$ konsistent med OLS dersom $cov(x_{it},\epsilon_{it}) = 0$. Denne antagelsen er mer kredibel nå som jeg fått den fasteffekten ut av feilleddet, men det er fortsatt en ganske sterk antagelse på observasjonsdata. Hvis det er uobserverte ting som påvirker utfallet og samvarierer med behandlingen så kan vi ikke isolere effekten av denne. Tenke for eksempel om vi kjører to behandlingen samtidig og kun observerer eksponering for ene. Tror vi kan bruke instrument på samme måte som i krysseksjon ved å sette det opp på first-difference form, men vet lite om dette.
+\subsection{Identifikasjon}
+ Skal forsøke å formalisere dette med rammeverket for potensielle utfall. Anta heretter at $i$ er individ og $t$ er tid. Begynner med å anta at at eksponering for behandling er så godt som tilfeldig fordelt betinget av egenskaper ved individet som er konstant over tid $A_i$, tidspunkt $t$ og noen andre observerte covariates $\mathbf{x}_{it}$ som kan variere over tid for hvert individ,
+\begin{align}
+&y_{it}^0 \indep D_{it}|\mathbf{x}_{it},A_i,t \\
+& \implies E[y_{it}^0|\mathbf{x}_{it},A_i,t,D_{it}] = E[y_{it}^0|\mathbf{x}_{it},A_i,t]
+\end{align}
+Antar en lineær en lineær modell,
+\begin{align}
+E[y_{it}^0|\mathbf{x}_{it},A_i,t] = \alpha + \delta_t+A_i'\gamma+\mathbf{x}_{it}\beta
+\end{align}
+Tror vi kun kan estimere en additativ kausal effekt,
+\begin{align}
+&E[y_{it}^1|\mathbf{x}_{it},A_i,t] = E[y_{it}^0|\mathbf{x}_{it},A_i,t]+\delta \\
+&\implies E[y_{it}|\mathbf{x}_{it},A_i,t,D_{it}] = \alpha + \delta_t+A_i'\gamma+\mathbf{x}_{it}\beta + \delta D_{it} \\
+&\implies y_{it} = \alpha_i + \delta_t+\mathbf{x}_{it}\beta + \delta D_{it} + \epsilon_{it}
+\end{align}
+der $\alpha_i := \alpha + A_i' \gamma$ og $\epsilon_{it} := y_{it}^0-E[y_{it}^0|\mathbf{x}_{it},A_i,t]$.\footnote{Vet ikke hvorfor det ikke er $\epsilon_{it} := y_{it}-E[y_{it}|..]$ Må se på dette senere} 
+\subsection{Estimering}
+Si litt high level om dette. I praksis knyttes til estimering av ligningsystem.. stacker matriser og sånn, blir heavy notasjon i lineær algebra. Kan også si noe om forskjell på fixed og random effects.
+\subsubsection{Fixed effects (within)}
+Vi vil se på variasjon innad i gruppe. En naturlig måte er å demeane alle variabler innad i hver gruppe. Finner først gjennomsnitt i hver gruppe, der jeg åpner for at antallet medlemmer kan variere.\footnote{Såkalt ubalansert panel. Ikke stort problem dersom ikke skyldes systematisk skjevt frafall som er brudd på forutsetning om tilfeldig utvalg.}
+\begin{align}
+\frac{1}{T(i)}\sum_t y_{it} &= \frac{1}{T(i)}\sum_t[ \alpha + \beta x_{it}+\alpha_i+\epsilon_{it}] \\
+\bar{y}_i &= \alpha + \beta \bar{x}_i + \alpha_i + \bar{\epsilon}_i
+\end{align}
+Deretter trekker jeg dette fra hver observasjon
+\begin{align}
+\ddot{y}_{it} := y_{it}-\bar{y}_i = \beta \ddot {x}_{it} + \ddot{\epsilon}_{it}
+\end{align}
+slik at vi kun trenger at $cov(x_{it},\epsilon_{it}) = 0$.\footnote{Tror det er ekvivalent med $cov(\ddot{x}_{it},\ddot{\epsilon}_{it}) = 0$.. kunne kanskje vist.}
+Alternativt kan jeg bruke dummies til eksplisitt å estimere fast-effektene. Dette illustrerer litt koblingen mellom panel og dummies generelt. Ved å introdusere dummies så definerer man eksplisitt undergrupper og identifiserer effekt av behandling ved å se på variasjon innad i gruppene. Således kan jo regresjon med kjønnsdummy betraktes som panel der hvert kjønn utgjør gruppe. 
+\subsubsection{Pooled OLS}
+\subsubsection{Random effects}
+Betrakte $\alpha_i$ som tilfeldig variabel. For at det estimator skal være konsistent må vi anta at $cov(x_{it},\alpha_i) = 0$ slik at det egentlig ikke er noe stort poeng i å bruke panel struktur, bortsett fra at vi kan bruke strukturen til å få mer effektiv estimator enn vanlig OLS. Denne strukturen utnyttes gjennom feasible generalized least square (FGLS). Tror ikke det er veldig stort poeng, bortsett fra at det ikke er kosher.
+
+Det kan derimot være relevant å modellere på denne måten dersom man ikke er interessert i kausal parameter, men kun endring i forvetningsverdi... bruker da MLE til å estimere.
+
+Kan bruke såkalt hausmannstest for å vurdere om $cov(x_{it},\alpha_i)=0$. Hvis den er oppfylt vil både F.E og R.E estimatorene være konsistent, men hvis den ikke er oppfylt vil de konvergere mot ulike størrelser. Huasmann gir oss test som sier om differansen er stor nok til at vi kan forkaste nullhypotesen om at $cov(x_{it},\alpha_i)=0$. 
+
+\subsubsection{Between estimator}
+En mulig strategi er å kollapse variablene innad i hver gruppe slik at vi bare har gjennomsnittene. Mister variasjon innad i gruppe (tidsdimensjon hvis gjentatt observasjon av individ) og ser bare på forskjeller mellom grupper. Kan identifisere kausaleffekt hvis gjennomsnittlig behandling ikke er korrelert med uobservert heterogenitet $\alpha_i$, men det vil være en lite effektiv estimatorer siden vi mister mye informasjon,
+\begin{align}
+\bar{y}_i = \bar{\mathbf{x}}_i\beta + \bar{u}_i
+\end{align}
+\subsubsection{GLS som vektet gjennomsnitt av within on between}
+hm. kan ta resultat og intuisjon, men utledning er ganske fucked. kunne brukt det som anledning til å si noe om GLS generelt, men gjør det et annet sted. Angrist sier at GLS er teit uansett, men kan gi litt intuisjon om 2SLS som GLS på wald estimatorer... eller noe sånt.
+\subsection{Dynamisk panel}
+Kan ønske å utnytte tidsseriedimensjonen i panel, altså det faktum at vi observerer samme individer på flere tidspunkt, til å modellere dynamikk. For det første kan det være slik at en behandling $x_{it}$ påvirker utfall ikke bare i tidspunkt $t$ men også i fremtidige perioder $t+1,t+2,..$. Dette kan vi ta hensyn til ved å inkludere laggede uavhengige variabler. Vi kan også ha lyst til å ta med lagged avhengig variabel. Tror at motivasjonen for dette er at vi vil sammenligne likt med likt og derfor må ta med historien til individene. Selv om de ser like ut på et gitt tidspunkt $t$, så kan informasjon om utfallene deres på tidligere tidspunkt gi informasjon om hva slags type person de er...
+\section{Dynamiske modeller}
+\subsection{Lagged uavhengig variabel}
+Så langt har jeg sett på univariate tidsserier. Dette er ofte greiest dersom jeg vil bruke modellen til forecasting. Men jeg kan jo også være interessert i relasjon mellom variabler. Tenk for eksempel at jeg vil modellere hvor sulten jeg er og at jeg for hver time $t$ rapporterer sult-nivå ($y_t$) samt egenskaper ved ting jeg har gjort i den aktutuelle perioden $\mathbf{x}_t$. La for eksempel $x_t$ være antall kalorier jeg har spist. Dette vil ikke bare påvirke sultnivå i $t$, men også i fremtidige perioder $t+1,t+2,..$ med gradvis mindre effekt. Modellen kan beskrives med
+\begin{align}
+y_t = \alpha_0 + \beta_0x_t+\beta_1+x_{t-1}+\beta_2x_{t-2}+\epsilon_{t}
+\end{align}
+Anta at jeg spiser 100 kalorier i $t=1$ og ingen i de andre. Funksjonene blir da
+\begin{align}
+y_1 &= \alpha_0 + \beta_0\cdot100+\beta_1\cdot0+\beta_2\cdot0+\epsilon{1} \\
+y_2&= \alpha_0 + \beta_0\cdot0+\beta_1\cdot100+\beta_2\cdot0+\epsilon{2} \\
+y_3&= \alpha_0 + \beta_0\cdot0+\beta_1\cdot0+\beta_2\cdot100+\epsilon{3} \\
+\end{align}
+Hvis effekten er avtagende så vil $\beta_0>\beta_1>\beta_2$ slik at $E[y_1|(x_1,x_2,x_3)=(100,0,0)]>E[y_2|(x_1,x_2,x_3)=(100,0,0)]$ osv. Gir sånn passe mening dette her.
+\subsection{Lagged avhengig variabel}
+Vi kan motivere dette med evaluering av arbeidsmarkedstiltak. Personer på tiltak har ofte hatt tap av inntekt. Hvis de har høyere lønnsvekst etter tiltak så kan dette fange opp at de har høyere \textit{potensiell lønn} enn sammenlignbare personer i kontrollgruppe? Vet ikke helt, men tar litt utledning uansett. Enkleste modell er
+\begin{align}
+y_{it} = \gamma y_{i,t-1}+u_{it}, \quad \text{der } u_{it}=\alpha_i+\epsilon{it}
+\end{align}
+der $(\epsilon_{it})_{t\in \mathbb{N}}$ er hvit støy (altså ingen seriekorrelasjon). Skal nå se på mulighet til å estimere den kausale $\gamma$. Det forutsetter at den uavhengige variabelen ikke er endogen.\footnote{Jeg er ikke 100\% komfortabel med begrepet endogen. Brukes vel bare short-hand for å være korrelert med feilledd, men tror det er greit å se litt på ligningssystem for at terminologi skal gi litt mening.} Jeg har et enkelt oppsett for å vurdere konsistens til OLS-estimator i enkel univariat regresjon,
+\begin{align}
+\hat{\beta}= \frac{\sum x_n y_n}{\sum_n x_n^2} = \frac{\sum x_n (\beta x_n +u_n)}{\sum_n x_n^2} = \beta + \frac{\sum x_n u_n}{\sum x_n^2}
+\end{align}
+Vi kan da vurdere konsistens ved å skalere med $1/N$ og slik at teller konvergerer til $cov(x_n,u_n)$ når $n\to \infty$. Mange estimatorer kan betraktes som OLS på transformerte variabler, så her er det bare å plugge inn. Prøver først med fixed effect der $x_n := \sum_{t=1}( y_{i,t-1}-\bar{y}_{i,-1})$ og $y_n = \sum_{t=1}( y_{i,t}-\bar{y}_)$
+\begin{align}
+\hat{\beta}&= \frac{\sum_n \sum_{t=1}( y_{i,t-1}-\bar{y}_{i,-1})( y_{i,t}-\bar{y})}{\sum_n \sum_{t=1}( y_{i,t-1}-\bar{y}_{i,-1})^2}\\
+& = \gamma+ \frac{\sum_n \sum_{t=1}( y_{i,t-1}-\bar{y}_{i,-1})(u_{i,t}-\bar{u}_i)}{\sum_n \sum_{t=1}( y_{i,t-1}-\bar{y}_{i,-1})^2}\\
+\end{align} 
+Det kan sikkert vises at det stemmer, men jeg bare plugger inn de analoge størrelsene fra transformert OLS. Litt usikker på hvordan jeg skal vise hva som er problemet her. Tror problemet er at $y_{i,t-1}$ er  positivt korrelert med $\alpha_i$ i feilleddet. Personer som har (uobserverte) konstante egenskaper som gir de høy lønn i forrige periode vil i gjennomsnitt ha høyere feilledd i denne perioden ikke sant.. så hvis høyt utfall i forrige periode er "behandling", så vil behandlingseffekten fange opp dette og vi får skjevt estimat av kausal effekt.
+
+Løsningen på dette er å bruke momentbetingelser implisert av modellen. For at et instrument $z$ skal være gyldig må
+\begin{enumerate}
+\item Relevans, må forklare noe variasjon i behandling: $cov(y_{i,t-1},z) \neq 0$
+\item Eksogenitet, må ikke være korrelert med uobserverte variabler som påvirker utfall: $cov(u_{i,t},z)=0$.
+\end{enumerate}
+Siden prosess er autoregressiv vil utfall i tidligere periode propagere gjennom prosessen. Laggede avhengige variabler er relevant og ikke korrelert med idiosynkratiske delen av feilleddet i hvertfall. Vil være korrelert med uobservert heterogenitet, men dette kan vi bli kvitt ved å ta first difference. Les om Arelleano-Bond hvis dette blir relevant i fremtiden...
+\subsection{Instrument}
+Selv i med fixed effect må vi anta at $cov(x_{it},\epsilon_{it})=0$, altså at behandling er ukorrelert med idiosynkratisk (?) uobserverte variabler. Kan forsøke å legge inn forklaringsvariabler slik at komponent av $\epsilon_{it}$ som ikke er forklart av kontroll-variablene ikke er korrelert med behandling, men i likhet med i krysseksjon kan de fortsatt være relevante utelatte variabler som varierer over tid. En alternativ strategi er å bruke instrument til å identifisere behandlingseffekt med utgangspunkt i variasjonen av behandling som kan forklares med instrumentet. Tror jeg trenger litt recap på instrument i krysseksjon først.
+\section{Forskjeller i forskjeller}
+Fixed effect er vel og bra hvis vi har variasjon i eksponering for behandling innad i grupper og føles oss komfortabel med å si at behandling er omtrent betinget uavhengig av potensielle utfall. I praksis er ofte behandling bestemt overnfra og ned i betydningen at noen grupper blir eksponert for tiltak/reform og andre ikke. Hvis vi kun har krysseksjon med utfallet til gruppene etter behandling er det vanskelig å trekke noen konklusjoner siden gruppene nok var forskjellig i utgangspunktet. Hvis vi derimot har informasjon om gruppene over tid kan vi se på forskjell i \textit{endring} for hver gruppe i stedet for nivå. Dette gjør det mulig å identifisere behandlingseffekten under antagelse om at de ville hatt felles trend i fravær av behandling. Dette skal jeg nå vise formelt med to grupper, to tidsperioder og to behandlingsnivåer. Deretter skal jeg utvide til til flere tidsperioder, flere behandlingsnivåer og kontroll for individuelle covariates.
+\subsection{Identifikasjon}
+Potensielt utfall i periode $t$:
+\begin{align}
+Y_{it}=Y_{it}^0+D_i(Y_{it}^1-Y_{it}^0)
+\end{align}
+Vi vil estimere average treatment effect on treated (ATT):
+\begin{align}
+\delta_1 = E[Y_{i1}^1-Y_{i1}^0|D_i=1]
+\end{align}
+Identifiserende antagelse er felles trend i fravær av behandling:
+\begin{align}
+&E[Y_{i1}^0|D_i=1]-E[Y_{i0}^0|D_i=1] \\
+&=E[Y_{i1}^0|D_i=0]-E[Y_{i0}^0|D_i=0]
+\end{align}
+Antar altså at $(Y_{i1}^0-Y_{i0}^0) \indep D_i$. Bevis for identifikasjon:
+\begin{align}
+\delta_1 &= E[Y_{i1}^1|D_i=1]-E[Y_{i1}^0|D_i=1] \\
+&= E[Y_{i1}|D_i=1] -E[Y_{i1}^0|D_i=1]
+\end{align}
+Vi observerer $E[Y_{i1}|D_i=1]$, men $E[Y_{i1}^0|D_i=1]$ er kontrafaktisk. Kan finne proxy gitt identifiserende antagelse:
+\begin{align}
+E[Y_{i1}^0|D_i=1] &= E[Y_{i0}^0|D_i=1] + (E[Y_{i1}^0|D_i=1] - E[Y_{i0}^0|D_i=1]) \\
+&=   E[Y_{i0}|D_i=1] + (E[Y_{i1}^0|D_i=0] - E[Y_{i0}^0|D_i=0]) \\
+&=   E[Y_{i0}|D_i=1] + (E[Y_{i1}|D_i=0] - E[Y_{i0}|D_i=0])
+\end{align}
+Alle størrelsene er observerbare og den kausale effekten er identifisert:
+\begin{align}
+\delta_1 = E[Y_{i1}|D_i=1] - E[Y_{i0}|D_i=1] -(E[Y_{i1}|D_i=0] - E[Y_{i0}|D_i=0])
+\end{align}
+Merk at antagelsen er ekvivalent med stabil seleksjonsskjevhet:
+\begin{align}
+&E[Y_{i1}^0|D_i=1] - E[Y_{i1}^0|D_i=0] \\
+&=E[Y_{i0}^0|D_i=1] - E[Y_{i0}^0|D_i=0]
+\end{align}
+\subsection{Flere grupper og flere tidsperioder}
+I det enkleste eksempelet trenger vi egentlig bare fire størrelser: gjennomsnitt i hver av gruppene før og etter eksponeringen for behandling. Dersom vi har individdata er det flere fordeler ved å sette opp en regresjonsmodell på form
+\begin{align}
+y_{ist} = \gamma_s + \delta_t+\delta D_{st}+\epsilon_{ist}
+\end{align}
+\section{Limited Dependent Variable}
+Skal nå begynne å se på utfallsvariabler med begrenser utfallsrom. Det kan være fordi utfallet er kategorisk slik at utfallsverdi bare er kode for den realiserte kategorien, fordi utfallet bare kan ta heltallsverdier, kun kan være positivt eller er avgrenset på andre måter. Felles for disse modellene er at vi estimerer dem med maximum likelihood. Et annet fellestrekk er at vi modellerer en underliggende latent variabel med ubegrenset utfallsrom som gjerne har en deterministisk komponent som avhenger lineært av inputvariabler samt et feilledd som vi gjør litt antagelser om. Vi definerer en regel som knytter den latente variabelen til det observerte utfallet og bruker dette til å lære om parametre i den underliggende latente modellen. Vi bruker deretter den latente modellen til å svare på spørsmål vi er interessert i.
+
+Den latente variabelen kan i noen tilfeller ha en fysisk tolkning der den kun er uobserverbar fordi vi ikke ser realiseringen i datasettet vårt. I andre tilfeller er det en ren konstruksjon som brukes til å modellere datagenereringsprosessen. Vi begynner med sistnevnte når vi modellerer klassifikasjon gjennom stokastisk nytte..
+\subsection{Stokastisk nytte}
+Vi antar at nytte ved valg av gode 1 (i forhold til gode 0) har en systematisk komponent som avhenger av observerte egensakper ved valgsituasjonen $\mathbf{x}_i$. Kan anta at den er felles for ulike individer eller så på det som et slags gjennomsnitt. Dessuten er det en tilfeldig komponent som er avviket av nytten til gitt individ fra gjennomsnitt til andre individ med samme observerte egenskap. Kan ha ulike preferanser og være ulike på andre måter.
+\begin{align}
+u_i = v(\mathbf{x}_i) + \epsilon_i \\
+y_i = I\{u_i>0\} 
+\end{align}
+Der vi setter terskelverdi lik 0 uten tap av generalisering siden nytte ikke har noe skala. Vi modellerer systematisk komponent med $v(\mathbf{x}_i) = \mathbf{x}_i'\beta$. Vi kan lære om parameter i denne funksjonen ved å observere at 
+\begin{align}
+P[y=1|\mathbf{x}] &= P[\mathbf{x}'\beta + \epsilon > 0|\mathbf{x}] \\
+&= \mathbb{P}[\epsilon > -\mathbf{x}'\beta|\mathbf{x}] \\
+&= F(\mathbf{x}'\beta)
+\end{align}
+der $F(\cdot)$ er kumulativ fordeling til $-\epsilon$, som vi antar er symmetrisk slik at det også er cdf til $\epsilon$. Det er tre vanlige valg av $F(\cdot)$ som gir probit, logit og LPM. Kan definere LPM slik at det blir gyldig cdf, men i praksis bruker jeg bare helningen og ikke predikert verdi.
+\subsubsection{Flere kategorier}
+Med flere kategorier blir det
+\begin{align}
+u_{ij} = v_{ij}+\epsilon_{ij} \\
+y_i = \arg\max_{j \in \{1,\ldots,J\}}u_{ij}
+\end{align}
+dersom vi antar at feilleddet er fra type 1 ekstremverdifordeling kan vi vise at
+\begin{align}
+P(Y=k|v_{ij}) = \frac{\exp(v_{ik})}{\sum_j \exp(v_{ij})}
+\end{align}
+Det følger fra ligningen at relativ sannsynlighet til to alternativer ikke blir påvirker av endring i egenskap til tredje alternativ. Dette er en egenskap, og det er ikke nødvendigvis ønskelig.. Har i hovedsak to typer modeller:
+\begin{enumerate}
+\item Conditional logit der egenskaper varierer mellom ulike kategori (og for ulike individ): $v_{ij}=x_{ij} \beta$. Poeng at individer har preferanse for ulike egenskaper ved alternativ (for eksempel pris) og vi beregner vekt for disse ulike egenskapene alternativene kan ha. Vi kan da bruke vektene til å analysere sannsynlighet for at individ vil bruke et nytt tilbud $J+1$ dersom vi kjenner $x_{iJ+1}$.
+\item Multinomial logit der vi kun bruker egenskap til individ $v_{ij}=x_{ij} \beta_j$. Vi finner i hvilken grad de ulike alternativene vekter egenskapene, for eksempel om kvinner foretrekker gitt alternativ. Denne analysen kan ikke brukes på nye alternativ ex-post siden vi ikke kjenner deres vekter.
+\end{enumerate}
+kan også kombineres. Det er noe greier om at man kan estimere priseffekt/krysspriseffekt og analysere verdsetting av tid. Relevant for transportøkonomi, men jeg vet ingenting. 
+\subsubsection{Ordnet logit}
+Hvis alternativene kan rangeres kan vi modellerer de fra underliggende latent variabel, bare at vi finner en partisjonering slik at $y=j$ hvis $y^*(\gamma_{j-1},\gamma_j]$. Tror grenseverdiene blir parametere. Bestemmer at $\gamma_1 = 1$ for de skal være entydig siden $\mathbf{x}\beta$ ikke har noen naturlig skala. 
+
+Merk at det er kun for kategoriene i endene der fortegn på koeffisient har entydig effekt på sannsynlighet for at observasjon tilhører kategori.
+\subsection{Sensurert regresjon (tobit)}
+En annen situasjon - som egentlig er ganske forskjellig! - som analyseres på tilsvarende måte er valg med hjørneløsning. I mange situasjoner er det ikke mulig å velge negativ kvantum slik at det blir en opphopning av verdier i $y=0$. Jeg tenker at vi da kunne ha modellert sannsynlighet for positivt kvantum med probit og modellert $E[y|x,y>0]$ med OLS hver for seg. Med Tobit gjør vi begge deler samtidig ved å anta at begge avhenger latent variabel.
+
+Vi begynner som alltid ved å beskrive modell for latent variabel og hvordan den er relatert til observert utfall:
+\begin{align}
+&y*=\mathbf{x}'\beta_0+u,\quad \text{der }u|\mathbf{x} \sim N(0,\sigma_0^2) \\
+&y=\max\{y^*,0\}
+\end{align}
+\subsubsection{Estimering}
+Jeg vil beskrive hvordan betinget sannsynlighet til $y$ gitt $\mathbf{x}$ avhenger av parametre. Vil har et uttrykk for tetthet til sannsynlighet av $y$ for en gitt $\mathbf{x}$ ikke sant, men dette er en mixed fordeling som punktsannsynlighet i $y=0$. For å håndtere dette deler jeg opp den betingede fordelingen og behandler hvert tilfelle separat.
+\begin{align}
+f(y|\mathbf{x}) = 
+\begin{cases}
+0,\quad y<0 \\
+P(y^*\leq 0|\mathbf{x}),\quad y=0 \\
+f(y^*|\mathbf{x}),\quad y>0
+\end{cases}
+\end{align}
+Jeg kan nå bruke antagelsene fra den latente modellen til å gi et eksplisitt uttrykk for hver størrelsene, noe som samtidig gir meg likelihood-funksjonen når jeg betrakter det som funksjon av parameter slik at jeg kan estimere parametre fra observerte data.
+\begin{align}
+P(y=0|\mathbf{x}) &= P(y^*\leq0|\mathbf{x}) \\ 
+&= P(\mathbf{x}'\beta_0+u\leq 0|\mathbf{x}) \\
+&= P(u<-\mathbf{x}'\beta_0|\mathbf{x}) \\
+&= P\left(\frac{u}{\sigma_0}<-\frac{\mathbf{x}'\beta_0}{\sigma_0}|\mathbf{x}\right) \\
+&= \Phi\left(-\frac{\mathbf{x}'\beta_0}{\sigma_0}\right) \\
+&= 1-\Phi\left(\frac{\mathbf{x}'\beta_0}{\sigma_0}\right)
+\end{align}
+For de positive verdiene kan vi utlede på samme måte som i vanlig regresjon. Begynner med å ta sannsynlighet for intervall siden punktsannsynlighet til tetthet=0..
+\begin{align}
+P(y<y|\mathbf{x},y>0) &= P(y^*<y|\mathbf{x},y>0)\\
+&=P(\mathbf{x}'\beta_0+u<y|\mathbf{x},y>0) \\
+&=P\left(\frac{u}{\sigma_0}<\frac{y-\mathbf{x}'\beta_0}{\sigma_0}|\mathbf{x},y>0\right) \\
+&= \Phi\left(\frac{y-\mathbf{x}'\beta_0}{\sigma_0}\right)
+\end{align}
+Deriverer for å finne uttrykk for tetthet
+\begin{align}
+f(y|\mathbf{x},y>0) = \frac{1}{\sigma_0}\phi\left(\frac{y-\mathbf{x}'\beta}{\sigma_0}\right)
+\end{align}
+Trenger ikke gjøre det relativt til standardisert fordeling.. skal se om jeg kan omskrive dette senere. Uansett, det gir en representasjon av loglikelihoodfunksjon,
+\begin{align}
+logL(\beta,\sigma) = \sum_n & I\{y_n = 0\}\log\left(1-\Phi\left(\frac{\mathbf{x}_n'\beta_0}{\sigma_0}\right)\right) \\
+&+ I\{y_n>0\} \log\left(\frac{1}{\sigma}\phi\left(\frac{y-\mathbf{x}_n'\beta}{\sigma}\right)\right)
+\end{align}
+Når vi har estimert parametrene kan vi gi estimerte mål på størrelser vi er interessert i og se hvordan de er relatert til parameter $\beta$ fra underliggende latent modell.
+\subsubsection{Tolke koeffisient}
+Når vi har fått estimert $\beta$ så ligner output litt på vanlig regresjon og det kan være fristende å tolke det på vanlig måte. Men $\beta$ er parameter i $\mathbb{E}[y^*|\mathbf{x}] =\mathbf{x}'\beta$. Tror dette kan ha direkte tolkning hvis data er sensuert, men ikke dersom vi modellerer hjørneløsning. Da vil vi istedet bruke latent modell til å beskrive sentraltendens i det faktiske utfallet.
+\begin{align}
+\mathbb{E}[y|\mathbf{x}] &= \mathbb{E}[y|\mathbf{x},y>0]P(y>0|x) + 0 \\
+&=\mathbb{E}[y|\mathbf{x},y>0]\Phi\left(\frac{\mathbf{x}'\beta_0}{\sigma_0}\right)
+\end{align}
+der jeg har brukt at $P(y>0|\mathbf{x}) = 1-P(y=0|\mathbf{x})$. Det er ganske rimelig at vi kan evaluere forventingsverdi ved å ta vektet sannsynlighet av betingede forventninger på partisjonering, men litt usikker på hvordan jeg viser det formelt. Se lov om iterated expectations. Vil finne et uttrykk for betinget sannsynlighet av utfall gitt at det er positivt.
+\begin{align}
+\mathbb{E}[y|\mathbf{x},y>0] &= \mathbb{E}[y^*|\mathbf{x},y>0] \\
+&=\mathbb{E}[\mathbf{x}'\beta_0+u|\mathbf{x},y>0] \\
+&=\mathbf{x}'\beta_0 + \sigma_0\mathbb{E}\left[\frac{u}{\sigma_0}|\mathbf{x}'\beta_0+u>0\right] \\
+&=\mathbf{x}'\beta_0 + \sigma_0\mathbb{E}\left[\frac{u}{\sigma_0}| \frac{u}{\sigma_0}<-\frac{\mathbf{x}'\beta_0}{\sigma_0}\right] \\
+&=\mathbf{x}'\beta_0 + \sigma_0\frac{\phi(-c)}{1-\Phi(-c)} \\
+&=\mathbf{x}'\beta_0 + \sigma_0\frac{\phi(c)}{\Phi(c)} \\
+&=\mathbf{x}'\beta_0 + \sigma_0\lambda(c)
+\end{align}
+der $c:=\frac{\mathbf{x}'\beta_0}{\sigma_0}$ og $\lambda(c):=\frac{\phi(c)}{\Phi(c)}$ betegnes som den inverse mills ratioen. Dette gir oss et uttrykk for $\mathbb{E}[y|\mathbf{x},y>0]$ som er en størrelse vi kunne forsøkt å estimere ved å avgrense til kun observasjoner med positivt utfall. Kan se at det består både av helning til forventningsverdi av latentverdi og et ekstra ledd. Litt usikker på hvordan vi tolker, men det har noe sammenheng med at observasjoner med positivt utfall har større verdi av uobservert variabel $u$ i latent modell. Dersom vi er interessert i parameter $\beta_0$ fra latent modell vil vi derfor få skjevt estimat dersom vi avgrenser til observasjon med positivt utfall.. Uansett, kan nå også plugge inn størrelsen og få et uttrykk 
+\begin{align}
+\mathbb{E}[y|\mathbf{x}] &= \mathbb{E}[y|\mathbf{x},y>0]P(y>0|x) \\
+&=\left[\mathbf{x}'\beta_0 + \sigma_0\lambda(c)\right]\Phi(c) \\
+&=\mathbf{x}'\beta_0\Phi(c)+\sigma_0\phi(c)
+\end{align}
+der $c:=\frac{\mathbf{x}'\beta_0}{\sigma_0}$. Når jeg har estimert parametrene er estimatene av $\mathbb{E}[y|\mathbf{x}]$ og $\mathbb{E}[y|\mathbf{x},y>0]$ bare to deterministiske funksjoner av $\mathbf{x}$. Disse funksjonene er en forenklet representasjon av egenskaper ved virkeligheten og er dessuten upresise fordi utvalget gir begrenset informasjon om den \textit{sanne} prosessen\footnote{Eller vår representasjon av den..} som genererer data. Uansett, det er ihvertfall objekter jeg kan jobbe med og bruke til å svare på spørsmål. Vi begynner med å se på hvordan $\mathbb{E}[y|\mathbf{x},y>0]$ endres når vi endrer en variabel $x_j$. 
+\begin{align}
+\frac{\partial}{\partial x_j} \mathbb{E}[y|\mathbf{x},y>0] &= \frac{\partial}{\partial x_j}(\mathbf{x}'\beta_ + \sigma_\lambda(c)) \\
+  &= \beta_j \ \sigma\frac{\partial}{\partial c}\lambda(c)\frac{\beta_j}{\sigma}
+\end{align}
+Må finne $\frac{\partial}{\partial c}\lambda(c)$. Bruker at $\partial \phi(c) / \partial c = -c\phi(c)$.\footnote{hvorfor?}
+\begin{align}
+\frac{\partial}{\partial c}\frac{\phi(c)}{\Phi(c)} &= \frac{-\mathbf{x}'\beta\phi(c)\Phi(c)-\phi(c)^2}{\Phi(c)^2}  \\
+&=\frac{-\phi(c)[c\Phi(c)+\phi(c)]}{\Phi(c)^2} \\
+&=-\lambda(c)\frac{c\Phi(c)+\phi(c)}{\Phi(c)} \\
+&=-\lambda(c)[c+\phi(c)]
+\end{align}
+slik at
+\begin{align}
+\frac{\partial}{\partial x_j} \mathbb{E}[y|\mathbf{x},y>0] =\beta_j\{1-\lambda(c)[c+\phi(c)]\}
+\end{align}
+Siden $\mathbb{E}[y|\mathbf{x}] = \mathbb{E}[y|\mathbf{x},y>0]P(y>0|x)$ og er $P(y>0|x)=\Phi(c)$, kan vi bruke produktregel og plugge inn
+\begin{align}
+\frac{\partial}{\partial x_j}\mathbb{E}[y|\mathbf{x}] =& \beta_j\{1-\lambda(c)[c+\phi(c)]\}\Phi(c)+\left[c + \sigma\lambda(c)\right]\frac{\beta_j}{\sigma}\phi(c)\\
+=&\beta_j\{\Phi(c)-\phi(c)[c+\phi(c)]\}+ \left[c + \sigma\lambda(c)\right]\frac{\beta_j}{\sigma}\phi(c)\\
+=&\beta_j\Phi(c)-\beta_j\phi(c)c-\beta_j \phi(c)^2 + c\frac{\beta_j}{\sigma}\phi(c) + \lambda(c)\beta_j\phi(c)\\
+\end{align}
+wtf. Bruker istedet 
+\begin{align}
+\mathbb{E}[y|\mathbf{x}] &=\mathbf{x}'\beta\Phi(c)+\sigma\phi(c) \\ 
+\frac{\partial}{\partial x_j}\mathbb{E}[y|\mathbf{x}]&= \beta_j\Phi(c)+\mathbf{x}'\beta\phi(c)\frac{\beta_j}{\sigma} -c\sigma\phi(c)\frac{\beta_j}{\sigma} \\
+&=\beta_j\Phi(c)+c\phi(c)\beta_j -c\phi(c) \beta_j \\
+&=\beta_j\Phi(c)
+\end{align}
+der jeg igjen har brukt $\partial/\partial c \phi(c) = -c\phi(c)$. 
+
+Partial effect avhenger av hvor vi evaluerer $\mathbf{x}$. Kan bruke average partial effect (APE) på samme måte som i probit. Merk også at derivert gir en lokal lineær tilnærming. Kan få eksakt endring ved én enhets endring ved å plugge verdier inn i $g(\cdot) :=\mathbb{E}[y|\cdot]$...
+\subsubsection{Kausalitet i Tobit}
+Så langt har jeg sett på Tobit som fremgangsmåte for å modellere $E[y|x]$ og $E[y|x,y>0]$ for utfall som er begrenset til å være positiv gjennom en lineær latent modell. Har sett at $E[y|x]$ består av to komponenter: sannsynlighet for å ha positivt utfall og verdi gitt positiv. Hvis vi vil undersøke kausal effekt av binær tilfeldig behandling $D_i$ på et slikt begrenset utfall kan det være fristende å bruke Tobit for å beregne de ulike effektene.\footnote{Merk at binær behandling så er CEF, $E[y|D]$ nødvendigvis lineær slik at det er god grunn til å bruke vanlig regresjon. Mer generelt er de gjerne ikke-linære med LDV slik at det blir større motivasjon for å beregne form med ikke-lineær kurve... Det vil uansett gjerne være slik at det ikke er så stor forskjell i gjennomsnittlig marginal effekt.} Hvis vi plotter histogram av betinget fordeling av utfall for behandling og kontroll grupper så vil de ha tyngdepunkt i 0 og en eller anne fordeling for positive verdier. Vi kan føle at forskjellen i gjennomsnittet ikke fanger alle aspekter ved behandlingseffekten, og det er forsåvidt sant. Vi kan bruke Tobit til å dekomponere behandlingseffekt,
+\begin{align}
+&E[y_i|D_i=1] - E[y_i|D_i=0]  \\
+&=E[y_i|D_i=1,y_i>0]P[y_i>0|D_i=1] \\
+&-E[y_i|D_0=1,y_i>0]P[y_i>0|D_i=0] \\
+&= E[y_i|D_i=1,y_i>0]P[y_i>0|D_i=1]-E[y_i|D_i=1]P[y_i>0|D_i=0] \\
+&+E[y_i|D_i=1]P[y_i>0|D_i=0]-E[y_i|D_0=1,y_i>0]P[y_i>0|D_i=0] \\
+&=\{P[y_i>0|D_i=1]-P[y_i>0|D_i=0]\}E[y_i|D_i=1,y_i>0] \\
+&+\{E[y_i|D_i=1,y_i>0]E-[y_i|D_0=1,y_i>0]\}P[y_i>0|D_i=0]
+\end{align}
+Hmm... litt usikker på om jeg skal beholde det. Poeng at \textit{conditional on positive} (y>0) er å betinge på utfall av behandling. Gruppene med positivt utfall i behandling og kontroll er systematisk forskjellig på andre måter slik at forskjellene ikke fanger kausal effekt. Noe å tenke på dersom man bruker Tobit til å analysere kausal effekt...
+\subsection{Heltallsverdier (Poisson-regresjon)}
+I mange sammenhenger kan utfallsvariabelen kun ta ikke-negative heltallsverdier. Et eksempel er antall barn en kvinne føder eller antall dager før person havner tilbake i fengsel. Hvis vi bruker MLE må vi modellere hele den betingede fordelingen, men vi kan også avgrense oss til kun å modellere sentraltendensen $\mathbb{E}[y|\mathbf{x}] = g(\mathbf{x},\beta)$. Siden $y$ ikke kan ta negative verdier gir det lite mening om denne funksjonen gjør det. Et mulig valg er $g(\mathbf{x},\beta) = \exp\{\mathbf{x}'\beta\}$. Denne funksjonen er ikke lineær i parametre, så vi kan ikke bruke vanlig closed form OLS. Vi kan derimot bruke ikke-linær OLS som er enkel generalisering og løse det numerisk.
+
+I praksis kan det være greit å påføre mer struktur ved å modellere den betingede fordelingen. Hvis vi velger en parametrisk fordeling så kan vi estimere den betingede sannsynligheten for de ulike utfallene i stedet for bare å ha sentraltendens og mål på spredning. Et vanlig valg er poisson-fordeling.
+\begin{align}
+&p(y;\lambda) = \frac{e^{-\lambda}}{y!}\lambda^y \\
+&p(y|\mathbf{x};\beta) = \exp(-\exp(\mathbf{x}'\beta))\exp(\mathbf{x}'\beta)^y/y! \\
+&LogL_n(\beta) = y_n\mathbf{x}'\beta-\exp(\mathbf{x}'\beta)
+\end{align}
+Poisson-fordelingen har egenskapen at $\mathbb{E}[y|\mathbf{x}] = \mathbb{V}[y|\mathbf{x}] = \lambda(\mathbf{x},\beta) = \exp(\mathbf{x}'\beta)$. I praksis kan dette stemme dårlig med den gitte fordelingen vi observerer og dette bør vi ta hensyn til. MLE-estimatoren kan gi konsistent estimat på $\mathbb{E}[y|\mathbf{x}]$ i en større klasse av fordelinger, men standardfeilen som vi utleder fra informasjonsmatrisen vil være feil. Kan innføre ny parameter $\sigma$ der $\mathbb{V}[y|\mathbf{x}] = \sigma \lambda(\mathbf{x},\beta)$. Bruker som vanlig en sandwich til å skalere, men i dette tilfelle er estimator en skalar, slik at
+\begin{align}
+\widehat{se}_{QMLE} = \hat{\sigma}\widehat{se}_{MLE}
+\end{align}
+må finne ut av dette senere.
+\section{Modellere seleksjon}
+Så langt har vi antatt at vi har et tilfeldig utvalg slik at det er representativt for populasjonen. Av ulike grunner så kan det være slik at vi ikke observerer alle egenskaper vi er interessert i for alle enheter. Noen kan la være å svare på alle spørsmål, noen kan la vær å svare overhodet, noen kan falle fra i forskningsopplegget slik at vi ikke ser utfallet. Selv med observasjonsdata kan det være systematiske skjevheter i hvilke variabler vi observerer for ulike personer. Man må for eksempel ha jobb for at vi skal observere lønn. Med slike ufullstendige utvalg kan ikke nødvendigvis konklusjon fra utvalg generaliseres til populasjon. 
+
+Jeg skal nå utvikle et rammeverk for å betrakte ufullstendige utvalg. Jeg vil se på egenskapene til estimatoren med ulike former for seleksjon og se på mulighet til å korrigere for eventuell skjevhet.
+
+Poenget er at vi kan konstruere en bineær tilfeldig variabel $s_n := I\{\textit{observerer hele} (\mathbf{x}_n,y_n)\}$. Det er en tilfeldig variabel med betinget fordeling. Vi kan modellere denne og forsøke å undersøke hva som påvirker om vi observerer.
+
+Vi kan anta at prosessen $(\mathbf{x}_n,y_n)_{n\in \mathbb{N}}$ oppfyller alle gode egenskaper, men istedet for tilfeldig utvalg $\{(\mathbf{x}_n,y_n):n=1,\dots,N\}$ observerer vi $\{s_n(\mathbf{x}_n,y_n):n=1,\dots,N\}$. Setter alle verdier lik null dersom noen mangler.
+\subsection{Avkortet (truncated) regression}
+I sensurert regression kan vi observere et tilfeldig utvalg av enheter i populasjon og deres karakteristikker, med unntak av utfall kan være sensuert i endepunktene. I avkortet regresjon blir observasjoner med gitte verdier av utfall ekskludert fra utvalget. Det er ikke lenger et tilfeldig (representativt) utvalg. Det er ingenting i veien for å estimere størrelser betinget av eksklusjonskriteriet, men dette kan avvike fra egenskaper ved underliggende latent modell som kan være det vi egentlig er interessert i. Begynner som alltid med å beskrive latent modell og relasjon mellom latente utfall og observerte utfall.
+\begin{align}
+y^* = \mathbf{x}'\beta_0 + u, \quad u|\mathbf{x} \sim N(0,\sigma_0^2) \\
+y = \begin{cases}
+y^*, \quad y^*>0 \\
+(y,x)\text{ ikke observert}, \quad y^* \leq 0
+\end{cases}
+\end{align}
+\subsection{Heckit}
+Vi kan tenke på seleksjon til utvalg som to-steg prosess. Først blir individer trukket og deretter blir en tilfeldig variabler $s_n$ realisert og bestemmer om vi observerer realiseringen av resten av variablene.\footnote{Vi kan være interessert i latent utfall. På samme måte som over kan latent utfall i prinsippet være fysisk observerbar, mens i det i andre tilfeller er litt mer konstruert størrelse.} Hvis $s_n$ er helt tilfeldig, så fører ikke frafallet til at utvalget er systematisk forskjellig fra populasjonen og vi kan se bort i fra det. Hvis det derimot er korrelert med sammenhengen vi vil estimere så kan det føre til skjevheter og konklusjoner om utvalget kan ikke lenger generaliseres til populasjonen. Det er et poeng at vi alltid kan estimere størrelser betinget av seleksjon, men dette er ikke alltid det vi er interessert i. En mulig løsning er å modellere seleksjonsprosessen og forsøke å korrigere for seleksjon.
+
+I heckit modellerer vi to latente variabler
+\begin{align}
+y^*&= \mathbf{x}'\beta+\epsilon, \quad \epsilon := y^*-E[y^*|\mathbf{x}] \\
+s^*&= \mathbf{z}'\gamma+v 
+\end{align}
+og der de korresponderende utfallene vi observerer i data er
+\begin{align}
+s &= I\{s^*>0\} \\
+y &= 
+\begin{cases}
+y^*, s=1 \\
+\text{uobservert}, s=0
+\end{cases}
+\end{align}
+Den betingede forventningsfunksjonen betinget av seleksjon er 
+\begin{align}
+E[y|\mathbf{x}, s=1] &= E[y^*|\mathbf{x}, s^*>0] \\
+&= \mathbf{x}'\beta + E[\epsilon|v >-\mathbf{z}'\gamma]
+\end{align}
+Hvis jeg estimerer med OLS vil jeg asymptotisk finne beste lineære tilnærming til denne funksjonen. Det er skjevhet som er litt analog til utelatt variabel. Kan isolere $\beta$ ved å modellere det andre leddet og ta det med i estimeringen. For å gjøre dette antar jeg at feilleddene i de latente ligningene er multivariat normalfordelt.
+\begin{align}
+(\epsilon, v) \sim N(\mathbf{0}, \Sigma)
+\end{align}
+De vil ha positiv korrelasjon dersom individer med uobservert egenskap som gjør de over gjennomsnittlig stor sannsynlighet for å være selektert (høy $v$) også gir de over gjennomsnittlig høyt utfall (høy $\epsilon$). Uansett, denne antagelsen medfører at 
+\begin{enumerate}
+\item $E[v|v>-c] = \frac{\phi(c)}{\Phi(c)} := \lambda(c)$
+\item $E[\epsilon|v] = \sigma_{\epsilon, v} E[v]$
+\end{enumerate}
+slik at 
+\begin{align}
+E[\epsilon|v >-\mathbf{z}'\gamma] = \sigma_{\epsilon, v}\lambda(\mathbf{z}'\gamma)
+\end{align}
+Heckmans' to-steg estimator er da
+\begin{enumerate}
+\item Finne $\hat{\gamma}$ fra estimering av $P(s=1|\mathbf{z}) = \Phi(\mathbf{z}'\beta)$. Bruk det til å lage $\hat{\lambda}_n = \lambda(\mathbf{z}_n'\hat{gamma}$
+\item Kjør OLS på $y_n=\mathbf{x}_n'\beta+\theta\hat{\lambda}_n +\text{feilledd}$, der $\hat{\theta}$ blir estimat på kovarians. Tror at hvis den er null så er det ikke sammenheng i seleksjon når vi kontrollerer for $\mathbf{x}$ (og $\mathbf{z}$?). I så fall får vi lignende estimat hvis vi kjører vanlig OLS, men greit å ha sjekket uanset..
+\end{enumerate}
+Til slutt kan jeg nevne at poeng å ha identifiserende variabel som påvirker seleksjon men ikke utfall.
+\subsubsection{Eksempler}
+Observerer kun lønn dersom den er over reservasjonslønn,
+\begin{align}
+w &= \alpha_0 + \beta ed + \epsilon \\
+w^r&=\alpha_1 + \delta ed \rho m + u \\
+s^* &= w^r-w = \alpha_1-\alpha_0 + (\delta-\beta) ed - \psi m + (u-\epsilon) \\
+s^* &= \gamma_0 + \gamma_1 ed + \gamma_2 m + v
+\end{align}
+hmm.

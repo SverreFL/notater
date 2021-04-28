@@ -1,0 +1,362 @@
+\chapter{Maximum likelihood}
+Vi ønsker å lære om en fordeling $P$ med utgangspunkt i realiserte verdier fra fordelingen. Dette er det generelle utgangspunktet i statistisk inferens. I likelihood tilnærmingen gjør vi sterke antagelser ved å anta at fordelingen tilhører en parametrisk klasse $P:=P_{\theta_0} \in \mathscr{P} = \{f(\cdot;\theta):\theta \in \Theta \subset \mathbb{R}^k\}$ der $f(\cdot;\cdot)$ har kjent form.\footnote{Denne mengden burde kanskje bestått av fordelinger, ikke tetthetsfunksjoner. Men så lenge modell er identifiserbar eksisterer det injektive funksjoner $\theta \mapsto P_{\theta}$ og $P_{\theta} \mapsto f_{\theta}$ slik at de ulike representasjonene av fordelingen er kjent når $\theta$ er kjent.} Med andre ord antar vi at fordelingen er kjent opp til en ukjent parameter og at denne parameteren fullt ut beskriver hele fordelingen som genererer data vi observerer. Funksjonen $f(\cdot;\theta)$ evaluert i en gitt verdi $\theta=\theta'$ er en sannsynlighetstetthetsfunksjon.\footnote{Eller en pmf. Distinksjonen er ikke viktig og hvis jeg kunne litt measure theory tror jeg fremstillingen kunne blitt gjort mer ryddig.} Hvis vi derimot holder den realiserte verdien konstant og betrakter det som en funksjon av $\theta$ kan vi betegne det som likelihoodfunksjonen, $f(\cdot;z):=L(\cdot;z) := L(\cdot)$. Vi kan betraktre $z$ enten som en gitt realisert verdi eller som en tilfeldig variabel $z:=z(\omega)$ som tar en konstant verdi når tilstanden $\omega$ blir avslørt. I den første tolkningen har likelihoodfunksjonen en ganske konkret tolkning som relativ sannsynlighet for at en fordeling med de ulike parameterverdiene kan ha generert den observerte verdien $z$.\footnote{Vet ikke om tolkningen er helt presis. Merk at det ikke er en sannsynlighetsfordeling siden det ikke oppfyller aksiom. Siden den kun betegner relativ sannsynlighet er den bare unik opp til en multiplikativ konstant siden slike skaleringer inneholder samme informasjon.  Det er praktisk siden det medfører at likelihoodfunksjonen er invariant til valg av måleenhet på observasjonen.} Hvis vi derimot betrakter situasjonen situasjonen før verdi er realisert er likelihoodfunksjonen utfallet av $g:\Omega \to S = \{L(\cdot;z):z^{-1}(\omega) \in \Omega\}$. Utfallet er en funksjon! Men hvis vi bare evalurer dette i gitte verdier av $\theta$ blir det en tilfeldig variabel med fordeling som vi kan beskrive og analysere på vanlig måte. 
+
+Denne tilnærmingen krever sterke antagelser, men har til gjengeld en veldig rik teori. Estimatoren vil også kunne ha gode egenskaper selv om modellen er feilspesifisert.
+\section{Begreper}
+Likelihoodfunksjonen for en gitt observasjon har en konkret tolkning. Formen på funksjonen beskriver i hvilken grad ulike parameterverdier korresponderer med den realiserte verdien vi observerer. Det er uansett begrenset hvor vi kan lære fra én enkelt realisering. Heldigvis er det enkelt å kombinere informasjon fra ulike realiseringer fra samme fordeling så lenge disse er uavhengige. Anta at vi obseverer $(z_1,...,z_n)$ der $\mathcal{L}(z_n) = P_{\theta_0}$ for $n=1,...,N$. Vi kan da kalle likelihoodfunksjonen for hver av observasjonene, $L_n(\cdot;z_n)$ for \textit{likelihood contribution} til observasjon $n$. Vi kan kombinere informasjonen ved å betrakte hele utvalget som én realisering fra simultanfordelingen $\mathcal{L}(z_1,...,Z_n) = \pi_n \mathcal{L}(z_n)$ slik at $L(\cdot;z_1,...z_n) = \pi_n L_n(\cdot;z_n)$. Den samlede likelihoodfunksjonen er da
+\begin{align}
+L &: \Theta \to [0,\infty) \\
+&: \theta \mapsto \Pi f ( z_n ; \theta) = \Pi f ( z_n ; \theta)
+\end{align}
+Likelihoodfunksjonen er riktignok ikke unik; alle skaleringer med positiv konstant inneholder akkurat like mye informasjon om $\theta$ siden vi kun kan vurdere relativ sannsynlighet for ulike parameterverdier gitt observert utvalg. Dette har litt sammenheng med at vi ønsker at likelihood skal være invariant for én-til-én transformasjoner av data, for eksempel valg av måleenhet. La $y = g(x)$ og $x = g^{-1}(y) := x(y)$. Da er
+\begin{align}
+&F_Y(y) = P(Y<y) = P(g(X)<y) = P(X < x(y)) = F_x(x(y)) \\
+& f_Y(y) = \frac{\partial}{\partial y} F_x(x(y)) = f_x(x(y))|\frac{dx}{dy}|
+\end{align}
+Det følger derfor at $L(\theta|x) = f_X(\theta;x)$ og $L(\theta|y) = f_Y(\theta;y) = L(\theta|x)|\frac{dx}{dy}|$. Disse er ulik med positiv skalar, men relativ likelihood evaluert i to ulike verdier $\theta_1$ og $\theta_2$ vil være den samme for begge funksjonene og er dermed begge like gode likelihoodfunksjon for $\mathcal{L}(X)$.
+
+I praksis er det enklere å jobbe med logaritmen av likelihood når vi kombinerer informasjon fra ulike kilder siden
+\begin{align}
+\log L(\cdot;z_1,...z_n) &= \log [ \pi_n L_n(\cdot;z_n)] \\
+&= \Sigma_n \log [L_n(\cdot;z_n)] \\
+&= \Sigma_n logL_n(\cdot;z_n) \\
+\end{align}
+Logaritmen er en positive monoton transformasjon som bevarer $\argmax$, gjør det enklere å kombinere informasjon fra avhengige observasjoner og optimere numerisk. Funksjonsverdiene har ikke like umiddelbar tolkning som i likelihoodfunksjonen, men vi skal se at de sentrale teoretiske størrelsene er knyttet til denne såkalte \textit{loglikelihood-funksjonen}. Merk også at verdien for hver $\theta$ er summen av $N$ uavhengige realiseringer fra $P_{\theta_0}$ slik at hvis vi skalerer det med $1/N$ så vil det konvergere mot\footnote{Det er direkte resultat av store talls lov: $\mathbb{E}_{\hat{P}_N}[g(z)] \overset{p}{\to} \mathbb{E}[g(z)]$.}
+\begin{align}
+\mathbb{E}_{\theta_0}[logL(\theta,z)]:=\int_Z logL(\theta,z) f(z;\theta_0)dz
+\end{align}
+\subsection{Score}
+Helningen\footnote{Skal generalisere til parametervektor med flere dimensjoner senere. Da vil det være gradienten.} til loglikelihood-funksjonen betegnes som dens \textit{score},
+\begin{align}
+&S_n(\theta) = \frac{\partial}{\partial \theta} logL_n(\theta) \\
+\implies & S(\theta) = \frac{\partial}{\partial \theta} logL(\theta) = \Sigma_n S_n(\theta)
+\end{align}
+Hvis vi betrakter denne størrelsen som en funksjon av $\theta$ for gitt realisert verdi av $z$ betegnes det som \textit{score-funksjonen} og hvis vi derimot betrakter hvordan verdien for en gitt $\theta$ avhenger av tilfeldig $z$ betegnes det som \textit{score-statistic}.
+
+Det gir mening at $P_{\theta_0}$ asymptotisk generer et utvalg som korresponderer med $\theta_0$ i betydningen at av alle kanditat-verdier av $\theta$ så er det mest sannsynlig at det ble generert fra fordeling med $\theta_0$. Det medfører at forventningsverdien til log-likelihoodfunksjonen er størst når den er evaluert i $\theta_0$ og tilsvarende at forventningsverdi til score-statistikken i $\theta_0$ er 0,
+\begin{align}
+\mathbb{E}_{\theta_0}S_n(\theta_0) :&= \int S_n(\theta_0)f_{\theta_0}(x)dz \\
+&= \int \frac{\partial}{\partial \theta}logL_n(\theta_0)f_{\theta_0}(x)dz \\
+&= \int \frac{\frac{\partial}{\partial \theta}L_n(\theta_0)}{L_n(\theta_0} f_{\theta_0}(x)dz \\
+&= \int \frac{\partial}{\partial \theta}L_n(\theta_0) dz \\
+&= \frac{\partial}{\partial \theta} \int L_n(\theta_0) dz = 0
+\end{align}
+der vi har brukt at $L(\theta_0):=L(\theta_0;z):=f_{\theta_0}(z) := f(z;\theta_0)$. Utvalgsanalogen til dette er å velge
+\begin{align}
+\hat{\theta}_{MLE} &= \underset{\theta \in \Theta}{\argmax} \mathbb{E}_{\hat{P}_N}[S_n(\theta)] \\
+&= \underset{\theta \in \Theta}{\argmax} \frac{1}{N}\sum S_n(\theta,z_n) = 0
+\end{align}
+som vi i enkle eksempler kan finne en \textit{closed form} løsning på slik at vi får et eksplisitt uttrykk $\hat{\theta}_{MLE} = g(z_1,...,z_N)$ og som ofte vil tilsvare momentestimatoren.\footnote{Kanskje finne noe måte å koble de sammen.} Vi vil maksimere forventen log-likelihood, men vi observerer det ikke så vi maksimerer i stedet gjennomsnitt loglikelihood fra observasjonen generert av sann fordeling og lener oss på at størrelsene konvergerer asymptotisk.
+\subsection{Informasjon}
+Hvor mye lærer vi om $\theta_0$ fra å observere én realisering fra $P_{\theta_0}$? Som nevnt lener vi oss på at $\mathbb{E}_{\theta_0}S_n(\theta_0) = 0$ og at gjennomsnittet i mitt utvalg bestående av $N$ $iid$ observasjoner konverger mot denne sentraltendensen. Men jeg har et begrenset antall observasjoner og vil derfor være interessert i mål på spredningen til den tilfeldige variabelen $S_n(\theta_0)$. Dette angir den teoretiske \textit{fisher-informasjonen} til den ukjente fordelingen $P_{\theta_0}$,
+\begin{align}
+I(\theta) &:= \mathbb{V}_{\theta_0}[S(\theta_0)] \\
+&= \mathbb{E}_{\theta_0}[S(\theta_0)^2] \\
+& := \int_Z S(\theta_0)^2f_{\theta_0}(z)dz \\
+& := \int_Z S(\theta_0,z)^2f(z;\theta_0)dz \\
+\end{align}
+
+Denne spredningen avhenger av hvor spiss toppen til $\mathbb{E}_{\theta_0}[logL(\theta)]$ er i $\theta=\theta_0$. For at det skal være mye informasjon om $\theta$ i hver observasjon av $z$ vil vi at den skal ha en spiss topp i $\theta_0$. Det viser seg at vi kan bruke denne intuisjonen til å finne en alternativ utledning av fisher-informasjonen. Generelt vil hesse-matrisen beskrive krumming til score-funksjon,
+\begin{align}
+H(\theta) = \frac{\partial}{\partial \theta}S(\theta) = \frac{\partial^2}{\partial \theta \partial \theta'}logL(\theta).
+\end{align}
+Den teoretiske fisher-info tilsvarer den negative verdien av den forventede hessematrisen evaluert i $\theta_0$,
+\begin{align}
+I(\theta_0) &= -\mathbb{E}_{\theta_0}\left[\frac{\partial}{\partial \theta}S(\theta_0)\right] \\
+&= - \mathbb{E}_{\theta_0}\left[H(\theta_0)\right] \\
+&= - \int_Z H(\theta_0,z)f(z;\theta_0)dz
+\end{align}
+Mer informasjon gir bedre presisjon av $\hat{\theta}_{MLE}$. Noe kontra-intuitivt er det derfor bedre med høyere varians til $S(\theta_0)$. Et veldig sentralt resultat, som jeg forhåpentligvis kommer tilbake til senere, er at for alle MLE-estimatorer vil
+\begin{align}
+\hat{\theta}_{MLE}-\theta_0 \overset{d}{\to} N\left(0,I(\theta)^{-1}\right)
+\end{align}
+Så langt har jeg betraktet fisher-informasjon som en ren teoretisk størrelse ved $P_{\theta_0}$, men informasjon i utvalget avhenger i tillegg av antall observerte verdier fra fordelingen. For et utvalg tar jeg utgangspunkt i den samlede log-likelihoodfunksjonen som er sum av log-likelihood-contribution fra $n=1,...,N$. Det medfører at utvalgsstørrelse blir bakt inn i fisher-informasjonen slik at det ikke er en eksplisitt $N$ med i uttrykket.
+\subsection{Alternativ utledning}
+Log-likelihood contribution for gitt parameterverdi, $logL_n(\theta;z_n)$, er en tilfeldig variabel med forventningsverdi $\mathbb{E}_{\theta_0}[logL_n(\theta)]:=\int_Z \log[f(z;\theta)]f(z;\theta_0)dz$ som er en skalar. For å understreke at $\mathbb{E}_{\theta_0}[logL_n(\cdot)]$ er en helt vanlig funksjon som mapper $\mathbb{R}^d\to\mathbb{R}$ vil jeg betegne den som $g$.\footnote{Den mapper fra parametermengden som generelt er delmengde av $\mathbb{R}^d$.}. Denne funksjonen $g$ kan utledes fra fordelingen $P_{\theta_0}$ og vi kan finne egenskaper ved denne helt streite funksjonen som dermed er egenskaper ved den sanne fordelingen.
+\begin{itemize}
+\item Score: $\frac{\partial}{\partial \theta}g(\theta)|_{\theta_0}$
+\item Fisher-informasjon: $\frac{\partial^2}{\partial \theta \partial \theta}g(\theta)|_{\theta_0}$ 
+\end{itemize}
+Vi kan ikke observere $P_{\theta_0}$ og kjenner dermed ikke $g$. Men vi kan bruke utvalgsanaloget til å tilnærme oss funksjonen siden $\mathcal{L}(z_n) = P_{\theta_0}$ medfører at
+\begin{align}
+\mathbb{E}_{\hat{P}_N}[logL_n(\theta)] &:= \frac{1}{N}\Sigma_n logL_n(\theta;z_n) \\
+&\overset{p}{\to} \mathbb{E}_{\theta_0}[logL_n(\theta)] = g(\theta)
+\end{align}
+Vi kan konsistent estimere $g(\cdot)$ med gjennomsnitt i utvalget og bruke det til å beregne egenskaper til funksjonen. Den teoretiske fisher-informasjonen gir oss for eksempel et mål på hvor mye vi lærer om $\theta_0$ fra én observasjon. For å finne den estimerte fisher-informasjonen i utvalget trenger vi bare å skalere gjennomsnittet med $N$ observasjoner. Dette gir oss tilbake hessematrisen fra $logL(\cdot)$ i utvalget.
+\section{Eksempler}
+\subsection{Bernoulli}
+Likelihoodfunksjonen kan skrives kompakt på én linje,
+\begin{align}
+&L_n(\rho) = \rho^x_n(1-\rho)^{1-x_n}\\
+&logL_n(\rho) = x_n \log(\rho) + (1-x_n)\log(1-\rho)
+\end{align}
+Vi deriverer med hensyn på parameter og finner score contribution,
+\begin{align}
+\frac{\partial}{\partial \rho}logL_n(\rho):=S_n(\rho) &= \frac{x_n}{\rho}-\frac{1-x_n}{1-\rho} \\
+&= \frac{x_n-\rho}{\rho(1-\rho)}
+\end{align}
+Vi kan anta at $\mathcal{L}(x_n) = bernoulli(\rho_0)$. Forventningsverdi til score contribution er da
+\begin{align}
+\mathbb{E}_{\rho_0}\left[S_n(\rho)\right] &= \mathbb{E}_{\rho_0}\left[\frac{x_n-\rho}{\rho(1-\rho)}\right] \\
+&=\frac{\rho_0-\rho}{\rho(1-\rho)}
+\end{align}
+som medfører at $\mathbb{E}_{\rho_0}[S_n(\rho)|_{\rho_0}] = 0$. Vi kan også finne variansen til score contribution evaluert i sann parameter
+\begin{align}
+\mathbb{V}_{\rho_0}\left[S_n(\rho_0)\right] &= \mathbb{E}_{\rho_0}\left[S_n(\rho_0)^2\right] \\
+&= \frac{1}{(\rho_0(1-\rho_0))^2}\mathbb{E}_{\rho_0}\left[(x_n-\rho_0)^2\right] \\
+&=\frac{1}{(\rho_0(1-\rho_0))^2}\mathbb{V}_{\rho_0}[x_n] \\
+&=\frac{1}{\rho_0(1-\rho_0)}
+\end{align}
+Kan også vises at dette tilsvarer den negative forventningsverdien til hessen evaluert i sann parameter, men hessen er ganske stygg siden vi må bruke kvotientregel. I stedet utvider jeg til å se på utvalg som består av summen av $N$ contributions.
+\begin{align}
+&logL(\rho) = \sum_{n=1}^N logL_n(\rho) = \sum_{n=1}^N \left[x_n \log(\rho) + (1-x_n)\log(1-\rho)\right]  \\
+&S(\rho) = \sum_{n=1}^N S_n(\rho) = \frac{\sum_{n=1}^N\left[x_n-\rho\right]}{\rho(1-\rho)}
+\end{align}
+Dette medfører at $\mathbb{E}[logL_n(\rho)] = \mathbb{E}[\frac{1}{N}logL(\rho)]$. Forventningsverdi til størrelsene er den samme, men med flere observasjoner så gir evaluering av forventningsverdi med hensyn på empirisk fordeling en bedre tilnærming.\textit{Dette er reflektert i høyere fisher-informasjon.} Vi finner $\hat{\rho}_{MLE}$ ved å løse 
+\begin{align}
+&\mathbb{E}_{\hat{P}_N}\left[S(\hat{\rho})\right] = 0 \\
+& \implies \hat{\rho} = \bar{x}_N
+\end{align}
+For å finne variansen til denne punktestimatoren må vi beregne fisher-informasjonen i utvalget. Med uavhengige variabler kan vi enkelt summere variansene slik at
+\begin{align}
+\mathbb{V}_{\rho_0}\left[S(\rho_0)\right] &= N\cdot \mathbb{V}_{\rho_0}\left[S_n(\rho_0)\right] \\
+&=\frac{N}{\rho_0(1-\rho_0)} := I(\rho_0)
+\end{align}
+Kunne kanskje evaluert variansen med hensyn på empirisk fordeling. Tror vi får samme resultat av å plugge inn punktestimator. Ble litt usikker. Uansett har vi nå at 
+\begin{align}
+(\hat{\rho}-\rho_0) \overset{d}{\to} N\left(0,I(\rho_0)^{-1}\right) = N\left(0,\frac{\rho_0(1-\rho_0)}{N}\right)
+\end{align}
+og vår estimasjon av denne fordelingen fra vårt éne realiserte utvalg er 
+\begin{align}
+N\left(0,\frac{\hat{\rho}(1-\hat{\rho})}{N}\right)
+\end{align}
+Dette er vårt beste forsøk på å tilnærme oss den ukjente asymptotiske fordelingen som igjen uansett bare vil være en tilnærming for vårt endelige utvalg. Med endelig antall observasjoner kan $\hat{\rho}$ bare ta et endelig antall verdier, så den eksakte fordelingen kan ikke være kontinuerlig. Vi kan vise at fordelingen til $N\times \hat{\rho}$ er $binom(N,\rho)$ og brukt dette resultatet i stedet, men er jo kjekt at MLE gir et generelt rammeverk til å finne asymptotisk fordelingen til stor klasse av estimatorer med gode asymptotiske egenskaper! 
+\subsection{Normalfordeling med kjent varians}
+\begin{align}
+f(x;\mu)&=\frac{1}{\sigma \sqrt{2\pi}}\exp\{-\frac{(x-\mu)^2}{2\sigma^2}\} \\
+\log L_n(\mu) &= -\frac{(x-\mu)^2}{2\sigma^2} + ... \\
+S_n(\mu) &= \frac{\partial}{\partial \mu} \log L_n(\mu) = \frac{x-\mu}{\sigma^2} \\
+\mathbb{E}[S_n(\mu)]&=0 \implies \mu = \mathbb{E}[x] \\
+I(\mu) &:= -\mathbb{E}\left[\frac{\partial}{\partial \mu} S_n(\mu)\right] = \mathbb{E}[\sigma^{-2}] \\
+Avar(\hat{\mu}) &= I(\mu)^{-1} = \sigma^2 \\
+\implies&\sqrt{N}(\hat{\mu}-\mu) \overset{d}{\to} N(0,\sigma^2)
+\end{align}
+\subsection{Uniform}
+Davidson og MacKinnon gjør et poeng av at det er to typer ML estimatorer,
+\begin{itemize}
+\item Type 1: $\hat{\theta} = \argmax_{\theta \in \Theta \subset \mathbb{R}^K} logL(\mathbf{z}_d,\theta)$
+\item Type 2: Implisitt definert av $S(\mathbf{z},\hat{\theta})=0$, der $S(\mathbf{z},\hat{\theta})$ er score-vektor med typisk element $S_k = \frac{\partial logL(S(\mathbf{z},\hat{\theta}),\theta)}{\partial \theta_k}$.
+\end{itemize}
+De fleste ML estimatorer er begge typer, men det er ikke alltid vi finner optimum gjennom første ordens betingelse fordi likelihoodfunksjonen ikke er differensierbar. Eksempel på det er uniformfordeling... 
+\subsection{Andre hendelser}
+Vi observerer utfall fra $P_{\theta}$ og på bakgrunn av dette vil vi kvantifisere relativ sannsynlighet for ulike verdier av den ukjente $\theta$. Likelihoodfunksjonen fikser dette og kan håndtere ulike typer utfall. La oss ta normalfordeling med kjent $\sigma=1$ som eksempel
+\begin{enumerate}
+\item Observere utfall direkte, f. eks. $X=1.3$, $L(\theta) = \phi(1.3-\theta)$
+\item Observere at utfall er i et intervall, f.eks. $X\in (1,3)$, $L(\theta) = P_{\theta}(X\in (1,3)) = \Phi(3-\theta)-\Phi(1-\theta)$
+\item Observere en funksjon av utfall, f.eks. $Y = g(X) = \max(X_1,...,X_N) := X_{N}=4$, $L(\theta) = P(g(X)=4) =  N\Phi(4-\theta)^{N-1}\phi(4-\theta)$
+\end{enumerate}
+der siste følger av at $P(X_{N}<s) = P(X_1<s,....,X_N<s) = \Phi(s-\theta)^N$ og $L(\theta) = f_{\theta}(s) = \frac{\partial}{\partial s}F(s)$. Ser generelt at jeg vil evaluere tettheter og eventuelt integral over tettheter dersom jeg ikke har eksakt verdi. Kan også enkelt kombinere informasjon fra ulike kilder så lenge observasjonen er uavhengige. Med log-likelihood er det bare å summere opp funksjonene. Det kan enten være enkeltobservasjoner eller fra ulike utvalg. Trenger ikke justere for antall observasjoner som ingikk for å konstruere funksjonen, siden all informasjon er oppsumert i selve funksjonen.
+\section{Oppsummere informasjon fra likelihoodfunksjonen}
+For et gitt utvalg vil likelihoodfunksjonen angi relativ sannsynlighet for ulike parameterverdier. Dette gir både informasjon om hvilke verdier som er mest sannsynlig og samt hvor sikre vi er på at den sanne, ukjente parameteren er i ulike intervall. Det er en utfordring at det kan være vanskelig å kommunisere denne informasjonen, spesielt hvis parameteren er en vektor slik at likelihood blir funksjon av flere variabler. Det kan dessuten være litt vanskelig å jobbe med funksjoner. Vi vil derfor ønske å finne alternative måter å oppsummere informasjon i likelihoodkurven. Ser generelt at det er både enklere å jobbe med log-likelihood numerisk og at analytiske resultat bruker denne formen.
+
+Vi vet for det første at maksimumsverdien gir det best punktestimatet. Videre vil spissheten til funksjonen rundt $\hat{\theta} = \argmax L(\theta)$ gi et mål på hvor sikre vi er på at den gitte $p_{\hat{\theta}}$ har generert utvalget. Hvis det er flatt på toppen er det mange ulike kandidater som er omtrent like sannsynlige, eg. kan korrespondere med observasjonene vi har observert, slik at det er mye usikkerhet knyttet til $\hat{\theta}$.
+\subsection{Kvadratisk tilnærming}
+Vi kan bruke størrelsene over til å beregne en andre ordens taylor ekspansjon av $logL(\theta)$ i $\theta=\hat{\theta}$.
+\begin{align}
+logL(\theta) &\approx logL(\hat{\theta}) + S(\hat{\theta})(\theta-\hat{\theta})-\frac{I(\hat{\theta})^{-1}}{2}(\theta-\hat{\theta})^2\\
+& = logL(\hat{\theta})-\frac{I(\hat{\theta})^{-1}}{2}(\theta-\hat{\theta})^2
+\end{align}
+Hele formen på funksjonen er da beskrevet av punktet $(\hat{\theta},logL(\hat{\theta}))$ samt den estimerte fisher-informasjonen. Det er mulig å vise at dette gir en eksakt beskrivelse av loglikelihoodfunksjonen til forventningsverdien av normalfordeling. For andre likelihoodfunksjoner vil det være en god tilnærming dersom de er såkalt \textit{regulære}. Det kan vises at de fleste loglikelihoodfunksjoner konvergerer mot denne kvadratiske formen når antall observasjoner øker og dette har litt sammenheng med CLT. Jeg skal nå utvikle teoretiske resultat som har utgangspunkt i denne forenklede representasjonen. Disse resultatene vil holde eksakt for gjennomsnitt av normalfordeling og være en asymptotisk tilnærming for andre fordelinger. Først skal jeg bare utlede to enkle sammenhenger til. Det første er en forenklet representasjon av normalisert likelihood.
+\begin{align}
+\log \left(\frac{L(\theta)}{L(\hat{\theta}}\right) &= logL(\theta)-logL(\hat{\theta}) \\
+&\approx\frac{I(\hat{\theta})^{-1}}{2}(\theta-\hat{\theta})^2
+\end{align}
+Den andre sammenhengen er bare første ordens taylor ekspansjon av score funksjonen som kan brukes til å visualisere om den kvadratiske tilnærmingen er god ved å se om sammenhengen under faktisk er lineær.
+\begin{align}
+S(\theta) &\approx S(\hat{\theta}) - I(\hat{\theta})^{-1}(\theta-\hat{\theta}) \\
+&=- I(\hat{\theta})^{-1}(\theta-\hat{\theta})
+\end{align}
+\subsection{Konfidensintervall}
+Jeg kan ha lyst til å konstruere et intervall $\Theta_c \subset \Theta$ der det virker rimelig at $P \in \{P_{\theta}:\theta \in \Theta_c\}$ kan ha generert det utvalget jeg observerer. Et greit utgangspunkt kan være å betrakte mengden
+\begin{align}
+\Theta_c = \left\{ \theta : \frac{L(\theta)}{L(\hat{\theta})} > c \right\}
+\end{align}
+Spørsmålet nå er hvordan vi skal velge $c$. Vil forsøke å knytte det til noe som i prinsippet er en observerbar sannsynlighet. Vil manipulere uttrykket slik at jeg får en størrelse med kjent fordeling. Begynner med å observere at
+\begin{align}
+\log \left(\frac{L(\theta)}{L(\hat{\theta}}\right) = \frac{\sigma^2}{2N}(\bar{x}-\theta)^2
+\end{align}
+for gjennomsnitt av normalfordeling og at dette kan være god tilnærming for andre regulære likelihoods. Jeg vet at 
+\begin{align}
+\bar{x} \sim N\left(\mu,\frac{\sigma^2}{N}\right) \implies 2\cdot \frac{L(\hat{\theta})}{L(\theta)} \sim \chi^2(1)
+\end{align}
+Manipulerer begge sider av ulikheten over og får
+\begin{align}
+P\left(2\cdot \frac{L(\hat{\theta})}{L(\theta)}<-2\log(c) = \chi^2_{1-\alpha}\right) = 1-\alpha
+\end{align}
+\section{Likelihood i flere dimensjoner}
+Har nå sett at jeg kan anta at observasjonene i utvalget mitt er $iid$ realiseringer fra $P_{\theta} \in \mathscr{P}_{\theta}$ og bruke parameterverdien som gjør det mest sannsynlig å observere verdiene i utvalget mitt som estimat. Dette kan vi generalisere til observasjoner $\mathbf{z} \in \mathbb{R}^d$ der $P_{\theta}$ nå blir en simultanfordeling. Det er en utfordring at simultanfordelinger er veldig komplekse objekter. Da skal angi skal angi sannsynlighet for utfall i ganske vilkårlige delmengder av $\mathbb{R}^d$. Det er både vanskelig å estimere og beskrive. I praksis vil vi ofte heller si noe om betinget sannsynlighet.
+\subsection{Betinget likelihood}
+I praksis vil vi ofte dekomponere $\mathbf{z}=(\mathbf{x},y)$ og se på hvordan $\mathbf{x}$ påvirker fordeling av $y$. Da får vi bruk for at 
+\begin{align}
+f(\mathbf{x},y) = f(y|\mathbf{x})f(\mathbf{x})
+\end{align}
+der vi er interessert i $f(y|\mathbf{x})$. Vi kan parametrisere tetthetene over slik at
+\begin{align}
+f(\mathbf{x},y;\theta,\gamma) = f(y|\mathbf{x};\theta)f(\mathbf{x};\gamma)
+\end{align}
+Hvis vi tar log-likelihood får vi 
+\begin{align}
+logL(\theta,\gamma) = \log(f(y|\mathbf{x};\theta))+\log(f(\mathbf{x};\gamma))
+\end{align}
+Hvis vi bare er interessert i $\theta$ så er andre leddet en uvesentlig konstant. Får samme estimat ved å kun betrakte første del som om vi betraktet likelihood til hele simultanfordelingen.\footnote{Gitt at det ikke er funksjonell relasjon mellom parameterene $(\theta,\gamma)$... i praksis vil vi neppe ønske å modellere dette.} 
+\subsection{Generell fremgangsmåte til å finne likelihood til betinget fordeling}
+Vi har en regresjonsmodell
+\begin{align}
+y=\mathbf{x}'\beta_0+u, \quad u|\mathbf{x}\sim N(0,\sigma_0^2)
+\end{align}
+Vi begynner med å finne betinget kumulativ sannsynlighet
+\begin{align}
+P(Y\leq y|\mathbf{x}) &= F(\mathbf{x}'\beta_0+u<y|\mathbf{x}) \\
+&= F(u<y-\mathbf{x}'\beta_0|\mathbf{x}) \\
+& = F\left(\frac{u}{\sigma_0}<\frac{y-\mathbf{x}'\beta_0}{\sigma_0}|\mathbf{x}\right) \\
+&= \Phi\left(\frac{y-\mathbf{x}'\beta_0}{\sigma_0}\right)
+\end{align}
+der $F(c|\mathbf{x}):=\int_{-\infty}^c yf(y|\mathbf{x})dy$. Merk at selv om $\mathbf{x}'\beta$ er tilfeldig så kan vi behandle det som en konstant når vi betinger av $\mathbf{x}$. Vi kan deretter enkelt finne tetthet ved å derivere
+\begin{align}
+f(y|x) &= \frac{\partial}{\partial y}\Phi\left(\frac{y-\mathbf{x}'\beta_0}{\sigma_0}\right) \\
+&= \frac{1}{\sigma_0}\phi\left(\frac{y-\mathbf{x}'\beta_0}{\sigma_0}\right)
+\end{align}
+Denne fremgangsmåten bruker eksplisitt antagelse om betinget fordeling til feilledd i stedet for å modellere betinget fordeling til $y$ direkte.. Tror det er litt ulike måter man kan gjøre dette på.
+\subsection{Betinget normal}
+Et konkret eksempel er $y|\mathbf{x} \sim N(\mu_x,\sigma_x^2) = N(g(\mathbf{x}),h(\mathbf{x})^2)$ og spesifisere hvordan parametrene avhenger av $\mathbf{x}$. Vanlig valg er $g(\mathbf{x})=\mathbf{x}'\beta$ og $h(\mathbf{x})=\sigma$, altså at vi varians ikke avhenger av $\mathbf{x}$. Det er ingenting i veien for at vi modeller hvordan varians avhenger av $\mathbf{x}$, men ofte er vi bare interessert i betinget forventningsverdi.\footnote{Tror dette er eksempel på semi-parametrisk estimering der $\sigma$ er såkalt nuisance-parameter.} Vi kan da skrive opp likelihood-funksjonen.
+\begin{align}
+L(\beta,\sigma) = \prod_n f(\mathbf{x}_n,y_n) = \prod_n \frac{1}{\sqrt{2\pi}\sigma}exp\{-\frac{(y_n-\mathbf{x}_n\beta)^2}{2\sigma^2} \cdot f(\mathbf{x}_n)
+\end{align}
+Kan merke da at parameter i betinget fordeling ikke avhenger av $f(\mathbf{x}_n)$ slik at vi kan se bort i fra dette.. og vise at OLS maksimerer likelihood. hm.
+\subsection{Betinget bernoulli}
+Vi vil se på hvordan ulike egenskaper $x$ til en person påvirker sannsynlighet for at hen deltar i arbeidsmarkedet. 
+\begin{align}
+q(s)=\mathbb{P}\{y=1|x=s]\}
+\end{align}
+For at funksjonen skal tilfredstiller aksiom til sannsynlighetsfunksjoner må $q(s) \in [0,1] \forall s \in \mathbb{R}^k$. En type funksjoner som tilfredstiller det kraver er kumulative sannsynlighetsfunksjoner. I praksis bruker vi derfor cdf med lineær parametrisering, $q(s)=F(s'\beta)$. Kan ikke estimere det med OLS siden det er en ikke-lineær funksjon mhp parametrene. For å gjøre MLE operativt må vi ha en spesifisert log likelihood funksjon som vi kan optimere. Første steg er betinget pmf. I utgangspunktet er det en piecewise funksjon, men jeg kan bruke triks for å få det på én linje:
+\begin{align}
+&P(y=i|x=s)=F(s'\beta)^i(1-F(s'\beta)^{1-i} \\
+&\implies  \log L(\beta) = \sum y_n \log(F(s'\beta)) + \sum (1-y_n) \log (1-F(s'\beta))
+\end{align}
+Dette kan jeg løse og få logit eller probit avhengig av valg av $F$. Ble litt ukomfortabel notasjon fordi jeg ikke vil bruke store bokstaver, men skal helst sikkert se nærmere på dette senere. 
+\section{Prinsipp for å utlede tester}
+Vi vil ofte teste om teste om data i utvalg gir tilstrekkelig bevis til at vi kan forkaste påstand om at $\theta \in \Theta_0$. Vi forkaster dersom det er lite sannsynlig at de faktiske observasjonene i utvalget har blitt generert fra en fordeling med parameter fra nullhypotesen. Videre gjør vi ofte avgrensinger av hvilke fordelinger $\mathscr{P}$ vi vil betrakte. Det er da nyttig å gjøre spesifikasjonstester for se om vi kan forkaste at $\mathbb{P} \in \mathscr{P}$ slik at modell er feilspesifisert, for eksempel ved at feilledd er heteroskedastisk. Har tre ulike prinsipp for å utlede testobservator fra likelihoodfunksjon som er asymptotisk ekvivalente og alle gir $\chi^2$-fordelte testobservator. Tror at at $t- og F-fordeling$ bare er justering som tar hensyn til at utvalg er begrenset, men litt usikker på dette. 
+\subsection{Greier fra DM}
+Prinsipp for å utlede testobservator som asymptotisk er $\chi^2(r)$-fordelt, der $r$ er antallet restriksjoner. Husk at nullhypotese er restriksjon av hypoteserommet og impliserer en avgrenset modell. Tror kanskje vi kan bruke parametrisert bootstrap som alternativ..
+
+Wald bruker bare uavgrenset modell. Gitt at hypotesen er sann er $r(\hat{\theta})\sim N(0,V(r(\hat{\theta}))$ slik at $r(\hat{\theta})'[V(r(\hat{\theta})]^{-1}r(\hat{\theta}) \sim \chi^2(r)$.
+\subsection{Wald-test}
+Denne fremgangsmåten tar utgangspunkt i en (asymptotisk) normalfordelt MLE estimator $\hat{\theta}$ og bruker at 
+\begin{align}
+\mathbf{R}\hat{\theta}-\mathbf{q} \overset{d}{\to} N(\mathbf{0},\mathbf{R}\Sigma\mathbf{R}') 
+\end{align}
+hypotesen $\mathbf{R}\theta=\mathbf{q}$ er sann.. Kan da forkaste nullhypotese hvis testestimator gir stort avvik fra 0, der vi bruker kvantiler av normalfordeling til å konkretisere hva som utgjør tilstrekkelig stort avvik for våre formål. Med enkelt parameter har testen form
+\begin{align}
+W &= \frac{\hat{\delta}-\delta_0}{\hat{se}} \overset{d}{\to} N(0,1) 
+\end{align}
+Med flere parametere tror jeg den fremgangsmåten gir flervariabel normalfordeling, men det er mye greiere å få tilbake et enkelt tall slik at vi kan forkaste hvis langt fra null. Alle tre prinsippene for å utlede asymptotiske tester gir oss derfor generelt testobservatorer som er $\chi^2$-fordelt. For den enkle testen over gir det
+\begin{align}
+\xi_w = Z^2 = (\hat{\delta}-\delta_0)[\hat{var}]^{-1}(\hat{\delta}-\delta_0) \overset{d}{\to} \chi^2(1)
+\end{align}
+I praksis er vi ofte interessert i forskjell mellom parametre siden vi ikke har et kjent benchmark vi tester mot. Det er relativt greit dersom utvalgene er uavhengige av hverandre siden varians til differansen av estimatorer er sum av variansen til hver av de. Et eksempel er forskjell i parameter i bernoulli-fordelt variabel. Vi har $\bar{X_1} \sim binom(p_1,n_1)$ og $\bar{X_2} \sim binom(p_2,n_2)$. Da er $\hat{\delta} = \hat{p_2}-\hat{p_1}$. Gjenstår bare å finne $\hat{se} := \widehat{se(\hat{\delta})}$. Vet at $\hat{p_j}$ gjennomsnitt. Vet at varians til gjennomsnitt er $\frac{\sigma^2}{N}$. Vet at $\sigma=p(1-p)$ i bernoulli, som er fordeling til $X$. Dette er tilstrekkelig til å finne $\hat{se}$, men gidder ikke skrive. Ta det som oppgave når du leser dette. Tilsvarende kan vi teste differanse mellom normalfordelte. En utvidelse et t-test i stedet for z-test.
+\subsection{Likelihood ratio}
+Likelihood ratio tar utgangspunkt i forskjellen i maksiumum av log-likelihood fra ubetinget og betinget optimering.
+\begin{align}
+\lambda = 2\log\left(\frac{\sup_{\theta \in \Theta}L(\theta)}{\sup_{\theta \in \Theta_0}L(\theta)}\right) 
+= 2\left(\frac{L(\hat{\theta})}{L(\hat{\theta}_0)}\right)
+\end{align}
+der $\hat{\theta}$ er MLE-estimatoren og $\hat{\theta}_0$ er MLE-estimator avgrenset til $\Theta = \Theta_0$. Dette har visst en $\chi^2$ fordeling.  Intuisjon for dette er at hvis forskjellen er stor så er det lite sannsynlig at avgrensingen ikke er bindene, altså at lite sannsynlig at $\theta \in \Theta_0$
+\subsection{Lagrange multiplier}
+Nullhypotesen medfører en restriksjon av parameterromet. Undersøker i hvilken grad restriksjon er bindene ved å se på lagrangemultiplier assosiert med restriksjonen av de ulike parameterne, skyggepris. Hvis stor skyggepris er lite sannsynlig at sann parameter i $\Theta_0$ som vi har avgrenset til å velge løsning innenfor..
+\section{Egenskaper ved feilspesifikasjon}
+Det er ganske sterk antagelse at $P_0 \in \mathscr{P}$, så kjekt at ikke alt rakner dersom denne antagelsen er feil.
+\subsection{Total variation distance og KL-divergence}
+Jeg vil ha et mål på avstand mellom to probability measures $D(\mathbb{P}_{\theta_0},\mathbb{P}_{\theta})$. Et ganske naturlig mål er \textit{Total variation distance}
+\begin{align}
+TV(\mathbb{P}_{\theta_0},\mathbb{P}_{\theta})=\max_{A \subset \Omega} |\mathbb{P}_{\theta_0}(A)-\mathbb{P}_{\theta}(A)|
+\end{align}
+Dette gir et tall i intervallet $[0,1]$ og tilfredstiller egenskapene til en avstand (symmetrisk, trekantulikhet..). Hvis vi ser på fordelinger på $\mathbb{R}$ kan vi beregne størrelsen med
+\begin{align}
+TV(P_{\theta_0},P_{\theta}) = 
+\begin{cases}
+\frac{1}{2}\sum | p_{\theta_0}(x)-p_{\theta}(x)| \\
+\frac{1}{2}\int | f_{\theta_0}(x)-f_{\theta}(x)|dx
+\end{cases}
+\end{align}
+Dette tilsvarer areal av mellom kurvene i området der den ene er større enn den andre. Det er symmetri siden areal under begge kurvene summerer til 1. Dette er et naturlig mål med gode egenskaper, men det litt vanskelig å gjøre operativt. Dette motiverer Kullback-Leibler (KL) divergence som har noe av de samme gode egenskapene, men som vi kan estimere fra utvalg med observasjoner fra $P_{\theta_0}$.
+\begin{align}
+KL(P_{\theta_0},P_{\theta}) = \begin{cases}
+\sum p_{\theta_0}(x)\log\left(\frac{p_{\theta_0}(x)}{p_{\theta}(x)}\right) \\
+\int f_{\theta_0}(x)\log\left(\frac{f_{\theta_0}(x)}{f_{\theta}(x)}\right)dx
+\end{cases}
+\end{align}
+Dette målet er ikke symmetrisk og tilfredstiller ikke triangelulikhet, men er i likhet med TVD 0 når funksjonene er like og vokser når avstanden øker. Selve tallet har ikke naturlig tolkning. Merk at dette er forventningsverdi av en funksjon med hensyn på $P_{\theta_0}$. 
+\begin{align}
+KL(P_{\theta_0},P_{\theta}) = E_{\theta_0}[log(f_{\theta_0})]-E_{\theta_0}[log(f_{\theta})]
+\end{align}
+Et naturlig valg av $\theta$ er den verdien som minimerer den empiriske analogen til KL-divergence,$\widehat{KL}(P_{\theta_0},P_{\theta})$. Merk at første ledd er konstant som ikke påvirker $\argmin$.
+\begin{align}
+\hat{\theta} &= \argmin_{\theta \in \Theta} \widehat{KL}(P_{\theta_0},P_{\theta}) \\
+&= \argmin_{\theta \in \Theta} \{ E_{\theta_0}[log(f_{\theta_0}(x_n))] - E_{\hat{P}_N}[\log(f_{\theta}(x_n))]\} \\
+&=\argmin_{\theta \in \Theta} \text{konstant}-\frac{1}{N}\sum \log(f_{\theta}(x_n)) \\ 
+&= \argmax_{\theta \in \Theta}  \log (\Pi_n f_{\theta}(x_n)) \\
+&= \argmax_{\theta \in \Theta}  \log (\Pi_n L_n(\theta;x_n)
+\end{align}
+Løsningen på dette optimeringsproblemet tilsvarer MLE-estimatoren. Så langt har vi antydet at den sanne fordelingen tilhører den parametriske klassen som vi søker over, men siden $ E_{\theta_0}[log(f_{\theta_0}(x_n))]$ uansett bare er en konstant som vi kan se bort i fra i optimeringen, så sier dette resultatet oss at MLE asymptotisk gir oss $\theta$ som korresponderer med den fordelingen innenfor $\mathscr{P}$ som minimerer avstand til den sanne $P$, både i betydningen av TVD og KL. Kunne jo selvsagt kommet nærmere ved å søke over en riktig spesifisiert $\mathscr{P}$, men det er jo uansett et greit resultat.
+\subsection{MLE fra empirisk risikominimering}
+Kan vise at MLE-estimatoren kan utledes som spesialtilfelle av empirisk risikominimering.\footnote{I hvert fall for estimering av tetthetsfunksjon... skal se om jeg kan utvide til regresjon.} Anta at vi vil estimerne en ukjent tetthetsfunksjon $q(\cdot)$ med utgangspunkt i observerte realiseringer fra fordeling med den tettheten. Definererer tapsfunksjon til kandidat $p(c\dot)$ ved $L(p,x) := -\log(p(x))$. Hvis vi observerer realisering $x=s$ så vil det realiserte tapet være større desto lavere verdi av $p(s)$, altså jo lavere tyngde vår kandidat plasserer på den realiserte verdien. Risikofunksjonen er dermed gitt ved
+\begin{align}
+R(p) = \mathbb{E}_q[L(p,x)] = -\int\log(p(s))ds
+\end{align}
+For å knytte dette til MLE avgrenser vi til å betrakte et parametrisert hypoteserom $\mathcal{P}_{\theta}=\{P_{\theta}:\theta \in \Theta\}$. Antar at modellen er identifisert slik at $\theta \mapsto P_{\theta}$ er bijektiv (én-til-én) slik at vi ekvivalent kan løse minimeringsproblemet med hensyn på $\theta$. 
+\begin{align}
+&P_{\hat{\theta}} = \argmin_{p\in\mathcal{P}_{\theta}} R_{emp}(p) \\
+&\implies \hat{\theta} = \argmin_{\theta \in \Theta} -\sum \log(p_{\theta}(s_n)) \\
+&\implies \hat{\theta} = \argmax_{\theta \in \Theta} \sum \log(p(\theta;s_n))
+\end{align}
+Ser at løsningen tilsvarer $\hat{\theta}_{MLE}$ når vi bruke $-\log(p(s))$ som tapsfunksjonen. Vi kan også dekomponere risikoen assosiert med denne tapsfunksjonen for å knytte det til KL-divergence,
+\begin{align}
+R(p) &= - \int \log(p(s))q(s)ds \\
+&= \mathbb{E}_q[(-\log(p(s))+\log(q(s))-\log(q(s)))] \\
+&= \mathbb{E}_q\left[\log\left(\frac{q(s)}{p(s)}\right)\right]-\mathbb{E}_q[\log(q(s)))] 
+\end{align}
+der første ledd er KL-divergence og andre ledd er entropy. Ser at entropy tilsvarer risiko når fordelingen er kjent. Får tilbake igjen MLE-estimatoren ved å minimere utvalgsanalogen til KL-divergence med hensyn på parametrisert $p$ som beskrevet i seksjonen over.
+\subsubsection{Liten digresjon, må endres eller slettes}
+Kan utlede estimering av logistisk regresjon m.m. ved å bruke såkalt logistisk tap,
+\begin{align}
+- \{y \log h_{\theta}(x)) + (1-y)\log(h_{\theta}(x))\}
+\end{align}
+men denne tapsfunksjonen kan jeg jo uansett utlede fra loglikelihood til bernoulli-fordelingen. Det er jo litt poeng at jeg kan motivere dette uten MLE, men er uansett bedre å gjøre det innenfor.
+\subsection{Kvasi-MLE}
+Forventningsverdien til score-funksjonen evaluert i sann parameter er 0.
+\begin{align}
+\mathbb{E}_{\theta_0}S(\theta_0) :&= \int S(\theta_0)f(x;\theta_0)dx =0\\
+\end{align}
+Utvalgsanalogen er å finne $\hat{\theta}$ som gjør at $\mathbb{E}_{\hat{P}_N}[S(\theta)=0$. Dette gir oss et ligningssystem av momentbetingelser som vi kan løse og estimatoren kan betraktes som en momentestimator. Hvis modellen er riktig spesifisert er estimatorene ekvivalente, men egenskapene til momentestimatoren vil være gyldig for en større klasse av fordelinger som har de samme første-ordens betingelsene. Hvis vi bruker F.O.B fra MLE til å betrakte fordelingen til estimatoren fra denne utvidede mengden kan vi betegne det som kvasi-likelihood. Fra store talls lov vet vi at estimatoren er konsistent og fra CLT får vi normalfordelingen, men asymptotisk varians er ikke lenger $I(\theta)^{-1}$. Vi må bruke såkalt sandwich estimator,
+\begin{align}
+(\hat{\theta}_{QMLE}-\theta_0) \overset{d}{\to} N(0,V)
+\end{align}
+der
+\begin{align}
+V = ...
+\end{align}
+Vil knytte dette til robust standardfeil i regresjon..S
+\subsection{Extremum estimators}
+Kan betrakte en klasse av estimator som er løsning på et optimeringsproblem av en objektfunksjon $Q_N(\cdot)$ som har verdimengde i $\mathbb{R}$,
+\begin{align}
+\hat{\theta} = \underset{\theta\in\Theta}{\argmax} Q_N(\theta;\mathbf{z}_d)
+\end{align}
+En viktig underklasse er M-estimatorer der $Q_N(\cdot)$ har formen
+\begin{align}
+Q_N(\theta;\mathbf{z}_d) = \frac{1}{N}\sum_n m(\theta;\mathbf{z}_n).
+\end{align}
+Et annet eksempel er GMM der 
+\begin{align}
+Q_N(\theta;\mathbf{z}_d) = -\frac{1}{2}g_N(\theta;\mathbf{z}_d)'\hat{W}g_N(\theta;\mathbf{z}_d)
+\end{align}
+der $g_N(\theta;\mathbf{z}_d) := \frac{1}{N}g(\theta;z_n)$ og $g(\cdot)$ er momentbetingelse. Tror vi kan bruke denne mer generelle klassen av estimatorer til å dra koblinger mellom MLE og GMM, blant annet type \textit{Limited information maxmimum likelihood} og finne asymptotiske tester for GMM. Jeg mistenker at de greiene der må bli i neste liv.

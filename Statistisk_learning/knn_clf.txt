@@ -1,0 +1,1 @@
+Med færre naboer blir decision boundary med sensitiv for treningsdata. Det gir bedre in-sample prediksjon, men er sensitiv for støy og kan generalisere dårligere til nye utvalg. 

@@ -1,0 +1,45 @@
+\documentclass[12pt,norsk,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}[norsk]
+\usepackage{listing}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{amssymb,amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\usepackage{mathrsfs}
+ \usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage{graphicx}
+
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+\newcommand\fnote[1]{\captionsetup{font=small}\caption*{#1}}
+\onehalfspacing
+\pagenumbering{roman}
+    
+
+\DeclareMathOperator*{\argmin}{arg\,min} % thin space, limits underneath in displays
+\DeclareMathOperator*{\argmax}{arg\,max} % thin space, limits underneath in displays
+\title{Notater}
+\author{Sverre Langaas}
+\begin{document}
+\maketitle
+\pagenumbering{roman}
+\tableofcontents
+\include{Sannsynlighet/sannsynlighet}
+\include{Stokastiske_prosesser/stokastiske_prosesser}
+\include{Fordelinger/fordelinger}
+\include{Inferens/inferens}
+\include{Moment_estimatorer/moment_estimatorer}
+\include{MLE/mle}
+\include{Linear_regression/linear_regression}
+\include{Tidsserier/tidsserier}
+\include{Statistisk_learning/statistisk_learning}
+\include{unsupervised/unsupervised}
+\include{Econometrics/econometrics}
+\include{Kalkulus/kalkulus}
+%\include{differensialligninger/differensialligninger}
+\include{Linear_algebra/linear_algebra}
+\include{Matematisk/Matematisk}
+\end{document}

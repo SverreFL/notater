@@ -1,0 +1,335 @@
+\chapter{Statistisk læring}
+I maskinglæring bruker vi data til å lære en masking å utføre oppgaver. Dette er i kontrast til tradisjonelle algoritmer der vi eksplisitt spesifiserer regler for hva maskinen skal gjøre. Maskinen får noe \textit{input}, transformerer det til noe \textit{output} og får tilbakemelding på i hvilken grad den klarte å utføre oppgaven. Algoritmen kan deretter tilpasse transformasjonen ut fra tilbakemeldingene den får. På denne måten kan maskiner blant annet lære å kjøre biler og spille sjakk. Jeg vil i hovedsak bruke det til å lære maskinen å predikere en såkalt \textit{utfallsvariabel} til en observasjon med utgangspunkt i informasjon om andre egenskaper til observasjonen. 
+
+Statistisk læring kan betegnes som tilnærmingen til denne tematikken fra statistikk i stedet for informatikk. Maskinlæringsalgoritmer lærer fra data og dette kan vi formalisere innenfor et statistisk rammeverk. Mer spesifikt kan vi betrakte målet som å lære egenskaper til en fordeling $\mathbb{P}$ som har generert data vi observerer. Dette perspektivet gjør det blant annet mulig å håndtere usikkerheten til en prediksjon på en systematisk måte. Rammeverket gir oss også verktøy for å lage transparente modeller som representerer egenskaper til populasjonen på en oversiktelig måte, selv om det nødvendigvis innebærer forenklinger og antagelser. I kontrast kan rene maskinlæringsalgoritmer være en såkalte \textit{black-box} funksjoner $h:\mathbf{x}\mapsto \hat{y}$ som kun gir oss predikert utfall $\hat{y}$ for hver input $\mathbf{x}$. I praksis er det stort overlapp mellom tilnærmingene så forskjellene bør ikke overdrives, men kapitellet har fått denne tittelen fordi jeg interessert i inferens og tolkning av modeller; ikke såkalt nevrale nettverk og andre maskinglæringsalgortimer som er velegnet for ikke-tabulære data.
+\section{Bakgrunn og oversikt}
+Maskinlæringsalgoritmer bruker erfaring $E$ til å bli bedre til å utføre oppgave $T$ som målt ved kriterie $P$. Supervises så er erfaring data med både input $\mathbf{x}$ og utfall $y$. Kan både oppnå bedre resultat og program som er enklere å utvikle og vedlikeholde, og som ikke trenger like mye \textit{domain knowledge}.
+
+Algoritme består av tre deler
+\begin{enumerate}
+\item Representasjon av egenskaper den lærer. Hypoteserom: kandidater av funksjoner $h$ den søker over
+\item Evaulering: mapper hver kandidat til et mål på fit. F.eks: $g:\beta \mapsto RSS(\beta)$ i lineær regresjon
+\item Optimisering: må ha måte å effektivt søke over hypoteserommet for å finne gode kandidatfunksjoner
+\end{enumerate}
+Kategorisere algoritmer: Supervisesed (reg og klassifikasjon) vs unsupervised (clustering, dimensjonsreduksjon, anamolie). Batch vs incremental learning. Instance vs model based.  Finnes mange ulike... hvilken som er best avhegner av data. (no free lunch..) Mer struktur er bra hvis riktig struktur. I praksis: ensemble hvis makismere prediksjon.
+\subsection{Generativ modell}
+Målet er å modellere assosiasjon\footnote{Bruker det bekrepet siden det ikke er en sammenheng eller tilknytning, men den er ikke eksakt} mellom input $\mathbf{x}$ og output $y$.
+
+I praksis kan vi ofte anta at $\mathbf{x}$ er kjent eller at vi driter litt i fordeling, så trenger bare betinget fordeling $y|\mathbf{x}=\mathbf{s}$ til å svare på spørsmål.
+
+Kan beskrive all info $f_{y|\mathbf{x}=\mathbf{s}}(y)$ der for alle $A \subset \mathbb{R}$ så er $\mathbb{P}(y\in A|\mathbf{x}=\mathbf{s})=\int_a f_{y|\mathbf{x}=\mathbf{s}}(y)$
+
+Vanskelig å jobbe med selv om vi kjente fordeling og enda vanskeligere å lære fra begrenset data! Vil ha sammendragsmål som egenskap. $E[y|\mathbf{x}=\mathbf{s}] = g(\mathbf{s};\theta)$. 
+
+Tenker at jeg har lyst til å knytte statistisk læring i større grad opp mot Bayes siden det er vesentlig å kvantifisere usikkerhet.
+\subsection{Utfordringer}
+\subsubsection{Generalisere fra utvalg}
+Utfordringer: For lite data. Signal og støy... støy jevner seg ut (per konstruksjon/definisjon), avvik fra sentraltendens. Avhenger av hvor sterkt signal er i forhold til støy. Problem at komplekse/fleksible algoritmer er veldig flinke til å finne mønster. Finner selv om det bare skyldes tilfeldigheter ved utvalget (alle med navn som begynner på 's' og slutter på 'e' er veldig smarte.. i utvalget. Generaliserer ikke). Problem som "kan løses", men legger begrensninger på løsning.
+
+Virkeligheten er komplisert og modellene er ofte veldig enkle. Det kan derfor være fristende å bruke mer fleksibel struktur som "lar dataene snakke". Det er flere avveininger knyttet til dette. For det første kan det bli vanskeligere å beskrive og tolke den estimerte modellen. Dette er mindre problematisk dersom modellen skal brukes til prediksjon, men det kan uansett være interessant å bruke modellen til å lære om hvordan input er relatert til output. Selv om vi kun er interessert i best mulig prediksjon er ikke alltid mer fleksibilitet bedre. Problemet er at vi lærer *for mye* om utvalget, mens vi egentlig er interessert i egenskaper ved prosessen som genererte det.
+
+Det signalet vi er interessert i å lære er ofte $E[Y|X]=f(X)$. For hver $y_n$ i utvalget er $y_n=f(x_n)+u_n$. Vi vil lære $f(\cdot)$, men med men for mye fleksibilitet vil det i for stor grad også fange opp støyen $u_n$ i det gitte utvalget. Dette er et eksempel på bias-variance-tradeoff.
+
+Et eksempel på at det ikke alltid er tilstrekkelig med høy test accuracy på data vi har tilgjengelig er klassifikasjon mellom ulv og hund (eg. husky). Hvis bilde av ulv er i område med snø, så vil snø være input som gjør at modell kan oppnå gode prediksjon. Men da bygger vi en modell som er god til å oppdage snø og det er kanskje ikke så nyttig for oss.
+
+Ved å se på sammenheng mellom input og output kan vi avdekke om det er såkalt irrelevante features (partikulære egenskaper ved de gitte dataene) som har stor forklaringskraft. Dette vil indikere at modellen ikke kommer til å generalisere så bra. Ved å analysere de uriktige prediksjonene kan vi også lære mer om hvilke nye variabler / features som kan være nødvendig for å oppnå bedre prediksjon.
+\subsubsection{Dimensjonalitetens forbannelse}
+Det kan være en utfordring å jobbe med høydimensjonal data. Problemet er størrelsen på rommet vokser veldig raskt når vi øker antall dimensjoner slik den gjennomsnittlige avstanden mellom observasjone også øker. Dette medfører at vi må ekstrapolere kurver til områder av rommet der vi har lite informasjon slik at det blir fort gjort å overfitte. Det medfører også at nabolaget ikke er så veldig lokalt og metoder som bygger på avstand mellom observasjon ikke fungerer så bra.\footnote{Tror litt av grunnen til at neurale nettverk fungerer så bra på høydimensjonal data er at det klarer å lære meningsfull representasjon i lavere dimensjon...}
+\subsubsection{Kvantifisere usikkerhet}
+Hvis vi observerer flere variabler kan vi redusere usikkerheten, men det kan også være variabler som er fundamentalt uobserverbare, spesielt når vi analyserer menneskelig atferd. En annen kilde til usikkerhet er målefeil i variablene, slik at observerasjoner med samme observerte $x$ kan ha ulik verdi av de reelle størrelsene som påvirker utfallet. Eksistens av usikkerhet og kvantifisering av denne.
+
+Usikkerhet til sentraltendens + gjennomsnittlig avvik fra sentraltendens.
+\subsubsection{Ikke-representative data}
+Annen utfordring er verre: Ikke representative data. Kan skyldes tilfeldigheter ved utvalg (denne risikoen kan i prinsippet kvantifiseres... men kan gi dårlig performance... mer data er bra). Skjevhet som ikke løses med mer data (seleksjonsproblem, respons bias). Generaliserer ikke til populasjon. Dårlig data (målefeil). Viktig med data cleaning og god feature engineering... hvor mye modell klarer å lære avhenge av representasjon av data... teori + kryssvalidering. 
+\section{Empirisk risikominimering}
+Vi kan formalisere læringsproblemet som et risikominimeringsproblem. Vi observerer $(\mathbf{z_1},..., \mathbf{z_N})$ der $\mathbf{z_n}=(y_n,\mathbf{x_n})$ er realiseringer fra $\mathcal{L}(\mathbf{z})=P$. Målet vårt er å finne en funksjon som tar verdi $f(\mathbf{x})$ og predikerer \textit{output} $y$ gitt at vi observerer \textit{input} $\mathbf{x}$. I praksis vil det være avvik mellom predikert og sann verdi. Vi kan definere en \textit{tapsfunksjon} $L$ som avhenger av størrelsen på dette avviket.\footnote{Dette rammeverket gir oss større fleksibilitet enn om vi kun ser på størrelsen av avviket $u:=y-f(\mathbf{x})$. Det kan for eksempel være slik at kostnad med prediksjonsfeil er asymmetrisk slik at større kostnad ved å enten over- eller underpredikere. Litt usikker på hvor relevant dette er og om jeg kan gjøre det operativt...} Noen vanlige tapsfunksjoner er
+\begin{itemize}
+\item Absolutt tap: $L(y,f(\mathbf{x})) = |(y-f(\mathbf{x})|$
+\item Kvadratisk tap: $L(y,f(\mathbf{x})) = (y-f(\mathbf{x}))^2$
+\item Diskret tap: $L(y,f(\mathbf{x})) = I\{y \neq f(\mathbf{x})\}$
+\end{itemize}
+Merk at tapsfunksjonen er en tilfeldig variabler som tar verdi for hver realisering av $\mathbf{z}$ og at fordelingen dermed avhenger av den ukjente simultanfordelingen $P$. Målet vårt er å minimere forventet tap som kan betegnes som \textit{prediksjonsrisikoen} $R(f)=\mathbb{E}L(y,f(\mathbf{x}))$. Utfordringen er at vi ikke kjenner $P$ slik at vi ikke kan evaluere prediksjonsrisikoen direkte. En mulig løsning er å bruke utvalgsanalogprinsippet og betrakte den \textit{empiriske risikoen}
+\begin{align}
+R_{emp}(f) \equiv \mathbb{E}_{\hat{P}_N}L(y,f(\mathbf{x})) = \frac{1}{N}\sum L(y_n,f(\mathbf{x_n}))
+\end{align}
+En naiv tilnærming vil nå være å finne $f$ som minimerer $R_{emp}(f)$, men dette vil ofte være en dårlig løsning. Dersom alle inputvektorene $\mathbf{x_n}$ tar ulike verdier vil det alltid være mulig å finne funksjoner $f$ slik at $f(\mathbf{x_n})=y_n, n = 1,...,N$ og $R_{emp}(f) = 0$. Hvis vi minimerer empirisk risiko vil vi få en funksjon som har lært for mye om det gitte utvalget vårt og generaliserer dårlig til nye observasjoner. Dette problemet kalles \textit{overfitting}. 
+
+For å unngå overfitting må vi begrense hvor mye algoritmen lærer fra det gitte realiserte utvalget. Vi har i hovedsak to måter å gjøre dette på. For det første kan vi modifisere tapsfunksjonen slik at det påføres ekstra kostnad dersom funksjonen tilpasser seg data i utvalget. Dette kalles regularisering og vi skal se på det senere. Den andre muligheten er å avgrense oss apriori til å kun betrakte kandidatfunksjoner i et hypoteserom $\mathcal{H}$. Løsningen på det empiriske risikominimeringsproblemet kan da uttrykkes som
+\begin{align}
+\hat{f} = \argmin_{f \in \mathcal{H}} R_{emp}(f).
+\end{align}
+Hvis vi antar at $x\in\mathbb{R}$, så kan et mulig hypoteserom være mengden av alle polynomial av grad $p$,
+\begin{align}
+\mathcal{H}_p = \{f:f(x)=\beta_0 +\beta_1x+\ldots+\beta_p x^p\}.
+\end{align}
+Det empiriske risikominimeringsproblemet med kvadratisk tapsfunksjon er da
+\begin{align}
+\argmin_{\beta} \frac{1}{N}\sum ((y_n-(\beta_0 +\beta_1x+\ldots+\beta_p x^p))^2
+\end{align}
+der vi kan finne løsningen analytisk med minste kvadrats metode. Med ulik grad $p$ av polynomfunksjonen får vi ulike hypotesefunksjoner. Hvordan velger vi hvilken $\mathcal{H}_p$ som er best? Vi kan ikke bruke empirisk risiko som mål fordi
+\begin{align}
+\mathcal{H}_1 \subset \mathcal{H}_2 \implies R_{emp}(\hat{f}_1) \geq R_{emp}(\hat{f}_2) 
+\end{align}
+Mer fleksibilitet vil alltid medføre at funksjonen kan lære mer fra data og få bedre \textit{in-sample fit} og dermed lavere empirisk risiko. Målet vårt er derimot å generalisere til nye data og oppnå best mulig \textit{out-of-sample fit}, altså prediksjonsrisiko. For å velge optimal struktur må vi bruke kryssvalidering.
+\subsection{Kryssvalidering}
+For å estimere prediksjonsrisiko til en gitt hypotesefunksjon $\hat{h}$ trenger vi usette data som ikke ble brukt i opplæringen av funksjonen. Hvis vi setter av $J$ observasjonen kan vi bruke
+\begin{align}
+\widehat{R(\hat{h})} = \frac{1}{J}\sum L(y_j,\hat{h}(\mathbf{x}_j)).
+\end{align}
+som ikke systematisk favoriesere med fleksible funksjoner. Testing på usette data er det vesentlige, men vi forbedre testingen og utnytte data mer effektivt gjennom såkalt K-fold-kryssvalidering. I stedet for å kun oppdele i trenings- og testdata, kan vi partisjonere datasettet $\mathcal{D}$ i $K$ like store deler som vi angir med $\mathcal{D}_k$ $(k=1,..K)$. I hvert steg holder vi av én del som testdata og trener algoritmen på de restenrende delene. Målet på prediksjonsrisiko blir da gjennomsnittet av estimert risiko på hvert av testdelene. Med andre ord blir algoritmen da:
+\begin{enumerate}
+\item for k in 1,...,K:
+\item fit $\hat{h}$ på $\mathcal{D}_{-k}$
+\item finn $\hat{R}_k = \frac{1}{|\mathcal{D}_k|}\sum_{n:n\in\mathcal{D}_k}L(y_n,\hat{h}(\mathbf{x}_n)$
+\item end for, finn $\widehat{R(\hat{h})}=\frac{1}{K}\sum \hat{R}_k$
+\end{enumerate}
+Til slutt velger vi $\hat{h}_{opt} = \argmin \widehat{R(\hat{h})}$. Merk at for å få forventningsrett estimat på hvor godt algoritmen fungerer på usette data må vi holde av enda et testsett som ikke har vært brukt i kryssvalideringen.
+\subsection{Dekomponering av risiko med kvadratisk tap}
+Det beste vi kan gjøre er å finne en funksjon $h$ slik at
+\begin{align}
+y = h(x)+\epsilon
+\end{align}
+der $\epsilon$ er uavhengig av $x$. Det medfører at funksjonen $h$ fanger opp all informasjon om verdi av $y$ slik at det resterende feilleddet er uavhengig av $x$. Vi bruker da $\hat{y}=h(x)$ som predikert verdi av $y$. Vi bruker forventet kvadrert avvik som mål på prediksjonsfeil, og siden dette er det beste vi kan oppnå er den såkalte \textit{irreducible error}
+\begin{align}
+E[(y-h(x))^2] = Var[\epsilon]
+\end{align}
+Jamført med diskusjon om projeksjon i $L_2$ er $h(x)$ projeksjonen av $y$ på underromet som består av alle tilfeldige variabler som kan skrives som en deterministisk funksjon av $x$. Dette tilsvarer den betingede forventningsfunksjonen. I praksis så må vi estimere $h$ fra realiserte verdier i utvalg. Vi finner da en annen $\hat{h}$ i underrommet. Den kvadrerte avstanden fra $\hat{h}$ til $y$ er
+\begin{align}
+E[(h(x)+\epsilon-\hat{h}(x))^2] = E[(h(x)-\hat{h}(x))^2] + Var[\epsilon]
+\end{align}
+der første ledd er prediksjonsfeilen vi kan ha håp om å redusere gitt $x$. Det er flere måter å vise denne dekomponeringen, men det følger av ortogonal projeksjon og pythagoras. Mye av statistisk læring handler om å finne best mulig $\hat{h}$. I praksis avgrenser vi oss ofte til å se på et underrom av mengden av tilfeldige variabler som kan skrives som funksjon av $x$; for eksempel alle lineære funksjoner. Biasen vil være avstand mellom $h(x)$ og $h^*(x)$ som er beste variabel i den delmengden. Det er i tillegg varians i estimeringen. 
+
+Utvalgsanalogen til MSE er
+\begin{align}
+E_{P_N}[(y-\hat{h}(x))^2]
+\end{align}
+Den kan virke rimelig å minimere dette for å finne $\hat{h}$. Problemet er at dette er en forventningsskjev estimator av MSE og alltid vil foretrekke mer fleksible funksjoner som kan lære mønster i utvalget. Men målet vårt er ikke å memorisere utvalget! Målet er å predikere fremtidige data. Vi bruker derfor kryssvalidering til å estimere MSE: se hvor god jobb hypotesefunksjonen gjør på usette data. Vi vil da se at forholdet mellom MSE og fleksibilitet har en U-form. Bias reduseres og varians øker. 
+\section{Lineær regresjon}
+I regresjonsmodeller kan utfallsvariabelen ta verdier på et intervall av tallmengden. Vi vil finne en funksjon som predikerer utfallet med utgangspunkt i en input. Denne funksjonen kan være vilkårlig komplisert, men i praksis vil vi bruke såkalt \textit{lineær regresjon}. Det medfører at vi avgrenser oss til å betrakte et hypoteserommet $\mathcal{H}_l := \{h:h(\mathbf{x})=\mathbf{x}'\mathbf{b}\text{ for noen } \mathbf{x} \in \mathbb{R}^K\}$. Denne lineære modellen har flere attraktive egenskaper. For det første er funksjonen representert med et endelig antall helningsparametre $\beta$ som betegner de marginale effektene, $\frac{\partial}{\partial x_k} f(\mathbf{x})=\beta_k$. Hvor meningsfull parametrene er avhenger riktig nok av i hvilken grad den lineære funksjonen tilnærmer $CEF$, men den attraktive egenskapen er at rammeverket er fleksibelt nok til å fange opp ikke-lineariterer gjennom såkalte \textit{basistransformasjoner}. Selv om vi transformerer variablene kan det fortsatt være mulig å tolke koeffisientverdiene i henhold til de opprinnelige variablene. Den tredje gode egenskapen er at med endelig mengde data vil den lineære strukturen begrense variansen slik at prediksjonene ikke nødvendigvis blir bedre med mer fleksible modeller. 
+
+Målet vårt er å nærme oss $y$ ved å finne en funksjon $h(\mathbf{x})$ som minimerer $\lVert u \rVert_{L_2}$. Minste kvadrats metode er konsistent estimator av den lineære regresjonsfunksjonen $h^* := \argmin_{h \in \mathcal{H}_l}\lVert u(h) \rVert_{L_2}$, der $\mathcal{H}_l := \{h(\cdot): h(\mathbf{x}=\mathbf{x}'\beta\}$. Vet å forlenge $\mathbf{x}$ ved å legge til nye variabler kan vi utvide hypoteserommet $\mathcal{H}_l$ slik at vi i teorien kan komme nærmere $y$. Det kan dermed være fristende å tenke at flere input-variabler alltid er et gode og kaste hele kjøkkenskapet inn i algoritmen. Problemet er at variansen øker og at det generalisere dårlig til nye data. 
+
+Vi skal se på valg av \textit{feature space} som er viktig i lineære modeller siden det per konstruksjon er begrenset hvor mye algoritmene kan lære om mønster i data på egenhånd. 
+\subsection{Feature space}
+Vi kan gjøre en transformasjon 
+\begin{align}
+\Phi : \mathbf{x} \mapsto \Phi(\mathbf{x}) =
+\begin{bmatrix}
+\Phi_1(\mathbf{x}) \\
+\vdots \\
+\Phi_J(\mathbf{x})
+\end{bmatrix}
+\end{align}
+og behandle $\Phi(\mathbf{x})$ som om det var inputvektoren.\footnote{Hvis vi tolker de estimerte koeffisientene så vil vi ofte se på endring i forhold til opprinnelig input. Skal se på tolkning senere.} De individuelle transformasjonene $\Phi_j(\cdot)$ betegnes som basistransformasjoner og verdimengden til $\Phi(\cdot)$ betegnes som feature space.\footnote{I praksis er det ofte slik at basistrasnfomasjonen bare avhenger av verdi til én av komponenetene i inputvektoren, men kan avhenge av flere verdier eller ingen. Et grunnlegende eksempel er konstantledd, $\Phi(\mathbf{x}) = \begin{bmatrix} 1 \\ 1\mathbf{x} \end{bmatrix}$.} Dette gir oss et nytt hypoteserom
+\begin{align}
+\mathcal{H}_{\Phi} = \{l \circ \Phi : \Phi:\mathbb{R}^K\to \mathbb{R}^J \text{ og } l \text{ er lineær funksjon} l:\mathbb{R}^J\to \mathbb{R}\}.
+\end{align}
+Det empiriske risikominimeringsproblemet kan da skrives som
+\begin{align}
+\hat{\gamma} = \argmin_{\gamma \in \mathbb{R}^j} \frac{1}{N}\sum(y_n-\gamma'\Phi(\mathbf{x}))^2
+\end{align}
+som vi løser for gitt transformasjon $\Phi(\cdot)$. I praksis er valg av $\Phi(\cdot)$ og dermed form på feature space vi søker over en viktig del av risikominimeringsproblemet. Det er bias-varians tradeoff og vi finner beste kandidat med kryssvalidering.
+
+En mye brukt transformasjon er polynom for å modellere ikke-lineær sammenheng. Fra Weierstrass' theorem vet vi at kan oppnå vilkårlig god tilnærming av kontinuerlig funksjon med polynom av tilstrekkelig høy orden. Det kan derfor være tilforlatelig å gjøre en transformasjon
+\begin{align}
+\Phi(x_n) = 
+\begin{bmatrix}
+x_n^0 \\
+x_n^1 \\
+\vdots \\
+x_n^J
+\end{bmatrix}
+, \quad \gamma'\Phi(x_n) = \sum_{j=0}^J\gamma_jx_n^j
+\end{align}
+men skal se at det finnes bedre måter å modellere ikke-lineær sammenheng dersom andre orden ikke er tilstrekkelig til å fange mønster. 
+\subsubsection{Valg av featurespace}
+I statistisk læring er målet vårt enklere å måle fra data og vi kan bruke algoritme til å finne hvilken kombinasjon som generaliserer best. \footnote{Som målt ved kryssvalidering i henhold til metric eller andre kriterier som pålegger straff for fleksibilitet (justert $R^2$, AIC, BIC,...). Vet ikke hvordan jeg utleder disse kriteriene eller hvorfor jeg skulle ønske å bruke det over kryssvalidering.}.
+\begin{enumerate}
+\item Kan teste alle mulige kombinasjoner, men det blir fort ganske mange... $2^K$ kombinasjoner
+\item Greedy algoritme (forward/backward selection). I hvert steg legger til variabel som fører til størtst reduksjon i $RSS$, deretter ta kryssvalidering.
+\end{enumerate}
+Jeg synes fremgangsmåten over virker ganske slitsom. Bedre å kaste alt inn og la regulariseringsparameter ta seg av problemet.
+\subsection{Regularisering}
+Vi vil ta hensyn til at det er sannsynlighet for utfall som som vi ikke observerer i det partikulære utvalget som vi trener modellen på, og at utfallet til verdi vi ikke observerer sannsynligvis er ganske like de nærmeste naboene vi observerer. Vi oppnår dette ved å straffe høye koeffisientverdier. 
+
+Vi kan se litt intuisjon for dette ved å betrakte to features som er høyt korrelert. Ettersom prediksjon er vektet gjennomsnitt av features så kan vi oppnå samme $\hat{y}$ ved å skalere opp den éne koeffisienten og ned den andre. Dette kan gi bedre føyning i utvalget, men gjørt at både $\hat{y}$ og koeffisient blir ustabile. Vi kan gjøre det mer stabil ved å presse begge mot null. Dette oppnår vi ved å legge til et straffeledd i tapsfunksjonen. Har tre ulike måter i implementere det på i lineær regresjon.
+\subsubsection{Ridge}
+Kostnadsfunksjonen er 
+\begin{align}
+C(\theta) &= MSE(\theta)+\alpha\sum_{k=1}^K\theta_k^2 \\
+&= MSE(\theta) + \alpha \mathbf{w}'\mathbf{w}
+\end{align}
+Merk at vi ikke straffer konstantleddet. Må standardisere features før vi regularisere slik at det ikke avhenger av måleenhet. Finnes en closed form løsning, men vet ikke hvor interessant det er.\footnote{Kan motivere at det har gode numeriske egenskaper som gjør inverse mer stabil eller noe sånt.}
+\subsubsection{Lasso}
+Kostnadsfunksjoen er
+\begin{align}
+C(\theta) &= MSE(\theta)+\alpha\sum_{k=1}^K|\theta_k|
+\end{align}
+Bruker $L_1$-norm i stedet. Vet ikke hvordan jeg kan skrive det på matriseform. Fordelen med denne regulariseringen er at det setter koeffisienter lik $0$ slik at den velger ut de relevante featurene. Her er marginalgevinsten ved å redusere koeffisient konstant. Kan også illustrere forskjell mellom ridge og lasso ved å sette det opp som betinget optimeringsproblem.
+\subsubsection{Elastic net}
+Kostnadsfunksjon har vektet gjennomsnitt av de to ulike regulariseringene,
+\begin{align}
+C(\theta) &= MSE(\theta)+\alpha\sum_{k=1}^K\theta_k^2+(1-r)\alpha\sum_{k=1}^K|theta_k|
+\end{align}
+hmhm. 
+\section{Andre regresjonsmetoder}
+Skal nå se på andre regresjonsmetoder. Tror splines er mest aktuell av disse.
+\subsection{Splines}
+\subsection{Ikke-paramerisk regresjon}
+I lineær regresjon antar vi at $E[y|\cdot]:=f(\cdot)$ er kjent opp til ukjent parameter. Vet ikke hvordan den ser ut på forhånd, men kan tilnærme arbritrære kontinuerlige funksjoner med basistransformasjoner og bruke kryssvalidering til å vurdere ekstern validitet. Dessuten har jeg sett av vi kan bruke splines til å partisjonere inputrommet slik at vi får mer fleksibilitet til å fange opp lokale sammenhenger. Sånn sett er parametriske metoder rimelig fleksible samtidig som de i prinsippet er mulige å tolke gjennom den parametriske representasjonen.
+
+Har noen ikke-parametriske metoder som også kan være relevant å bruke i økonometri, men tror relevansen er avgrenset til regresjonsdiskontinuitet der det viktig å fange eksakte funksjonelle relasjonen. Metodene generaliserer veldig dårlig til input i flere dimensjoner; både fordi det er vanskelig å kommunisere den funksjonelle formen dersom den ikke kan visualiseres grafisk og fordi dimensjonalitetens forbannelse gjør at lokale metoder fungerer dårligere. 
+\subsubsection{K-nærmeste naboer}
+Dette er en ganske direkte, naturlig og intuitiv estimator for $f(\mathbf{x})=E[y|\mathbf{x}]$. Estimerer gjennomsnitt lokalt. Nedside: Ikke parametrisk representasjon av funksjonen, må ha alt data i minnet for å gjøre nye prediksjoner, fungerer dårlig i høy dimensjon.
+\subsubsection{Kernelmetoder}
+\subsubsection{Sieve?}
+\subsection{Kvantilregresjon}
+Den $\tau$'te kvantilen til en variabel $y$ med cdf $F$ er gitt ved $Q(\tau)$ der
+\begin{align}
+\tau = F(Q(\tau)) \implies Q(\tau) = F^{-1}(\tau)
+\end{align}
+Vi må utvide definisjonen til å håndtere at ikke alle $F$ er monotont voksende slik at den inverse ikke er definert på hele verdimengden til $F$.
+\begin{align}
+Q(\tau) = \inf\{t:F(t)\geq \tau\}
+\end{align}
+Dette er den vanlige definisjonen, men vi kan også definere det som løsningen på et minimerings problem som involverer forventningsverdi av parametrisert funksjon av $y$. Skal da se at vi kan få det inn i ERM-rammeverket og kan estimere kvantiler fra utvalgsanalog. 
+\begin{align}
+L_{\tau}(y,\xi) &= |(y-\xi)(\tau-I\{y<\xi\})| \\
+&= piecewise
+\end{align}
+Kan vise at 
+\begin{align}
+Q(\tau) = \min_{\xi} \mathbb{E}[L_{\tau}(y,\xi)]
+\end{align}
+hmm... hm.
+\section{Klassifikasjon}
+I klassifikasjon angir utfallvariabelen hva slags kategori observasjonen tilhører. I binær klassifikasjonen er det to kategorier. Det er vanlig å betegne den éne som \textit{positiv} kategori og la den ta verdi 1, og den andre kategorien er \textit{negativ} med verdi 0. Med flere kategorier kan utfallsvariabelen ta verdi $y \in G=\{1,...,K\}$. Merk at siden tallene bare er kode for kategori kan vi ikke bruke de numeriske verdiene til å si noe om avstanden mellom ulike kategorier eller deres rangering.
+
+Fremgangsmåten i klassifikasjonsproblemer har likevel mange fellestrekk med regresjon. I praksis vil vi gjerne lære funksjoner som tar verdi $p_k(\mathbf{x}) := P(y=k|\mathbf{x})$. Disse betingede sannsynlighetsfunksjonene angir sannsynligheten for at en observasjon tilhører de ulike kategoriene gitt andre observerte egenskaper. De må oppfylle egenskapene til sannsynlighetsfunksjoner slik at $p_k(\mathbf{x}) \in [0,1]$ for alle $k$ og $\sum_k p_k(\mathbf{x})=1$. Merk at i binær klassifikasjon er det tilstrekkelig å lære $p_1$ siden $p_0(\mathbf{x}):=1-p_1(\mathbf{x})$. Med flere kategorier er det vanlig å estimere ut fra \textit{one-versus-rest} og eventuelt skalere slik at de summerer til én. 
+
+Vi vil også ha en hypotesefunksjon som tar verdi $h(\mathbf{x})\in G$ og angir predikert kategori. Det kan vi lage ved å plassere observasjonen i kategorien med høyest predikert sannsynlighet,
+\begin{align}
+h(\mathbf{x}) = \argmax_{k\in G} p_k(\mathbf{x})
+\end{align}
+Spesielt i binær klassifikasjon kan det være aktuelt å velge en \textit{terskelverdi} $k$ og plassere i positiv kategori dersom predikert sannsynlighet overstiger denne verdien,
+\begin{align}
+h(\mathbf{x}) = I\{p(\mathbf{x}>k)
+\end{align}
+der valg av $k$ avhenger av kostnad ved ulike typer feilprediksjon. Dette impliserer en partisjonering av inputmengden i delmengder som predikerer ulike kategorier og grensene mellom delmengdene er decision boundary
+\begin{align}
+D(h)=D(p,k)=\{x:p(x)=k\}
+\end{align}
+som både avhenger av den estimerte betingede sannsynligheten og valg av treshold.
+\subsubsection{Empirisk risikominimering}
+Litt usikker på om jeg kan få klassifikasjon inn i rammeverket med empirisk risikominimering. Skal se at jeg kan bruke såkalt log-loss tap til å lære parameter i logistisk regresjon og betrakte det som empirisk risikominimering. Men jeg bruker jo annet kriterium til å vurdere risiko til $h$. Så er ikke like direkte kobling som i regresjon ...
+\subsection{Logistisk regresjon}
+Logistisk regresjon har en del fellestrekk med lineær regresjon og deler gode egenskaper, blant annet at det gir parametre som kan tolkes.
+
+Utfallsvariabelen kan ta to verdier i $\{0,1\}$ og den er da nødvendigvis bernoulli-fordelt. Fordelingen kan være betinget av $\mathbf{x}$ slik at parameteren $p$ er en funksjon av $\mathbf{x}$ og det kan være ulike bernoulli-fordelinger for de ulike $\mathbf{x}$-verdiene, $y|\mathbf{x} \sim bernoulli(g(\mathbf{x}))$. Denne funksjonen $g$ må tilfredstille $g(\mathbf{x}) \in [0,1], \forall \mathbf{x}$. I praksis vil vi paramterisere funksjonen med $g({\mathbf{x}}'\beta)$ slik at vi kan si noe om hvordan betinget sannsynlighet endrer seg når vi endrer input. Vi trenger en funksjon $g$ som transformerer tallinjen til $[0,1]$. Kumulative fordelingsfunksjoner har denne egenskapen, og de to vanlige valgene er 
+\begin{align}
+g(\mathbf{x}) = 
+\begin{cases} \Phi(z) = \int_{-\infty}^x (2\pi)^{0.5}exp\{-s^2/2\}ds \\
+\Lambda(z) = \frac{e^z}{1+e^z}
+\end{cases}
+\end{align}
+der første kalles probit og andre logit. Kan utvide til flere kategorier ved å lage egen parametervektor for hver kategori, $\theta^{(k)}, k=1,..,K$. Den predikerte sannsynligheten for at input $\mathbf{x}_n$ tilhører kategori $j$ er da
+\begin{align}
+\hat{p}_j = \frac{\exp\left(\theta^{(j)}\mathbf{x}_n\right)}{\sum_{k=1}^K \exp\left(\theta^{(k)}\mathbf{x}_n\right)}
+\end{align}
+Dette har visstnok noe med \textit{softmax} og \textit{cross entropy} å gjøre, men det må bli annen dag.\footnote{Også et poeng at vi kan kjøre log-reg som one-versus-all, men det skal i teorien være mulig å tolke $\theta^{(k)}$ fra multinomial... må prøve å få dette operativt i økonometri-delen, tror Cameron og Trivedi er best på dette.}
+\subsubsection{Tolke koeffisienter}
+Merk nå at $\beta$ er fra den underliggende latente modellen og ikke har noen opplagt tolkning. Det vi er interessert i er hvordan sannsynligheten for $P[y=1|\mathbf{x}]$ avhenger av $\mathbf{x}$. For kontinuerlige variabler kan vi bruke kjerneregel til å derivere uttrykket,
+\begin{align}
+\frac{\partial}{\partial x_k} F(\mathbf{x}'\beta) &= \frac{\partial F(u)}{\partial u} \beta_k \\
+&= f(\mathbf{x}'\beta) \beta_k
+\end{align}
+Vi kan merke at effekt partiell effekt på betinget sannsynlighet alltid har samme fortegn som $\beta_k$ siden $f(\cdot)$ er sannsynlighetstetthet, men størrelsen avhenger av hvor vi evaluerer $\mathbf{x}$. Vi kan betrakte $f(\mathbf{x}'\beta)$ som en skaleringsfaktor. Tre vanlige valg av skaleringer er
+\begin{enumerate}
+\item Plugge inn noen verdier. Interessant dersom vi har har noen få dummies, men i praksis vil vi ofte ha enklere sammendragsmål.
+\item Partial effect at average (PEA): Plugger in $\bar{\mathbf{x}}$. Litt problem dersom har transformerte variabler, siden tar gjennomsnitt etter transformasjon.
+\item Average partial effect (APE): Evaluerer i hver $\mathbf{x}_n$ som jeg observerer i utvalg og tar gjennomsnitt, $\frac{1}{N}\sum_n f(\mathbf{x}_n'\beta)\beta_k$.\footnote{Dette blir da hele uttrykket for partial effect og ikke bare skaleringsfaktoren.}
+\end{enumerate}
+For variabler som er diskret er ikke den deriverte en meningsfull størrelse. Vi tar da differanse i verdi, $(x_k+1)-x_k$, men det avhenger fortsatt av verdi til andre variabler. Kan bruke samme fremgangsmåter som over, f.eks blir APE:
+\begin{align}
+APE(x_k) = \frac{1}{N}\sum_n\left[f(\mathbf{x}_{n,-k}\beta_{-k}+\beta_k(x_k+1))-f(\mathbf{x}_n'\beta)\right]
+\end{align}
+der $\mathbf{x}_{n,-k}\beta_{-k}$ er vektorene med de resterende $K-1$ variablene.
+\subsection{Bayesianske metoder}
+Bruker bayes regels til å estimere betinget sannsynlighet
+\subsubsection{Diskriminantanalyse}
+Bayes-regel gjør at vi kan estimere betinget sannsynlighet på en annen måte:
+\begin{align}
+f(y=k|\mathbf{x}) &= \frac{f(\mathbf{x}|y=k)\mathbb{P}\{y=k\}}{f(\mathbf{x})} \\
+&= \frac{f_k(\mathbf{x})\pi_k}{\sum_j f_j(\mathbf{x})\pi_j} \\
+& \propto f_k(\mathbf{x})\pi_k
+\end{align}
+denne metoden er enklere å bruke på flere kategorier og dette må jeg si litt om.. Uansett, må nå i stedet velge parametrisk klasse til $\mathbf{x}|y$ og får kvadratisk discriminant analysis hvis jeg antar at $\mathbf{x}|y=k \sim N(\mu_k,\Sigma_k)$ og lineær hvis jeg i tillegg antar at $\Sigma_k=\Sigma, \forall k$. Med utgangspunkt i dette kan jeg finne decision boundary som funksjon av enkle størrelser som jeg kan estimere. Skal si mer om dette senere.
+\subsubsection{Naiv bayes}
+For å implementere bayes-regel kan vi estimere
+\begin{align}
+f_k(\mathbf{x})\pi_k.
+\end{align}
+Har sett at lda/qda gir en måte å gjøre dette på. Den metoden har ganske sterke parametriske antagelser. Vil bruke svakere antagelser, men problem å estimere betinget simultanfordeling $f_k(\mathbf{x})$. Blir mye enklere dersom vi antar at de er uavhengige slik at 
+\begin{align}
+f_k(\mathbf{x}) = \prod_j f_{kj}(x_j)
+\end{align}
+mer om dette senere.
+\subsection{KNN}
+En ikke-parametrisk metode for å estimere betinget sannsynlighet. Bruker relativ av kategorier i nabolag til $\mathbf{x}$ som estimat på betinget sannsynlig, der nabolaget $N_K(\mathbf{x})$ består av $K$ observasjoner med minst $\lVert \mathbf{x}_n - \mathbf{x} \rVert$.
+\begin{align}
+\hat{P}(y=j|\mathbf{x}) = \frac{1}{k}\sum_{n\in N_K(\mathbf{x})} I\{y_n = j\}
+\end{align}
+Hvis målet er å minimere feilrate blir klassifiseringsregelen $h$ å predikere kategori som er mode i nabolag. 
+\subsection{Support vector machines}
+\subsection{Beslutningstrær}
+Beslutningstrær er en fleksibel og transparent metode som kan brukes til både regresjon og klassifikasjon. Metoden går ut på å partisjonere inputmengden og bruke mode eller gjennomsnitt i hver delmengde som predikert kategori for observasjon med input der. Formelt finner vi $R_j$ der 
+\begin{align}
+\cup_{j=1}^JR_j = \mathcal{X}, \quad R_j \cap R_k = \emptyset, j \neq k 
+\end{align}
+og predikert verdi kan representeres parametrisk i lineær modell som
+\begin{align}
+\hat{y}_n=\sum_j I\{\mathbf{x}_n \in R_j\}\hat{\beta}_j
+\end{align}
+der $\hat{\beta}_j = avg(\{y_n: \mathbf{x}_n \in R_j\})$. Partisjonering kan representeres med et tre som er en special case av en graf.\footnote{Må ha litt formell definisjon av graf som jeg får fra algoritme/datastrukturer. Poeng at det har nodes og verticies.} Treet består av nodes og koblinger mellom nodes som vi kan betegne som greiner (eller \textit{branches}). Det begynner i root-node og splitter i to eller flere child nodes ut i fra verdi av en variabel. Nodes som ikke har childs betegnes som blader (eller \textit{leaves}). Bladene på treet utgjør den endelige partisjoneringen og det er dette vi bruker til å gjøre prediksjoner.
+
+For nye inputs kan vi bevege oss gjennom treet. Dette gjør estimatoren transparent siden vi ser hvilke inputs som fører til hvilke inputs. Mer spesifikt kan vi både se hvilke inputs som er viktige for å forklare forskjeller i observert kategori (tidlig split) og hvilken retning det påvirker predikert sannsynlighet for kategori. Vi kan observere predikert sannsynlighet i hver node og se hvordan den endres mens vi beveger oss i treet gjennom å gi gradvis mer informasjon om input til observasjon.
+
+En nedside med beslutningstrær er at de er veldig sensitive for treningsdata. Små endringer i data den blir opplært på kan få store konvekvenser for partisjoneringen (som bestemmer decision boundary og prediksjoner). Dette har til dels sammenheng med at den lager rektangulære partisjoner som er ortogonalt på aksene. Vi skal senere se at vi kan glatte ut boundaries ved å kombinere mange trær i en såkalt tilfeldig skog. Først skal vi se litt kort på algoritme for å konstruere hvert enkelt tre. 
+\subsubsection{Algoritme for å konstruere trær}
+I hver node så søker vi over alle mulige cut-points for å finne partisjonering som fører til størst mulig reduksjon i såkalt \textit{impurity}. Vi vil at labels i hver delmengde skal være mest mulig homogene. De to vanligste målene på impurity er \textit{gini} og \textit{entropy}. I praksis bruker vi en greedy algoritme som søker over grid og kalkulerer reduksjon i impurity for hver punkt i grid og bruker dette til å partisjonere. Deretter gjøres dette rekursivt helt til det ikke lenger er mulig å redusere impurity (alle inputs har enten samme features eller samme labels) eller til treet har nådd en spesifisert grense for dybde.
+
+Jeg tror det er best å vokse ut hele treet og deretter trimme (\textit{prune}) det ex-post for å fjerne oppdelinger som ikke fører til bedre fit out-of-sample. I praksis tror jeg vi bruker maks-dybde som regularisering selv om dette ikke er optimalt...
+\section{Ensemble}
+Vi kan oppnå bedre prediksjoner ved å kombinere flere estimatorer. Litt av intuisjonen bak dette er at idiosynkratiske feil jevner seg ut når vi tar gjennomsnitt.\footnote{Kan koble til forsikring... Selv om hver enkelt estimator kun predikere riktig kategori i 51\% av tilfellene vil andel som predikere riktig konvergere i sannsynlighet mot 51\% slik at majoriteten tar riktig i 100\% av tilfellene dersom de er uavhengige.} Dette argumentet bygger på at det er variasjon i prediksjonene til de ulike estimatorene. Den enkleste måten å oppnå dette er å bruke algoritmer til å trene opp estimatorer på treningsdata og deretter bruke en avstemming til å predikere nye inputs. Vi kan da enten bruke simpel majoritet (såkalt hard voting) eller vi kan vekte ut i fra den predikerte sannsynligheten til de ulike estimatorene (såkalt soft voting). I praksis bruker vi to andre fremgangsmåter for å skape variasjon: vi sampler fra treningsdata for å skape variasjon i data eller vi trener estimatorer sekvensielt der det blir lagt større vekt på observasjonene som ble feilpredikert av forrige estimator.
+\subsection{Bagging og tilfeldig skog}
+Bagging er kort for bootstrap aggregering. Ved å sample med replacement fra treningsdata så sampler vi fra empirisk fordeling. Dette innfører litt mer bias, men ved å ta gjennomsnitt av estimatorene så kan vi redusere varians. Fremgangsmåten er spesielt egnet for beslutningstrær siden de er sensitive for treningsdata. I praksis bruker vi derfor såkalte tilfeldig skog som er baggete beslutningstrær med litt ekstra triks for å oppnå mer varians. Det er for eksempel vanlig å avgrense mengden av variabler den kan bruke til å partisjonere til en tilfeldig delmengde.
+
+Den tilfeldige skogen er litt mindre transparent enn et enkelt beslutningstre siden vi ikke kan følge hvordan input beveger seg langs greinene, men vi kan få et mål på feature importance ut fra gjennomsnittlig bidrag til reduksjon i impurity fra tra trærene i skogen. Det er også en fordel at trærene kan blir trent opp parallelt.
+\subsection{Boosting}
+Dette er en alternativ fremgangsmåte der estimatorene blir trent opp sekvensielt og som dermed ikke kan paralleliseres. I stedet for å bruke mange unbiased estimatorer med høy varians så forsøker vi å sekvensielt redusere bias ved å legge mer vekt på observasjonene som ble feilpredikert av forrige estimator. Det finnes i hovedsak to fremgangsmåter for å booste: Ada(ptive)Boost og gradient boosting.
+\subsubsection{Adaptive Boosting}
+Eksplisitt endringer av vekter i kostnadsfunksjon, må gjør algoritmen formell en annen gang.
+\subsubsection{Gradient Boosting}
+Fitter residual av forrige, vet ikke om det fungerer på klassifikasjon.
+\subsection{Stacking}
+Kan også forsøke å lære den beste mulige måten å kombinere de ulike estimatorene... Hard vs soft voting osv; alt kan læres og valideres...
+\section{Vurderingskriterier}
+\subsection{Confusion matrix}
+I klassifikasjon er ikke vurderingskriteriet like entydig som i regresjon. Det mest intuitive kriteriet er \textit{accuracy} som angir andelen av observasjoner som blir plassert i riktig kategori, men dette er ofte ikke et godt mål på hvor egnet modellen er. For det første kan vi med ubalanserte kategorier oppnå høy treffsikkerhet ved å alltid predikere majoritetskatogrien som ikke er så nyttig. Dessuten er det ofte ulike kostnader assoiert med ulike \textit{typer} feil. Vi kan kategoriesere ulike typer feil gjennom en en såkalt \textit{confusion matrix} som deler inn observasjoner ut fra faktisk kategori og predikert kategory. Med binær klassifikasjon gir dette fire muligheter og vi bruker dette til å lage vurderingskriterier
+\begin{align}
+&\text{Accuracy} = \frac{\text{TP+TN}}{\text{TP+FP+TN+FN}}\\[1ex]
+&\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}\\[1ex]
+&\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+\end{align}
+Anta nå at vi bruker algoritmen til å diagnostisere om personer har en gitt sykdom (f.eks. covid). Presisjon til algoritmen angir andelen av de som tester positiv som faktisk er smittet. Denne kan vi få arbritært høy gjennom å kun diagnostisere de som helt klart er syke. Recall (sensitivitet) angir derimot andelen av de som faktisk er syke som tester positivt. Hvis testen er lite sensitiv så er det mange syke som vil gå under radaren. Vi kan igjen få denne arbritært høy ved å si at alle som tester seg er syke. 
+
+Isolert sett gir disse kriteriene ikke noe godt mål siden vi kan lage rimelig trivielle algoritmer som maksimerer kriterium uten å være nyttig. Et alternativ kan være å ta et gjennomsnitt av presisjon og sensitivitet. F1-score tar harmonisk gjennomsnitt. \footnote{litt usikker på hvorfor vi ikke tar artimetisk snitt. Harmonisk vekter slik at det blir større straff dersom én av de er lav..} Dette kan gi et greit sammendragsmål for å sammenligne ulike algoritmer, men i praksis er det bedre å undersøke tradeoff mellom presisisjon og sensitivitet for å finne den beste balansen til vårt formål.
+\subsection{Presisjon vs Recall trade-off}
+Algoritme gir gjerne et mål på hvor sikker den er at en observasjon tilhører en kategori.
+\begin{align}
+&\widehat{P(y_n=1|\mathbf{x}_n)} = \hat{p}_n \\
+&\hat{y}=I\{\hat{p}_n \geq k\}
+\end{align}
+ved å øke \textit{treshold} $k$ kan vi øke presisjon og redusere recall. Vi kan visualisere dette gjennom å tegne $(k, Pres(k))$ og $(k, Recall(k))$ i et diagram. Det er mer nyttig å tegne output fra $f:k\mapsto (Pres(k),Recall(k))$ som angier en såkalt \textit{mulighetskurve} med recall vi kan oppnå for gitt presisjon. Hvis kurven er bratt så må vi gi opp masse recall for å oppnå litt mer presisjon. Vi kan bruke denne kurven til å finne $k$ som korresponderer med balansen av presisjon og recall som vi foretrekker. Kan også tegne kurver fra ulike algoritmer. Ulike algoritmer kan ha ulik performance på ulike deler av kurven. Så dersom vi er veldig opptatt av å ha f.eks. over 90\% recall, så kan vi se hvilken algo som oppnår høyest presisjon i det intervallet.
+
+Et annet mye brukt mål er den såkalte \textit{ROC-kurven} som plotter True Positive Rate (?) vs False Positive Rate (?). Igjen kan vi undersøke kurven eller bruke areal under kurven (\textit{AUC}) som et sammendragsmål for valg av algoritme og treshold $k$.

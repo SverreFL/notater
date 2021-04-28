@@ -1,0 +1,1 @@
+Figuren viser hvordan presisjon til koeffisientestimatene avhenger av varians til feilledd. Ground truth er konstant lik 1 og helning lik 2. Første rekke viser realisering for gitt utvalg med 25 observasjoner. Andre rekke viser sannsynlighetstettheten til koeffisientestimator for gitte utvalgsstørrelsen og tredje rekke viser 20 realiseringer.

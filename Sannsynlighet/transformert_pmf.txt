@@ -1,0 +1,1 @@
+For hver verdi av utfallsmengden til transformert variabel er sannsynlighetsmassen summen av sannsynlighetsmassene i mengden av punktene som mapper til det punktet.

@@ -1,0 +1,1 @@
+Kan rekonstruere tetthetsfunksjon fra betingede tettheter, $p(x)=\sum p(x|y=k)p(y=k)$. Gir mer fleksibilitet enn å bare anta en parametrisk form på hele fordelingen.

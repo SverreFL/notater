@@ -1,0 +1,274 @@
+\chapter{Matematisk tenkemåte}
+Det matematiske språket har en logisk oppbygning. Logikk er læren om hva som gjør argumentasjon gyldig. For veldefinerte spørsmål i matematiske modeller vil det være entydige svar fordi konklusjonen følger logisk fra informasjonen som er tilgjengelig. Mer generelt vil konklusjoner avhenge av skjulte antagelser... slik at man trekker ulike konklusjoner. Kan knytte dette til modell (liten verden versus stor verden). Viktig for konstruksjon av argument og da spesielt matematiske bevis. 
+
+Det matematiske språket medfører og fasiliterer abstraksjon. Vi fokuserer på de vesentlige egenskapene og finner en enklere representasjon. Vi kan benytte oss av matematiske objekt med gitt definisjon som avgrenser hvilke størrelse som tilhører en gitt type objekt. Kan deretter finne egenskaper til objekter av gitt type og definere operasjoner på disse. Det gir oss et generelt rammeverk som vi kan anvende på mange ulike problemstillinger. Grunnleggende objekter er mengder, tupler og tall. Videre skal vi se på relasjoner, hvorav funksjoner er et viktig spesialtilfelle. Til slutt skal vi også se på grafer som kan beskrive en mer hierakrisk struktur (ikke bare hvorvidt det er kobling men hvor mange ledd unna samt .. mer info.)
+\section{Logikk}
+Logikk handler mye om hva som følger. Hvis noe er sant, så kan vi vise at andre ting også må være sanne. Jeg er fra Bergen og Bergen er en by i Norge. Dermed følger det logisk at jeg er fra Norge. Jeg vil bruke logikk til å konstruere gyldige argument der jeg viser at en konklusjon må være sanne gitt at premissene er sanne. Det kan også være nyttig å manipulere uttrykk som gir det en annen representasjon, men bevarer samme meningsinnhold. Vi begynner med klassisk utsagnslogikk som kun består av sammensetninger av enkle utsagn med logiske bindeord. Deretter vil jeg se på førsteordens logikk som blant annet bruker begreper fra mengdelære og gir oss et mer fleksibelt språk til å representere utsagn og sammenhenger mellom disse. På denne måten kan vi (nesten) konstruere hele det matematiske språket fra bunnen av.
+\subsection{Utsagnslogikk}
+Vi vil finne en representasjon av meningsinnholdet i språklige yttringer. De består grunnleggende av \textit{utsagn} som enten kan være sanne eller usanne. Disse kan representeres med en \textit{utsagnsvariabel}. Dette er plassholder for \textit{valuasjon} av enten $1$ hvis sann eller $0$ hvis usann. Det kan også være andre slags yttringer, for eksempel "hurra!", men dette påvirker ikke gyldigheten til argumentasjonen og vi kan derfor se bort i fra dette. Videre vil yttringene bestå av \textit{logiske bindeord} som og, eller, ikke og hvis, så. Disse representeres med henholdvis $\land, \lor, \neg, \rightarrow$. Med utsagnsvariabler og logiske bindeord kan vi konstruere \textit{formler}. Mengden av formler $\mathcal{F}$ er definert som den induktive tillukningen av utsagnsvariabler under de logiske bindeordene. 
+
+Vi kan betrakte de logiske bindeordene som funksjoner $f:\{0,1\}^2\to\{0,1\}$.\footnote{Med unntak av $\neg$ som er $f:\{0,1\}\to\{0,1\}$.} Vi kan konstruere sannhetstabeller som gir valuasjon av formelen for alle kombinasjoner av valuasjoner av de atomære formlene som kun består av utsagnsvariabel. For en gitt valuasjon kan det være praktisk å bruke et tre til å representere hierarkisk struktur av det sammensatte formelen og propagere sannhetsverdi oppover.
+\subsubsection{Nødvendighet og tilstrekkelighet}
+Jeg vil ha noen begreper for å beskrive hvordan valuering av en formel påvirker hva vi vet om en annen formel. I beskrivelsen under bruker jeg utsagn, men merk at disse er atomære formler og argumentene gjelder generelt for formler.
+\begin{itemize}
+\item Et utsagn $P$ er \textit{tilstrekkelig} for $Q$ dersom $Q$ må være sann dersom $P$ er sann, altså $P \rightarrow Q$. Dette kan også uttrykkes som \textit{hvis} $P$, så $Q$. Merk at tilstrekkelig ikke impliserer \textit{nødvendig}. Det kan derfor være slik at $Q$ er sann uten at $P$ er det. Kun en valuasjon av $Q$ gir oss derfor ingen informasjon om sannhetsinnholdet i $P$.
+\item En påstand $P$ er nødvendig for $Q$ dersom det ikke er mulig at $Q$ er sann uten at også $P$ er sann, altså $P \leftarrow Q$. Dette kan også utrykkes som $Q$ \textit{bare hvis} $P$. Merk at nødvendig ikke impliserer tilstrekkelig. Kun en valusjon av $P$ gir oss derfor ingen informasjon om $Q$.
+\item Hvis påstanden $P$ er både nødvendig og tilstrekkelig for $Q$ er påstandene ekvivalente i betydning av at begge med nødvendigheten enten er sanne eller usanne samtidig, altså $P \leftrightarrow Q$. Dette kan også uttrykkes som $Q$ \textit{hvis og bare hvis} $P$. 
+\end{itemize}
+\subsubsection{Logisk ekvivalens}
+To formler er logisk ekvivalente dersom de har samme sannshetsverdi for alle mulige tilordninger av sannhetsverdier til de atomisk påstandende de består av. En mulighet for å bevise ekvivalens er derfor å konstruere sannhetstabellene. En alternativ fremgangsmåte er å bruke et resonement. For å vise at formlene F og M er ekvivalente må vi
+\begin{enumerate}
+\item Anta at F er sann og vise at da må M være sann.
+\item Anta at M er sann og vise at da må F være sann.
+\end{enumerate}
+I denne argumentasjonsrekken kan vi få bruk for å manipulere uttrykk slik at de får ny representasjon, men samme meningsinnhold. Noen viktige ekvivalenslover
+\begin{itemize}
+\item Distributativ: $A \lor (B \land C) \leftrightarrow (A \land B) \lor (A \land C)$
+\item DeMorgan: $\neg (A \lor B) \leftrightarrow (\neg A \land \neg B)$
+\item Assosiativ: $A \lor (B \lor C) \leftrightarrow (A \lor B) \lor C$
+\item Kommutativ: $A \land B \leftrightarrow B \land A$
+\end{itemize}
+Fra de grunnleggende konnektivene kan vi definere nye konnektiver som gir oss enklere måte å representere formler med samme sannhetsinnhold.
+\begin{itemize}
+\item $P\land Q \leftrightarrow \neg(\neg P \lor \neg Q)$
+\item $P \rightarrow Q  \leftrightarrow \neg(P\land \neg Q)$
+\item $(P \leftrightarrow Q) \leftrightarrow (P \rightarrow Q) \land (Q \rightarrow P)$
+\end{itemize}
+\subsubsection{Logisk konsekvens}
+Hvis vi godtar et premiss eller gjør antagelser om at noen påstander er sanne, så vil det være andre påstander som følger med nødvendighet av dette; de må, av logisk konsekvens, også være sanne. Mer presist er $F$ en logisk konsekvens av $M$ dersom $F$ alltid er sann når $M$ er sann. Et argument er gyldig dersom konklusjonen er en logisk konsekvens av mengden med antagelser.Et eksempel på gyldig argument er
+$$
+\begin{array}{rl}
+    & P \lor Q\\
+    & \neg P \\
+    \cline{2-2}
+    & \therefore  Q
+  \end{array}
+$$
+\subsubsection{Noen flere begreper}
+Vi kan innføre litt begreper om hvordan sannhetsinnhold til en formel avhenger av valuering til de atomære formlene (utsagnsvariabler) den består av.
+\begin{itemize}
+\item Oppfyllbar dersom det eksisterer en valuering der formelen er sann.
+\item Falsifiserbar dersom det eksisterer en valuering der den ikke er sann.
+\item Tautologi dersom den alltid er sann (ikke falsifiserbar).
+\item Motsigelse dersom den alltid er usann (ikke oppfyllbar).
+\end{itemize}
+\subsection{Første ordens logikk}
+Vi skal gå fra utsagnslogikk til første ordens logikk, også kalt for predikatlogikk. Dette gir et mer fleksibelt rammeverk til å utrykke påstander om egenskaper til elementer i en mengde, samt si ting om sammenheng mellom ulike elementene. Vi kan bruke relasjon til å uttrykke påstand om element, $P(x)$. Vi kan la $x$ være en \textit{variabel} som representerer eller er plassholder for element i universet $\Omega$. Uttrykket $P(x)$ er en predikat siden det inneholder en \textit{fri variabel} og vi kan ikke si om det er sant eller usant. Sannhetsmengden til predikatet er $S = \{x \in \Omega:P(x)=1\}\subset \Omega$. Vi kan i prinsippet beskrive hele sannhetsmengden, men ofte vil bare uttrykke egenskaper ved den, for eksempel $S \neq \emptyset$ eller $S \neq \Omega$. For å gjøre dette får vi bruke for kvantorer.
+\subsubsection{Kvantorer}
+Vi vil ofte si noe om innholdet i sannhetsmengden til påstander. Vi har to såkalte \textit{kvantorer}:
+\begin{enumerate}
+\item Universalkvantoren: $\forall x P(x)$, betyr at påstand er sann for alle $x$ i universet vi betrakter
+\item Eksistenskvantoren: $\exists x P(x)$, betyr at det eksisterer minst én $x$ der påstand er sann
+\end{enumerate}
+I tillegg brukes $\exists! x P(x)$ som betyr at det eksisterer én og bare én $x$ som gjør påstand sann. Dette er mer en notasjonell konvensjon. Vi kan også omformulere utrykk med quantifiers for å finne ekvivalente representasjoner. Merk at
+\begin{itemize}
+\item $\forall x P(x) \Leftrightarrow \neg \exists x \neg P(x)$. Hvis det er sant for alle x kan det ikke eksistere en x der det ikke er sant. Medfører $\neg \forall x P(x) \Leftrightarrow \exists x \neg P(x)$.
+\item $\exists x P(x) \Leftrightarrow \neg \forall x \neg P(x)$. Hvis det finnes minst én x der det er sant, så kan det ikke være usant for all x. Medfører $\neg \exists x P(x) \Leftrightarrow \forall x \neg P(x)$. 
+\end{itemize}
+Merk også at rekkefølgen til \textit{quantifiers} har betydning dersom de er ulike, men dersom de er like kan vi lese $\exists x \exists y$ som at det eksisterer x og y slik at (...), og rekkefølgen har ikke betydning. Merk også at dersom vi bruker quantifiers om to størrelser fra samme univers må vi spesifisere eksplisitt dersom $x \neq y$. Vi kan også bruke denne notasjonen for å si at et predikat $P(\cdot)$ er sant for alle elementer i en mende $S$:
+$$
+\forall x \in S P(x) \Leftrightarrow \forall x (x\in S \Rightarrow P(x))
+$$
+\subsubsection{Formelle definisjoner}
+Vi vil fortsatt betrakte sannhetsverdi til formler, men disse består ikke lenger bare av induktiv tillukning av atomære formler (utsagn) under logiske bindeord. For det første har vi introdusert to nye logiske symboler med entydig betydning. Deretter vil vi også åpne for at språket vi bruker har en \textit{signatur} som består av \textit{konstanter}, funksjoner og relasjoner som vi selv definerer meningsinnholdet til. Konstantene er navngitte representasjoner av elementene i universet. Funksjonene definerer operasjon som lar oss representere elementer i universet uten at de har en egen konstant. Relasjonene tar \textit{termer} (konstanter eller variabel) som argument, der antall argument er gitt ved \textit{ariteten} til relasjonen. En relasjon $R$ med aritiet 2 evaluert i konstante $(a,b)$ kan skrives som $(a,b)\in R \iff aRb \iff R(a,b)$. Det tar verdi i $\{0,1\}$ og er derfor et utsagn. 
+
+Mengden av formler $\mathcal{F}$ under et språk er induktivt definert. Basismengde av såkalte \textit{atomære formler} som er relasjon på termer. Hvis mengden er lukket under funksjoner $f, g, \dots$ på elemntene i basismengde så er $f(t_1,..,t_n)$ også en term. I tillegg har vi at 
+\begin{enumerate}
+\item $\phi, \psi \in \mathcal{F} \rightarrow \phi \land \psi, \phi \lor \psi, \dots \in \mathcal{F}$
+\item $\phi \in \mathcal{F} \implies \forall x \phi, \exists x \phi \in \mathcal{F}$
+\end{enumerate}
+\subsubsection{Første ordens språk}
+Kan si litt om språk generelt og ta formell definisjon av første orders språk her.
+\section{Mengdelære}
+En mengde er en uordnet kolleksjon av distinkte objekter. Dette medfører at rekkefølge og antall forekomster ikke har betydning, slik at $\{a,a,b\}=\{b,a\}$. I eksempelet ble mengdene representert ved å liste opp objektene. Alternativt kan innholdet beskrives ved
+\begin{align}
+A = \{x:P(x)\},
+\end{align}
+der $P:S\to \{0,1\}$ er et medlemskriterium og $S$ er univserset av objekter vi betrakter. Et objekt er da element i mengden $A$ dersom påstanden $P(\cdot)$ er sann (tar verdi 1) når det blir evaluert for det objektet. Ettersom mengder er så fleksible vil vi også ha en mer fleksibel måte å konstruere de. En alternativ måte er å bruke elementer fra en annen mengde $I$ som indeks når vi konstruerer
+\begin{align}
+P = \{p_i : i \in I\}
+\end{align}
+\subsubsection{Rangering og operasjoner}
+En mengde B er er en delmengde av A hvis alle elementene i B også er element i A
+\begin{align}
+B \subset A \iff x \in B \implies x \in A
+\end{align}
+To mengder er like dersom de inneholder akkurat de samme elementene
+\begin{align}
+A=B \iff A \subset B \land B \subset A
+\end{align}
+Vi kan også konstruere nye mengder ved å utføre \textit{operasjoner} på eksisterende
+\begin{itemize}
+\item Union: $ A \cup B = \{x\in S:x \in A$ eller $x \in B \}$
+\item Interseksjon eller snitt: $A \cap B = \{x\in S:x \in A$ og $x \in B \}$
+\item Differanse: $ A \setminus B = \{x\in S:x \in A$ og $x \notin B \}$
+\item Komplement: $A^C = \{x\in S:x \notin A\}$
+\item Symmetrisk differanse: $A\triangle B = \{x\in S: (x\in A \land x\notin B)\cup(x\notin A \land x\in B)\}$
+\end{itemize} 
+\subsubsection{Univers av tall}
+Mengder kan i utgangspunktet inneholder alle slags objekter, men i praksis liker vi å jobbe med mengder av tall. 
+\begin{itemize}
+\item $\mathbb{R}$, mengden av reelle tall, det vil si alle tall på tallinjen.
+\item $\mathbb{Z}$, menden av heltal $\{...,-1,0,1,...\}$
+\item $\mathbb{Q}$, mengden av rasjonelle tall, det vil si tall som kan skrives som brøk av heltall.
+\item $\mathbb{N}$, mengden av naturlige tall, $\{0,1,...\}$. Merk at noen ikke inkluderer 0 som naturlig tall.
+\end{itemize}
+Det er også vanlig å avgrense disse mengdene, for eksempel ved å kun betrakte positive reelle tall. Det kan betegnes som $\mathbb{R}^+$. 
+
+Intervaller utgjør viktige delmengder. Eksempler på intervall er
+\begin{align}
+A = \{x| a < x < b \} = (a,b) \subset \mathbb{R} \\
+B = \{x| a \leq x \leq b \} = [a,b] \subset \mathbb{R}
+\end{align}
+der det første er åpnet og det andre er lukket. Det eksisterer en presis definisjon på om en mengde er åpen eller lukket som avhenger av om den inkluderer endepunktene. Vi kan beskrive nye mengder med utgangspunkt i eksisterende mengder.
+\subsubsection{Kardinalitet}
+Kan si at $|A|$ er antallet elementer i $A$. En mengde er uendelig dersom det ikke eksisterer et tall som representerer kardinaliteten til mengden. To mengder har samme kardinalitet, $|A|=|B|$, dersom det eksisterer en bijektiv funksjon mellom elementene i mengdene. Dette gjør det mulig å sammenligne kardinalitet til uendelige mengder. En mengde $A$ er tellbar dersom det finne en injektiv transformasjon $f:A\to\mathbb{N}$.
+\subsubsection{Identiteter}
+Vil knytte operasjon på mengder til logiske konnektiver... ekvivalens.
+
+Merk at det finnes ulike måter å gi ekvivalente representasjoner av samme utrykk. For eksempel er $ A \setminus B = \{x\in S|x \in A$ og $x \notin B \} = x \in S \land x \in A \land x \notin B$. Tror jeg.. de har samme sannhetsmengde i hvertfall..Vi kan analysere den logiske formen til utrykk om mengder og betrakte sammenhengen mellom reglene for operasjoner på mengder og reglene for ekvivalens mellom utrykk. Eksempel
+\begin{align}
+x \in A \setminus (B \cap C) \\
+P \land \neg (Q \land R) \\
+P \land (\neg Q \lor \neg R ) \\
+(P \land \neg Q) \lor (P \land \neg R) \\
+x \in A \setminus B \cup A \setminus C
+\end{align}
+der jeg brukte at $x\in A$ (osv.) er påstander og dermed kan representeres med bokstav. Sannhetsverdi avhenger av variabel x så jeg kunne også ha betegnet det med $P(x)$.
+\subsubsection{Mengder av mengder}
+Det kan i prinsippet være alle mulige typer objekter, inkludert andre mengder. Mengder av mengder betegnes ofte som en familie. Et eksempel på dette er \textit{power set} til en mengde A som består av alle delmengdene til A.
+\begin{align}
+\mathscr{P}(A) = \{x:x\subseteq A \}
+\end{align}
+Vi kan ha en kolleksjon av mengder som potensielt er uendelig. La $\mathcal{F}=\{A_i: A_i = [\frac{1}{i},1], i \in \mathbb{Z}^+\}$. Denne kolleksjonen er monotont voksende fordi $j>i \implies A_i \subset A_j$. Vi kan ta unionen av alle mengdene og se om de konvergerer til en gitt mengde,
+\begin{align}
+\cup_{i=1}^{\infty} A_i = (0,1]
+\end{align}
+Vi sier at en følge av hendelser $A_1, A_2,...$ er stigende dersom $A_n \subset A_{n+1}, n \geq 1$ og avtagende hvis $A_{n+1} \subset A_n, n \geq 1$. Grenseverdien til slike følger er definert ved
+\begin{itemize}
+\item $\lim_{n\to\infty} A_n = \cup_{i=1}^{\infty} A_i$, hvis stigende
+\item $\lim_{n\to\infty} A_n = \cap_{i=1}^{\infty} A_i$, hvis avtagende
+\end{itemize}
+\subsubsection{Partisjonering}
+En partisjonering av en mengde $S$ er en mengde av ikke-tomme delmengder $S_k \subset S$ der
+\begin{enumerate}
+\item Unionen av delmengdene utgjør mengden, $\cup S_k = S$
+\item Delmengdene er disjunkte slik at snittet av distinkte delmengder er tomt, $S_k\cap S_j = \emptyset, k\neq j$
+\end{enumerate}
+Kan innføre begrep som rangere partisjonering... Finere. 
+\subsubsection{Kartesisk produkt}
+Ofte vil vi betrakte samling av element der hvert element består av komponenter som kommer fra ulike mengder. For å håndtere dette definerer vi en tuple som en endelig samling av objekt der rekkefølge og antall forekomster har betydning. Et eksempel på en tuple er $(a_1,...,a_N)$. To tupler $a$ og $b$ er like dersom $a_n = b_n$ for $n \in {1,\dots, N}$. Mengder av tupler blir ofte konstruert av kartesisk produkt av en mengde mengder. Dette betegnes også som kryssproduktet av mengdene og består av alle mulige tupler der komponent $n$ kommer fra den $n$'te mengden. 
+\begin{align}
+A_1\times...\times A_N =\times_{n=1}^N A_n =  \{(a_1,...,a_N)|a_n \in A_n \text{ for } n=1,...,N\}
+\end{align}
+I praksis bruker vi ofte kryssprodukt av mengder av reelle tall der hvert element er en vektor. Vektorrommet $\mathbb{R}^N=\mathbb{R}\times ... \times \mathbb{R}$ der $\mathbf{x}=(x_1,...,x_N) \in \mathbb{R}^N$. Husker at intervall er viktige delmengder av $\mathbb{R}$. Dette kan generaliseres til $\mathbb{R}^N$ som rektangler som består av kartesisk produkt av intervall
+\begin{align}
+I = \times_{n=1}^N[a_n,b_n) = \{(x_1,...,x_N)|a_n\leq x_n <b_n \text{ for } n=1,...N\}
+\end{align}
+\section{Relasjoner}
+En relasjon $R$ fra mengden $S$ til mengden $T$ er en delmengde av det kartesiske produktet av mengdene, $R \subset S \times T$. Vi kan bruke en alternativ notasjon for å beskrive medlemskap i relasjonen, $(a,b) \in R \iff aRb$. For relasjonen $<$ innebærer dette at $(a,b) \in < \iff a<b$. Noen navngitte relasjoner:
+\begin{itemize}
+\item Identitetsrelasjonen: $R=\{(x,x):x\in S\}$
+\item Tom relasjon: $R=\emptyset$
+\item Universell relasjon: $R=\{(x,y):x\in S, y\in T\}$
+\end{itemize}
+Noen begreper for å beskrive egenskaper en relasjon kan oppfylle
+\begin{itemize}
+\item Refleksiv: $(x,x) \in R$ for alle $x\in S$
+\item Symmetrisk: $(x,y) \in R \implies (y,x) \in R$
+\item Transitiv: $(x,y) \in R \land (y,z) \in R \implies (x,z) \in R$
+\item Antisymmetrisk: $xRy \land yRx \implies x=y$
+\item Irrefleksiv: $(x,x) \notin R, \forall x \in S$
+\end{itemize}
+Vi har litt terminologi om relasjoner avhengig av hvilke av egenskapene over de oppfyller. En relasjon er en \textit{ekvivalensrelasjon} dersom den er refleksiv, symmetrisk og transitiv. Den utgjør en \textit{ordning} dersom der er refleksiv, antisymmetrisk og transitiv. Ordningen er total hvis $xRy$ eller $yRx$ for alle $x\in S, y\in T$, slik at alle elementene inngår i relasjonen. Ellers er ordningen partiell.\footnote{Jeg vil knytte dette til ordning og ekvivalens på tall for intuisjon, og deretter se hvordan det kan utvides til andre mengder...}
+\subsection{Tillukning}
+Kanskje flytte dette til etter definisjon av operasjon?
+\begin{itemize}
+\item En mengde $M$ er lukket under en operasjon $R$ hvis $xRy \in M$ for alle $x,y \in M$.
+\item Tillukningen av $M$ under $R$ er den minste mengden som inkluderer ... hmm
+\item Tillukningen av en relasjon $R$ med hensyn på en egenskap er den minste mengden $R'$ der $R\subset R'$ som oppfyller denne egenskapen.
+\end{itemize}
+\subsubsection{Ekvivalensmengder}
+Hvis $\sim$ er en ekvivalensrelasjon kan vi for hver $s \in S$ definerere ekvivalensklassen til $s$ som $[s]=\{t\in S: t \sim s\}$. Mengden av ekvivalensklassene kalles kvotientmengden til $S$ under $\sim$, 
+\begin{align}
+S/\sim := \{[s]:s\in S\}
+\end{align}
+Kan merke at det utgjør en mengde av delmengder av $S$. Hvis $\sim$ er identitetsrelasjonen så er $S/\sim = \{\{s\}: s \in S\}$. Vi kan vise at mengden av ekvivalensklasser alltid utgjør en partisjonering av $S$. Denne partisjoneringen er ofte enklere å jobbe med siden den grupperer elementer som er ekvivalente i henhold til en gitt relasjon slik at vi kan behandle de likt.\footnote{For en dørvakt kan det for eksempel være relevant å dele folk inn etter hvor fulle de er og de er tilstrekkelig gamle...} Det er et eksempel på abstraksjon som innebærer en transformasjon til en annen representasjon som lar oss fokusere på det som er vesentlig. 
+\subsection{Funksjoner}
+En bineær relasjon fra $S$ til $T$ er en funksjon $f$ dersom hvert $x\in S$ blir assosiert med nøyaktig én $y\in T$. Med andre ord, så vil det for for alle $x \in S$ være nøyaktig én $y \in T$ der $(x,y) \in f$. En vanligere notasjon for å beskrive medlemskap i funksjonen er $f(x)=y$, der $x$ er \textit{argumentet} til funksjonen og $y$ er \textit{verdien}. For å henvise til selve funksjonen $f$ som et matematisk objekt liker jeg å bruke
+\begin{align*}
+f&:S\to T \\
+&:x \mapsto f(x)
+\end{align*}
+siden det både viser \textit{definisjonsmengden} og \textit{verdimengden}, samt regelen som tilordner argument til verdi. Vi sier at \textit{bildemengden} av $f$ er $\{f(x):x\in S\}$ som er alle mulige verdier funksjonen kan ta. Vi sier også at \textit{bildet} av en delmengde $\mathcal{X}$ under $f$ er $\{f(x):x\in \mathcal{X}\subset S\}$. Vi har litt fleksibilitet i valg av verdimengde så lenge bildemengden er delmengde av denne. Jeg vil nå innføre litt terminologi for å beskrive egenskaper til funksjoner
+\begin{itemize}
+\item Injektiv: funksjonen er \textit{en-til-en} slik at ulikt mapper til ulikt, $x \neq y \implies f(x) \neq f(y)$.
+\item Surjektiv: funksjonen er \textit{på} verdimengden slik at det tilsvarer bildemengden, $\forall y \in T$ så eksisterer det $x \in S$ slik at $f(x)=y$.
+\item Bijektiv: både injektiv og surjektiv, altså både på og en-til-en.
+\end{itemize}
+Merk at hvis en funksjon er injektiv eksisterer det alltid en invers funksjon $f^{-1}:B\rightarrow A$ der $f^{-1}(b)=a \iff f(a)=b$. Hvis den også er surjektiv vil definisjonsmengden til $f^{-1}$ tilsvare verdimengden til $f$. 
+\subsubsection{Operasjoner}
+En funksjon fra $S^n \to S$ kan betegnes som en operasjon...
+\subsubsection{Funksjoner som matematiske objekt}
+Kan putte de som element i mengder, definerer norm på de, rangere de, definere operasjon på de som gir ny funksjon.. bruke dette til å beskrive sammensatte funksjoner.. Se litt på analogi til mengde..
+\section{Grafer}
+Grafer er viktig i matematisk modellering fordi det gir en representasjon som fanger opp essensen av strukturer med relasjoner mellom objektene. En graf $G$ består av en mengde $V$ av \textit{noder} og en mengde $E$ av \textit{kanter} $\{u,v\}$, der $u,v \in V$. Vi sier at to noder er naboer hvis de forbindes med en kant. Vi kan innføre litt mer terminologi:
+\begin{itemize}
+\item En kant som forbinder en node med seg selv kalles en løkke
+\item To kanter er parallelle dersom de forbinder de samme nodene
+\item Grafen er enkel dersom den ikke har løkker eller parallele kanter
+\item I en retningsgraf er kantene tupler $(u,v)$
+\item Grafen er tom hvis $E=\emptyset$
+\item Grafen er komplett hvis alle nodene er forbundet med alle de andre nodene
+\end{itemize}
+Vi kan ha lyst til å bevege oss rundt i grafen og jeg vil innføre litt terminologi for å beskrive dette.
+\begin{itemize}
+\item En \textit{vandring} med lengde $n$ er en sekvens av noder og kanter $(v_0,e_1,v_1,\dots, e_n,v_n)$ der $e_i := \{v_{i-1},v_i\}$. I enkle grafer er det tilstrekkelig å skrive nodene. Vi kan også forenkle notasjonen slik at vandringen er beskrevet av $v_0v_1\dots v_n$.
+\item Vandringen utgjør en $sti$ dersom ingen av nodene blir besøkt mer enn én gang.
+\item Vandringen er lukket dersom $v_0 = v_n$. Den utgjør en \textit{krets} dersom den er både lukket og en sti.
+\item Hva er teknisk definisjon på en \textit{sykel}?
+\item Grafen er \textit{sammenhengende} dersom det er mulig å gjennomføre en vandring mellom $v_i$ og $v_j$ for alle $v_i, v_j \in V$. 
+\end{itemize}
+\subsection{Trær}
+Definisjonen er på grafer er ganske fleksibel. Vi kan påføre mer struktur ved å spesifisere egenskapene til kantene. Vi sier at grafen er et \textit{tre} dersom det er sammenhengende og asyklisk. Terminologi: blad og rot. Har litt egenskaper... blant annet kun én sti mellom to noder.
+\subsection{Vektede grafer}
+\section{Induksjon}
+Induktiv definisjon av mengde: Basismengde og tillukning av basismengde under operasjon. Måte å avgrense uendelig mengder..
+\section{Kombinatorikk}
+Kombinatorikk kalles gjerne for kunsten å telle. I mange situasjoner kan det være aktuelt å beregne for mange ulike valgmuligheter vi har eller hvor mange ulike måter noe kan gjøres på. Det er blant annet aktuelt i sannsynlighetsregning og for å beregne hvor raskt kompleksiteten til en algortime vil vokse. 
+\subsection{Multiplikasjonsprinsippet}
+Hvis vi kan betrakte situasjonen som en sekvens av uavhengige valg, i betydningen av at antallet muligheter i hvert valg ikke avhenger av de andre valgene, vil at det totale antallet mulige valg være produktet av antallet muligheter i hvert valg. Det tilsvarer antallet elementer i det kartesiske produktet av valgmulighetene,
+\begin{align}
+|A_1 \times \ldots \times A_K| = |A_1|\cdot \ldots \cdot |A_K|
+\end{align}
+Vi kan bruke dette prinsippet til å utlede antallet mulige delmengder av en mengde $A$, siden vi kan betrakte det som en sekvens av valg der vi i hvert valg bestemmer om vi skal inkludere et element eller ikke. Det samlede antallet valgmuligheter er da $2^{|A|}$.
+\subsection{Permutasjoner}
+En permutasjon kan betegnes som en tilordning av elementer i en rekkefølge. Ofte kan vi være interessert i antall mulige permutasjoner av elementer i en mengde $A$. La $|A|=n$. Da er antallet permutasjoner $n\cdot(n-1)\cdot\ldots\cdot 1 := n!$. Vi kan igjen betrakte det som et sekvens av valg og antallet tilsvarer igjen produktet av antall muligheter i hver valg, men merk at valgene ikke er uavhengige og at antallet muligeheter blir redusert med én for hver gang. Hvis vi vil finne alle permutasjoner av elementene i mengden med lengde $k$, blir det
+\begin{align}
+^nP_k = n\cdot(n-1)\cdot\ldots\cdot(n-(k-1)) = \frac{n!}{(n-k)!}
+\end{align}
+\subsection{Kombinasjoner}
+Andre ganger er vi ikke opptatt av rekkefølge og kun interessert i hvor mange ulike delmengder med gitt kardinalitet vi kan konstruere fra en mengde. 
+\begin{align}
+{n\choose k}:=\frac{^nP_k}{n!}=\frac{n!}{(n-k)!k!}
+\end{align}
+\section{Informasjonsteori}
+Hva er informasjon og hvordan kan vi kvantifisere det? Intuitivt så vil en melding inneholde informasjon hvis det reduserer usikkerheten til mottaker. Det kan for eksempel være tilbakemelding om karakter på en eksamen. Vi kan tenke at det inneholder informasjon fordi det avgrenser mulige alternativer.
+
+Vi kan formalisere dette i en modell der informasjon i en melding avhenger av antall mulige meldinger som kunne ha blitt sendt. Mengden informasjon avhenger altså av kontekst og ikke av innhold i den spesifikke meldingen. Hver melding kan representeres med en bitstreng. Vi kan bruke minste antall bits som er nødvendig for å representere alle de mulige meldingene som måleenhet for informasjon. Husk at med $k$ bits kan vi representere $2^k$ ulike meldinger. For å representere $N$ ulike alternativer trenger vi $2^k=N \iff k = log_2(N)$ bits. 
+\subsection{Entropi}
+Vi kan betrakte modellen over som et spesialtilfelle der alle de ulike meldingene er like sannsynlige. Modellen kan utvides ved å vekte alternativene med sannsynligheten for at den meldingen blir sendt. Hvis sannsynlighetsmassen er konsentrert på få alternativer er vi i utgangspunktet mindre usikre og det er derfor mindre reduksjon i usikkerhet av melding og dermed inneholder den mindre informasjon. Merk igjen at mengden informasjon ikke avhenger av selve inneholdet i melding, så (tror ikke) det er mer informasjon dersom det er melding om lite sannsynlig alternativ.
+
+Vi definerer entropi som
+\begin{align}
+H = -\sum p_n\log(p_n)
+\end{align}
+der høyere entropi medfører høyere usikkerhet og dermed mer informasjon i melding. Dersom alle alternativer er like sannsynlig tilsvarer det antall bits i modellen over,
+\begin{align}
+H = -\sum \frac{1}{N}\log(\frac{1}{N}) = -\log(\frac{1}{N}) = \log(N)
+\end{align}
+og hvis vi allerede vet hvilke alternativ det blir så er
+\begin{align}
+H = 1\log(1) +0 = 0.
+\end{align}
+Entropi er altså en egenskap ved sannsynlighetsmassefunksjoner og den er høyere jo mer spredt sannsynlighetsmassen er.

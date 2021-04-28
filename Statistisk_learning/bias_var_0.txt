@@ -1,0 +1,1 @@
+Med tilstrekkelig antall data kan vi bruke mer fleksibel funksjonell form for å få bedre tilnærming av CEF, men den økte fleksibiliteten medfører større varians i begrensede utvalg slik at prediksjonene ikke nødvedigvis blir bedre. For et gitt utvalg vil vi observe én av kurvene i panel B og vi vet ikke hvor nærmt det er ground truth.

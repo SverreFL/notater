@@ -1,0 +1,198 @@
+\chapter{Kalkulus}
+Jeg trenger litt greier for optimering. Ta recap på basic theorem, derivasjon og integral, optimering i $\mathbb{R}$ og $\mathbb{R}^2$ (både betinget og ubetinget), generalisering til flere dimensjoner, konkavitet, gradient, jacobi, hesse, lagrange, koblinger til lineær algebra (kvadratisk form, (lokalt) lineære transformasjoner,...)
+\section{Litt bakgrunn}
+\subsection{Algebra}
+Det mulig å uttrykke påstander der sannhet avhenger av verdi til variabel $x$. En vanlig problemstilling med praktisk anvendelse er å finne sannhetsmengde til påstand. Delmengder av tallinjen er intervall eller kombinasjon av intervall (snitt/union). Avstand mellom to tall er absoluttverdi. Eksempler på påstander og deres sannhetsmengder:
+\begin{align}
+|x|&=D \iff x \in \{-D,D\} \iff x=-D \lor x=D \\
+|x-a|&=D \iff x=a-D \lor x=a+D \\
+(2-x)^{-1}&<3 \iff x \in (-\infty,\frac{5}{3}) \cap  (-2,\infty)
+\end{align}
+Det tredje eksempel var mest sammensatt. Kan generelt løse ved å omskrive på form $\frac{a\cdot b}{c \cdot d} <0$, finne ut for hvilke $x$-verdier hver av faktorene er negative og dermed finne sannhetsmengde til hele uttrykket. En annen vanlig problemstilling er å finne røttene til en funksjon, altså verdiene av $x$ der $f(x)=0$. En grunn til at dette dukker opp så ofte er at vi alltid kan omskrive $g(x)=h(x) \iff g(x)-h(x)=0 \iff f(x) = 0$, der $f:= g-h$.\footnote{Jeg tror addisjon og subtraksjon av funksjoner er veldefinert, men er ikke helt sikker.}. En mulig fremgangsmåte her er å faktorisere $f(x)=a\cdot b \cdot c \cdot ..$ og finne får hvilke $x$-verdier hver av faktorene er lik null.
+\section{Litt analyse}
+Det sies at kalkulus er studie av endring. Vi mapper tall, så det er jo litt interessant å se hvor mye verdien av output endres når vi gjør en liten endring i input. Historisk har folk brukt konspetet om \textit{infinitesmall} endringer, men i siste halvdel av 1800-tallet kom teorien på litt tryggere grunn med følger og grenser (som man kan lære mer om i reell analyse).
+\subsection{Følger}
+Vi kan betrakte en følge $(x_1,x_2,...x_n,...) := (x(n):n\in\mathbb{N}) = (x_n)_{n\in\mathbb{N}}$ som en uendelig tuple der hvert positive heltall blir mappet til et objekt $x(n) := x_n$. Dette er en ganske generell datastruktur, men i kalkulus betrakter vi tilfelle der $x_n \in \mathbb{R}^N$. Vi er interessert i om følger konvergerer til et tall $\mathbf{r} \in \mathbb{R}^N$. Vi sier at $\lim x_n = \mathbf{r}$ eller $x_n \to \mathbf{r}$ dersom det er slik at uansett hvor lite vi gjør et nabolag om $\mathbf{r}$, så vil vi kunne finne en index $N$ slik at alle elementene i følgen med høyere indeks befinner seg i nabolaget. Vi beskriver nabolaget med en såkalt $\epsilon$-ball om $\mathbf{r}$,
+\begin{align}
+B_{\epsilon}(\mathbf{r}) := \{\mathbf{x}:d(\mathbf{x},\mathbf{r}) < \epsilon \}
+\end{align}
+der $d(\cdot)$ er en norm, for eksempel den euklediske:$d(\mathbf{x},\mathbf{r}) = \sqrt{\mathbf{(x-r)}'\mathbf{(x-r)}} := \lVert \mathbf{x}-\mathbf{r} \rVert$.
+\subsection{Rekker}
+En rekke er summen av leddene i en følge. Kan være entent endelig eller uendelig. Vi er interessert i om en uendelig rekke konvergerer. Tror vi kan betrakte summen av de $n$ første leddene som element i en følge, $x(n)=\sum_{i=1}^n y_i$, og undersøke om $(x_n)_{n\in\mathbb{N}}$ konvergerer.
+\subsection{Grenser og kontinuitet}
+Bruker epsilon-delta til å definere grense.
+\begin{align}
+\lim_{x\to a} f(x)=f(a) \iff \exists \delta |x-a|<\delta \implies |f(x)-f(a)|< \epsilon, \quad \forall \epsilon >0
+\end{align}
+Hvis grensen til $f$ eksister i $a$ så sier vi at funksjonen er kontinuerlig i $a$. Hvis funksjonen er kontinuerlig for alle $a \in I$ så er den kontinuerlig på intervallet $I$.\footnote{Sikkert noe tekniske greier om endepunktene.} Det er også venstre- og høyrekontinuitet som jeg er litt usikker på hvordan man definerer formelt.
+\begin{align}
+\lim_{x\to a} f(x)=f(a) \iff \lim_{x\to a^-} f(x)=f(a) \land \lim_{x\to a^+} f(x)=f(a)
+\end{align}
+\subsection{Topologi}
+Vil inføre noen definisjoner til å beskrive mengden en funksjon er definert på. 
+\subsubsection{Åpne mengder}
+En mengde er \textit{åpen} dersom den ikke inkluderer grenseverdiene. Mer formelt er en mengde $S$ åpen hvis det for hver $x \in S$ eksisterer en $\epsilon >0$ slik at $B_{\epsilon}(x) \subset S$. Funksjoner på åpne mengder har ikke nødvendigvis noen ekstremverdier så de kan være vanskelig å optimere. Dette motiverer også bruk av $\inf$ og $\sup$
+\subsubsection{Lukket mengde}
+En mengde er lukket dersom den inneholder grenseverdi til alle konvergente følger av elementer i mengden, $x_n \to x \implies x \in S$ dersom $x_n \in S \forall n \in \mathbb{N}$.
+\subsubsection{Begrenset mengde}
+En mengde er begrenset dersom det eksisterer et tall $B$ slik at $\lVert x \rVert < B$ for alle $x \in S$.
+\subsubsection{Kompakt mengde}
+En mengde er kompakt dersom den er både lukket og begrenset. 
+\section{Litt om funksjoner...}
+\subsection{Real valued functions}
+En funksjon $f$ er en "real valued" funksjon hvis den mapper til tallinjen; $f:A\rightarrow \mathbb{R}$. Vi er ofte interessert i å finne for hvilke element i A at funksjonen tar sin høyeste verdi. 
+\begin{itemize}
+\item Maximizer av $f$ på A er $\{a^*\in A|f(a^*)\geqslant f(a),$ $ \forall a \in A \}$ 
+\item Maksimumsverdi er da $f(a^*)$
+\end{itemize}
+Det er en utfordring at maxmizers ikke alltid eksisterer. Dette gjelder for eksempel for monotont voksende funksjoner på åpne intervall. For å håndtere dette kan vi definerer en supremum $ s := sup A $ der (1) $a \leq s$, $ \forall a \in A$  og (2) det eksisterer en følge  $(x_n), x_n \in A,$ slik at $ x_n \rightarrow s$
+\subsection{Inverse funksjoner}
+Hvis $f'(x)>0$ for alle $x\in I$ er funksjonen strengt monotont voksende på intervallet slik at $b>a \implies f(b)>f(a)$. Da eksisterer det en funksjon $f^{-1}$ med definisjonsmengde $\{f(x):x\in I\}$, verdimengde $I$ og der $f^{-1}(f(x))=x$. Det er en ny funksjon som tar output og mapper til input under $f$. Funksjonen $f$ må være strengt monoton fordi ellers vil flere input mappe til samme output og dermed vil ikke den inverse tilfredstille definisjonen av en funksjon og er dermed ikke definert. 
+\section{Lineær tilnærming av funksjoner}
+Funksjoner kan gjøres vilkårlig kompliserte og de kan potensielt være vanskelige å beskrive og manipulere. Mye av kalkulus handler om å finne en enklere (eg. lineær) representasjon av funksjonen som gir tilnærming av funksjonen i et omegn om $x^* \in S$.
+\subsection{Derivasjon}
+Hvis funksjonen er kontinuerlig så kan vi tegne punktene $\{(x,f(x):x\in I\}$ uten å løfte blyanten. Dermed kan vi tenke oss å lage en sekant som er en rett linje mellom to punkter på grafen $(x,f(x)),(x+h,f(x+h))$ og se hva som skjer med helningen når $h$ går mot $0$. Dette er den deriverte til funksjonen i $x$.
+\begin{align}
+f'(x) := \lim_{h\to0}\frac{f(x+h)-f(x)}{h}
+\end{align}
+for at den deriverte skal være definert må grenseverdien eksistere. Da er kontinuitet en nødvendig, men ikke tilstrekkelig betingelse. $f'(x)$ er også en funksjon av $x$ og denne må være kontinuerlig i $a$ for at $f'(a)$ skal være definert. Uansett, fra definisjonen over kan man utlede derivasjonsregler for alle (?) funksjonstyper og kombinasjoner av disse, så det er forholdsvis enkelt å derivere. Lite utvalg:
+\begin{itemize}
+\item Kjerneregel: $\frac{d}{dx}f(g(x)) = \frac{d}{dx}f(u) = \frac{df}{du}\frac{du}{dx}$
+\item Generalisering av kjerneregel:
+\item Noe om inverse funksjoner?
+\end{itemize}
+Når jeg jeg deriverer en funksjon $f:\mathbb{R} \to \mathbb{R}$ får jeg ut en ny funksjon $f':\mathbb{R} \to \mathbb{R}$. Hvis jeg evalurer den i et element av inputmengden får jeg $f'(x^*) = a \in :\mathbb{R}$; et tall som angir grenseverdien av helningen til $f$ i $x^*$. Jeg kan bruke dette til å beskrive funksjonen som gir verdier av tangentlinjen
+\begin{align}
+g:s\mapsto f(x^*)+ f'(x^*)(s-x^*) \approx f(x^*+s)
+\end{align}
+der jeg har bruke $s$ istedet for $\Delta x$. Dette er en affine funksjon, men vi kan se på lineær representasjon ved å se direkte på endring av funksjonsverdi i stedet for nivå.
+\begin{align}
+h:s\mapsto f'(x^*)(s-x^*) \approx f(x^*+s)-f(x^*) 
+\end{align}
+Generelt kan vi skrive $h(s)=DF(s^*)x$. Hvis funksjonen $f:\mathbb{R}^N\to\mathbb{R}$ får vi lineær tilnærming
+\begin{align}
+h:(s_1,...,s_N) \mapsto \sum \frac{\partial}{\partial x_n}F(\mathbf{x}^*)s_n = DF(\mathbf{x}^*)\mathbf{s}
+\end{align}
+der $DF(\mathbf{x}^*) := \left[\frac{\partial}{\partial x_1}F(x^*), ... ,\frac{\partial}{\partial x_N}F(x^*) \right]$ som også kalles Jacobi-matrisen til $F$ i $\mathbf{x}^*$. Dette skiller seg fra gradienten som er en kolonnevektor. Vi kan enkelt utvide til en funksjon $F: \mathbb{R}^N \to \mathbb{R}^M$ ved å observere at vi kan behandle hver av komponentene separat.\footnote{Husk at det finnes ulike måter å betrakte samme transformasjon. Vi kan for eksempel tenke på $\cos(x^2) := f(x)$ eller som $g(h(x))$ der $h:x\mapsto x^2$ og $g:y\mapsto \cos(y)$.}
+\begin{align}
+F(\mathbf{x}) = \left[F_1(\mathbf{x}),...,F_M(\mathbf{x})\right]' \in \mathbb{R}^M
+\end{align}
+For å finne lineær tilnærming er det bare å derivere hver av de $M$ komponent funksjonene med hensyn på de $N$ inputvariablene
+\begin{align}
+DF(\mathbf{x}^*) = \left[DF_1(\mathbf{x}^*),...,DF_M(\mathbf{x}^*)\right]'
+\end{align}
+\subsection{Taylor-tilnærming}
+Funksjoner kan være komplisert å arbeide med analytisk. Vi kan forsøke å finne en funksjon $p$ der $p(x) \approx f(x)$ for $x$ i et nabolag til $a$. Det kan være rimelig å kreve at $p(a) = f(a)$ og at $p'(x)|_a = f'(x)|_a$. Dette gir
+\begin{align}
+f(x) \approx p(x) := f(a)+f'(a)(x-a)
+\end{align}
+Vi kan bruke dette til å beregne endring i $y$ for små endringer i $x$
+\begin{align}
+dy := p(x+dx)-p(x) \approx \Delta y := f(x+dx)-p(x)
+\end{align}
+Dette er en lineær tilnærming av funksjonen, også kalt første ordens taylor tilnærming. Hvis den n'te deriverte til f er definert i $a$ kan vi generelt definere n'te ordens taylor tilnærming av $f$ i $a$ som
+\begin{align}
+p(x) = f(a) + \sum_n^N \frac{1}{n!}f^(n)(a)(x-a)^n \approx g(x)
+\end{align}
+det er mulig å vise at differansen $g(x)-p(x)$ er gitt ved lagranges feilledd
+\begin{align}
+R_{n+1}(x)=\frac{1}{(n+1)!}f^{(n+1)}(c)x^{n+1}
+\end{align}
+Størrelsen på leddet avhenger av $c$ som er vanskelig å finne. Vi kan velge $c$ som gir størst absoluttverdi av $f^{(n+1)}(c)$ for å finne en øvre begrensing på feilen i intervallet vi tilnærmer funksjon.
+\section{Noen vanlige funksjoner}
+\subsection{Polynomial}
+\subsection{Eksponential og logaritmer}
+Det er mange størrelser som vokser med \% av egen verdi. Populasjoner, penger i banken, mm. Dette kan beskrives med en eksponetialfunksjon $f(x)=ca^x$ der 
+\begin{itemize}
+\item$f(x+1)/f(x) = ca^{x+1}/ca^x = a \iff f(x+1)=f(x)a$ 
+\item $f(3)=c\cdot a \cdot a \cdot a$ 
+\item $f(0)=c$. 
+\item $f(\frac{m}{n}) = ca^{m/n}$
+\item $f(-x) = ca^{-x}=\frac{c}{a^x}$
+\end{itemize}
+derivert? valg av grunntall
+
+Det er en monoton funksjon som er strengt voksende for $a>1$ og strengt avtagende for $a<1$. Hvis $a=1$ er $f(x)=c$ for alle x. Med unntak av dette tilfelle har eksponentialfunksjoner en invers som kalles logaritmen
+
+egenskaper, litt usikker på hvordan utleder
+\begin{itemize}
+\item $\log(xy)=ln(x)+ln(y)$
+\item $\log(\frac{x}{y})=ln(x)-ln(y)$
+\item $\log(\frac{1}{x})=1-ln(x)$
+\item $\log(x^r) = r \cdot ln(x)$
+\end{itemize}
+\subsubsection{Naturlig logaritme}
+One base to rule them all.
+\begin{align}
+a = e^{ln(a)} \iff a^x = e^{ln(a)x} = e^{\lambda x}, \quad \text{der } \lambda =ln(a)
+\end{align}
+\subsubsection{Log-lineær}
+Tror dette er når sammenhengen mellom variabler i lineær i logartimen, eks:
+\begin{align}
+y = Ax^a \implies \log y = \log [Ax^a] = \log A + \log x^a = \log A + a \log x
+\end{align}
+\subsection{Trigonometriske funksjoner}
+\subsection{Sammensatte funksjoner}
+\section{Kort om integral}
+Det fundamentale teoremet i kalkulus er 
+\begin{align}
+\int_0^xf(s)ds := F(x)
+\end{align}
+der $F$ er integralet eller den antideriverte av $f$. Vi kan tenke oss at vi beveger oss på intervallet $[0,x]$ av tallinjen der variabelen $s$ befinner seg og tar en slags vektet sum der hvert punkt blir vektet med $f(s)$. En alternativ fremgangsmåte er å eksplisitt betrakte en todimensjonal inputmengde som begrenset av $[0, f(s)]$ i $t$-retningen og $[0, x]$ i $s$-retningen. Vi vekter nå alle punkter likt slik at det ikke er noen vektingsfunksjon inne i integralet
+\begin{align}
+\int_0^x\int_0^{f(s)}dtds&=\int_0^x t|^{f(s)}_0ds =F(s)|^x_0 = F(x)
+\end{align}
+Vi kan selvfølgelig spesifisere en variabel som bestemmer nedre grense for intervallet. De analoge uttrykkene blir da
+\begin{align}
+\int_a^bf(s)ds := F(a)-F(b)
+\end{align}
+og
+\begin{align}
+\int_a^b\int_0^{f(s)}dtds&=\int_a^b t|^{f(s)}_0ds =F(s)|_a^b = F(a)-F(b).
+\end{align}
+Vi kan også innføre en annen nedre grense enn $0$ i $t$-retningen. Med vektingstilnærming blir det differanse mellom vektene,
+\begin{align}
+\int_0^x[f(s)-g(s)]ds = \int_0^xf(s)ds - \int_0^xg(s)ds = F(x)-G(x)
+\end{align}
+dersom $f(s)>g(s)$ for alle $s\in [0,x]$. Eventuelt må vi partisjonere intervallet av tallinjen og ta differansen separat. Kanskje mulig å bruke absoluttverdi... hm. Kan finne tilsvarende med dobbeltintegral uten vekting av punktene,
+\begin{align}
+\int_0^x\int_{g(s)}^{f(s)}dtds = \int_0^xt|_{g(s)}^{f(s)}ds=\int_0^x[f(s)-g(s)]ds
+\end{align}
+\section{Flervariable funksjoner}
+Betrakt en funksjon
+\begin{align}
+f&: \mathbb{R}^d \to \mathbb{R} \\
+&: \mathbf{x}=(x_1,...,x_d) \mapsto f(\mathbf{x})
+\end{align}
+Generaliseringen av den deriverte til funksjonen er gradienten som angir den partiellderiverte med hensyn på hver av variablene i inputvektoren.\footnote{Tror vel egentilig generaliseringen er jacobimatrisen som er et lineær map. Må avklare forhold mellom jacobi og gradient..}
+\begin{align}
+\nabla f&:\mathbb{R}^d \to \mathbb{R}^d \\
+&:\mathbf{x}\mapsto \left(\frac{\partial f(\mathbf{x})}{\partial x_1},...\frac{\partial f(\mathbf{x})}{\partial x_d}\right)'
+\end{align}
+Gradienten er en vektor som lever i inputspace. Eller i utgangspunktet er det en vektor av funksjoner. Det blir vektor av tall når vi angir spesifikk verdi av $\mathbf{x}$. Uansett hvor vi evaluere vil vektoren peke i retningen der funksjonen vokser raskest. Lengden på vektoren sier noe om hvor raskt den vokser. 
+ 
+Generaliseringen av den andrederiverte til funksjonen er hesse-matrisen
+\begin{align}
+\mathbf{H}f &: \mathbb{R}^d \to \mathbb{R}^{d\times d} \\
+&:\mathbf{x} \mapsto \mathbf{H}f(\mathbf{x})
+\end{align}
+der
+\begin{align}
+\mathbf{H}f(\mathbf{x})_{i,j} = \frac{\partial}{\partial x_j}\left(\frac{\partial f(\mathbf{x})}{\partial x_i}\right)
+\end{align}
+Funksjonen er strengt konkav hvis\footnote{Merk at den kvadratiske formen er generaliseringen for om en matrise er \textit{positiv} eller \textit{negative}. Sier forhåpentligvis mer om dette i delen om lineær algebra.}:
+\begin{align}
+\mathbf{x}'\left[\mathbf{H}f(\mathbf{x})\right] \mathbf{x} > 0, \quad \forall \mathbf{x} \neq \mathbf{0}
+\end{align}
+\section{Ubetinget optimering}
+\subsection{Gradient descent}
+I maskinlæring har vi en kostnadsfunksjon $C:\Theta \to \mathbb{R}$ som angir sum av tap til hver av observasjonene i treningsdata for kandidatparameter $\theta$. Jeg vil velge kandidaten som minimerer kostnaden. En mulighet er å finne gradientent $\nabla_{\theta}C$ og løse $\nabla_{\theta}C(\theta)=0$. For å finne kandidater til optimum. Utfordringen er at $C(\cdot)$ kan være vilkårlig komplisert og avhenge av mange variabler slik at vi ikke klarer å løse det ikke-lineære ligningssystemet analytisk. Alternativet er da å gå frem numerisk. Hvis vi har et eksplisitt uttrykk for gradienten kan vi evaluere den i vilkårlig $\theta_{start}$. Gradienten er vektor i parameterrommet som peker i retning der kostnaden vokser raskest og lengden avhenger av hvor bratt funksjonen er. Vi velger derfor å gå i helt motsatt retning,
+\begin{align}
+\theta_{ny} = \theta_{start}-\eta\nabla_{\theta}C(\theta_{start})
+\end{align}
+der $\eta$ er den såkalte læringsraten som skalerer gradienten og påvirker hvor raskt vi beveger oss i parameterrommet. Det er viktig at den ikke er for høy slik at vi overskyter bunnpunktet og begynner å divergere, men bør heller ikke være for lav slik at konvergens tar for lang tid. Bestemmer oss et treshold som avslutter algoritmen når $\lVert \nabla_{\theta} \rVert <k$ siden vi i praksis ikke for den eksakt lik null. 
+
+Merk at dette er en lokal metode som bare kjenner helning til funksjon akkurat der den blir evaluert. Sikrer kun at det lokale minimum som den konvergerer mot også tilsvarer det globale minimum dersom funksjonen er konveks. Skal nå se på alternativ fremgangsmåte som kan håndtere funksjoner med platå og flere lokale minimum.
+\subsubsection{Stokastisk gradient descent}
+Denne fremgangsmåten bruker kun subset av treningsdata når den evaluerer hvordan kostnaden blir påvirker av valg av parameter. Når vi evaluerer i ulike subsets får vi ulike kostnadsfunksjoner slik at gradient hopper litt rundt om kring, men i gjennomsnitt så vil den konvergere mot global minimum. Kan være effektiv fordi den bruker mindre data og dermed kjører raskere, selv om det tar flere steg og en litt mindre ryddig vei mot målet. Også fordel at den kan hoppe ut at av blindveier.
+\section{Betinget optimering}

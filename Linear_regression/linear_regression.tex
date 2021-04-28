@@ -1,0 +1,268 @@
+\chapter{Lineær regresjon}
+Noen av fordelene med å avgrense til linære funksjoner er at vi kan få parametre med enkle tolkninger og det empiriske risikominimeringsproblemet med kvadratisk tap har en analytisk løsning (MKM). Kjenner teoretisk egenskap, stabil, prediksjonsrisiko. Stor klasse av additative modeller... tenker det finnes parametrisk representasjon av splines og lignende... litt usikker på hva jeg sier om dette. Nært knyttet til MKM, men dette er bare én av flere måter å estimere koeffisientene. (Vekte observasjonene i tapsfunksjonen ut fra varians... legge til regularisering... si noe om IV?).
+
+Lineær regresjon bruker i ulike fagfelt, for ulike formål og kan motiveres på ulike måter. Beste tilnærmede løsning på et overdeterminert ligningssystem. I økonometri motiveres det gjerne av såkalt \textit{conditional independence assumption} der behandling er tilfeldig fordelt innad i delgrupper og kan betraktes som analog til \textit{matching estimator}. I statistisk modellering (MLE/Bayes) gjør vi eksplisitte antagelser om parametrisert struktur til fordeling som generer data. I ren prediksjonssetting kan vi være mer agnostisk om fordeling og bare løser risikominimeringsproblem. Jeg begynner med siste tilnærming.
+\section{Egenskap ved simultanfordeling}
+beskrive egenskap ved simultanfordeling. ting vi kan forsøke å lære fra realiserte observasjoner
+
+Vi kan betegne den betingede forventningsfunksjonen $E[Y|X] := \int y f(y|X) dy$ som (populasjons) regresjonsfunksjonen.\footnote{Merk at populasjonsregresjonsfunkjsjonen (PRF) også brukes som betegnelse på den beste lineære tilnærmingen. Jeg tenker det er bedre å betegne dette som den lineære populasjonsregresjonsfunksjonen.} Dette er en tilfeldig variabel som for hver $X=x$ angir forventningsverdi til den betingede fordelingen av $y$. Det er den ortogonale projeksjonen av $y$ ned på underrommet som består av alle tilfeldige variabler som kan skrives som en deterministisk funksjon av $X$. Dette medfører at det minimerer forventet avvik og at vi kan dekomponere
+\begin{align}
+Y = E[Y|X] + Y-E[Y|X] = E[Y|X] + U 
+\end{align}
+der feilleddet $U$ per konstruksjon er ortogonal på alle funksjoner av $X$, altså $E[g(X)U]=0$. I praksis bruker vi små bokstaver av notasjonell konvensjon.
+
+Den lineære populasjonsregresjonsfunksjonen tilsvarer den ortgonale projeksjonen av $y$ ned på mengden av tilfeldige variabler som kan skrives som en lineær funksjon av $x$. Det medfører at vi kan dekomponere
+\begin{align}
+y = \beta'x+y-\beta'x = \beta'x+u
+\end{align}
+der feilleddet $u$ per konstruksjon er ortogonal på alle lineære funksjoner av $x$, altså $E[(b'x)u]=b'E[xu] = 0$. Dersom det inkluderer et konstantledd så medfører det også at $E[1u]=E[u]=0$ og $cov(x_k,u)=0$. Vi kan også motivere dette som beste lineære tilnærming til $E[y|x]$ som er det vi egentlig er interessert i. Husk at dette er en tilfeldig variabel, så det er ingenting i verien for å betrakte det som den avhengige variabelen i regresjonen.
+\subsection{Projeksjon}
+\subsection{Dekomponering av varians}
+knytte noe til avstand, geometri.. mest mulig analog
+\subsection{Tolkning av feilledd}
+avvik, E[u|x], strukturelt eller ikke. tolkning av parameter.
+\section{Numeriske egenskaper}
+Minste kvadrats metode har en rekke egenskaper som gjelder for alle datasett. Disse algebraiske egenskapene følger av projeksjoneringen og har geometriske tolkningner.
+\subsection{Ortogonal projeksjon}
+Minimeringsproblemet med kvadratisk tapsfunksjon er
+\begin{align}
+&h_{\hat{b}} = \argmin_{h_b \in \mathcal{H}_l} \mathbb{E}_{P_{\hat{N}}}[(y_n-h_b(\mathbf{x}_n)^2] \\
+& \hat{\mathbf{b}} = \argmin_{b \in \mathbb{R}^K} \frac{1}{N}\sum_n(y_n-\mathbf{x}_n'\mathbf{b})^2
+\end{align}
+Generelt må vi minimerer tapsfunksjonen numerisk ved å bruke algoritme som søker over parameterromet. Her kan vi løse det analytisk.\footnote{Det betyr at vi kan skrive $\hat{b} = g(\{(y_n,\mathbf{x_n}):n=1,...,N\}$ der vi kjenner $g$. I praksis er det bedre å organisere utvalget i matrise som er helt analogt til representasjon i tabulær form som vi er vant til å se.} Vi begynner med å sette det opp på matriseform ved å stacke input-vektorene,
+\begin{align}
+\mathbf{X}=
+\begin{bmatrix}
+\mathbf{x}_1' \\
+\vdots \\
+\mathbf{x}_N'
+\end{bmatrix}
+\end{align}
+slik at $col_k(\mathbf{X})$ gir verdi av feature $k$ til hver av de $N$ observasjonene i utvalget. Omskriver tapsfunksjon\footnote{Lurer på om jeg vil ha eget begrep for tap på hele utvalget i stedet for enkeltobservasjon... kostnad?},
+\begin{align}
+\frac{1}{N}\sum_n(y_n-\mathbf{x}'\mathbf{b})^2 = \frac{1}{N}(\mathbf{y}-\mathbf{X}\mathbf{b})'(\mathbf{y}-\mathbf{X}\mathbf{b})
+\end{align}
+Kan knytte dette til avstand og ortogonal projeksjon. Uansett, finner
+\begin{align}
+\hat{\mathbf{b}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}
+\end{align}
+\subsection{Frisch-Waugh-Lovell}
+Vi projekterer $\mathbf{y}$ på $S(\mathbf{X})$. 
+\begin{align}
+\mathbf{y} &= \mathbf{X} \hat{\beta} + \mathbf{M}\mathbf{y} \\
+&= \mathbf{X}_1\hat{\beta}_1 + \mathbf{X}_2\hat{\beta}_2 + \mathbf{M}\mathbf{y}
+\end{align}
+FWL-theoremet sier at vi får samme $\hat{\beta}_2$ ved å projektere $\mathbf{y}$ på residualen av projeksjonen av $\mathbf{X}_2$ på $S(\mathbf{X}_1)$. Merk at matrise kan transformere flere vektorer om gangen, men når jeg snakker om residualer så begrenser jeg implisitt til å se på én vektorer.. Kan få noe intuisjon ved å tenke på bivariat regresjon. Hvis jeg prosjekterer $\mathbf{x}$ på $S(\mathbf{1})$ så får jeg $\bar{x}\mathbf{1}$. Residualen er da den sentrerte vektoren der hver komponent er avvik fra gjennomsnitt. Hvis jeg regger $\mathbf{y}$ på den sentrerte variabelen uten konstantledd får jeg samme helning som i den bivariate regresjonen. Hm.
+
+FLW-theoremet gjør at vi kan isolere enkeltkomponentner i helningskoeffisienten og betrakte det som analog bivariat regresjon.
+\begin{align}
+\beta_1 = \frac{cov(y,\tilde{\mathbf{x}_k})}{var(\tilde{\mathbf{x}}_k)}
+\end{align}
+der $\tilde{\mathbf{x}}_k$ er residualen fra regresjonen av $\mathbf{x}_k$ på $S(\mathbf{x}_{-k})$.
+
+Tror det er enklest å tenke på dette som en to stegs prosess
+\begin{align}
+\mathbf{M}_1\mathbf{y}&=\mathbf{M}_1[\mathbf{X}_1\hat{\beta}_1 + \mathbf{X}_2\hat{\beta}_2 + \mathbf{M}\mathbf{y}] \\
+&= \mathbf{M}_1 \mathbf{X}_2\hat{\beta}_2 + \mathbf{M}\mathbf{y}
+\end{align}
+Merk at $S(\mathbf{M}) \subset S(\mathbf{M}_1)$. Hjelper dette..?
+
+Uansett, tror mye av poenget er at
+\begin{align}
+\hat{\beta}_k = \frac{cov(\tilde{\mathbf{x}}_k,\tilde{\mathbf{y}}_k)}{var(\tilde{\mathbf{x}}_k)}
+\end{align}
+der $\tilde{\mathbf{x}}_k$ og $\tilde{\mathbf{y}}_k$ er residualen av projeksjon av henholdsvis $\mathbf{x}_k$ og $\mathbf{y}$ på span av underrommet til de andre forklaringsvariablenee, $S(\mathbf{X}_{-k})$.
+\subsection{In-sample fit}
+Vi dekomponerer $\mathbf{y}$ i komponent i $span(\mathbf{X})$ og dets ortogonale komplement. Vi vil si noe om hvor god vår tilnærmede løsning er. Det avhenger den relative størrelsen på komponentene; hvor stor avviket er i forhold til \textit{størrelsen} på $\mathbf{y}$. Alt dette er jo vektorer så bedre å snakke om lengde enn størrelse...
+\begin{itemize}
+\item $TSS = \lVert \mathbf{y}\rVert^2$
+\item $RSS = \lVert \mathbf{M}\mathbf{y}\rVert^2$
+\item $ESS = \lVert \mathbf{P}\mathbf{y}\rVert^2$
+\end{itemize}
+fra pythagoras følger det at TSS = RSS + ESS. Vi kan definere enkel $R^2$ som andelen av den totale lengden som går i retning av kolonnerommet til $\mathbf{X}$... 
+\begin{align}
+R^2 = \frac{ESS}{TSS} = 1-\frac{RSS}{TSS} = 1-N\frac{R_{emp}(\hat{b}}{TSS}
+\end{align}
+Det følger at $R^2 \in [0,1]$ og at det gir mål på in-sample fit.\footnote{Hvis vi bruker annen estimering enn OLS og velger helt arbritære $R^2$ så kan vi få negative verdier.} Men målet vårt er å generalisere til nye data; ikke lære mest mulig om det gitte utvalget vi besitter. Maksimering av $R^2$ er dårlig kriterie i modellselskjon siden vi alltid kan få den høyere ved å legge til nye variabler enten de er relevante eller ikke,
+\begin{align}
+span(\mathbf{X}_a) \subset span(\mathbf{X}_b) \implies R^2_a \leq R^2_b
+\end{align}
+Det er heller ikke problem i seg selv at $R^2$ er lav... hvis vi estimerer kausal sammenheng så kan det være at eksponering for behandling forklarer liten andel av variasjon i utfall. Kan medføre problem med presisjon til koeffisientestimatene, men ser på dette under statistisk egenskaper. 
+\section{Statistiske egenskaper}
+De statistiske egenskapene sier oss noe om fordelingen til estimerte egenskaper dersom vi observerte (uendelig) mange realiserte datasett $\mathcal{D}$ fra samme fordeling. For å utlede slike egenskaper må vi gjøre antagelser om prosessen som genererer data. Disse antagelsene kan til dels sannsynliggjøres fra vårt enkle utvalg, men det kan ikke bevises. Med antagelsene kan vi utlede egenskaper.
+
+Antagelsene vi gjør avgrenser hvilke datagenereringsprosesser (DGP) vi er villig til å betrakte. Det definerer implisitt en mengde $\mathbb{M}$ av DGPer. Hvis den sanne prosessen $DGP_0 \in \mathbb{M}$ er modellen riktig spesifisert og egenskapene vi utleder er sanne for prosessen vi betrakter. En (historisk) mye brukt modell er den klassiske lineære modellen som lar oss utlede statistiske egenskaper for vilkårlig utvalgsstørrelse
+\begin{align}
+\mathbb{M} = \{y=\mathbf{x}\beta+u:u\sim NID(0,\sigma^2)\} \\
+DGP_0 =\{y=\mathbf{x}\beta_0+u:u\sim NID(0,\sigma^2_0)\}.
+\end{align}
+Merk at hvis vi inkluderer en irrellevante variablel $z$ i modellen som ikke er inkludert i $DGP_0$ så vil det likevel være element i $\mathbb{M}$ med koeffisient lik 0 for $z$. Egenskapene holder likevel. Hvis det derimot er utelatt variabel er $DGP_0 \notin \mathbb{M}$ og modellen er feilspesifisert.
+\subsection{Små utvalg}
+\begin{align}
+E[\hat{\beta}|\mathbf{X}] &= E[(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'y|\mathbf{X}] \\
+&=E[(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'(\mathbf{X}\beta+\mathbf{u})|\mathbf{X}] \\
+&=\beta+(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'E[\mathbf{u}|\mathbf{X}] \\
+&=\beta
+\end{align}
+\begin{align}
+V(\hat{\beta})&=E[(\hat{\beta}-\beta)(\hat{\beta}-\beta)'] \\
+&=E[(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{u}((\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{u})'] \\
+&=E[(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{u}\mathbf{u}'\mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}] \\
+&=\sigma^2E[(\mathbf{X}'\mathbf{X})^{-1}]
+\end{align}
+der jeg har brukt at $u_n\sim NID(0,\sigma^2) \implies V(\mathbf{u})=E[\mathbf{u}\mathbf{u}']=\sigma^2\mathbf{I}$. Kan omskrive
+\begin{align}
+V(\hat{\beta})=\frac{\sigma^2}{N}E[(\frac{1}{N}\mathbf{X}'\mathbf{X})^{-1}]
+\end{align}
+Variansen vokser proposjonalt med varians til feilledd, omvendt proposjonalt (?) med utvalgsstørrelse og avhenger også av kovariansstruktur mellom uavhengige variabler. Kan bruke FWL til å finne uttrykk for variansen til enkelt koeffisientestimator,
+\begin{align}
+V(\hat{\beta}_k)=\sigma^2(\mathbf{X}'\mathbf{M}_{-k}\mathbf{X})^{-1}
+\end{align}
+Litt usikker på den der. Avhenger av hvor mye variasjon i $x_k$ som ikke er forklart med variasjonen i andre variabler...
+\subsection{Store utvalg}
+\subsection{Presisjon til koeffisient}
+\subsection{Presisjon til prediksjon}
+Antar at jeg har en respons som er betinget normalfordelt og at CEF er lineær.
+\begin{align}
+\mathbf{y}|\mathbf{X} \sim N(\mathbf{X}\beta,\sigma^2\mathbf{I})
+\end{align}
+Hvis jeg observerer én realisering av denne simultanfordelingen får jeg én realisering av $\hat{\beta}$.    Jeg kan beregne utvalgsfordelingen til $\hat{\beta}$ gitt antagelsen jeg har gjort over,
+\begin{align}
+\hat{\beta} \sim N(\beta,\sigma^2\mathbf{I})
+\end{align}
+Hvis jeg får en ny observasjon $\mathbf{x}_{new}$ så vil min prediksjon fra den estimerte modellen være $\hat{y}_{new} := \mathbf{x}_{new}'\beta$ siden dette er sentraltendensen i betinget fordeling av $y|\mathbf{x}_{new}$. På en annen side er det jo slik at dersom jeg hadde observerte en annen realisering av simultanfordelingen ville jeg hatt en annen $\hat{\beta}$ og gitt annen prediksjon. Jeg vil forsøke å kvantifisere variasjonen i prediksjonen.\footnote{Jeg tror målet mitt er å kunne angi et intervall der jeg med gitt sannsynlighet kan påstå at $y_{new}$ vil ligge i. Det avhenger både av variasjon i $\hat{y}_{new}$ og fordeling til avvik fra sentraltendens... Begynner i hvertfall med å se på variasjon til prediksjonen.}
+\begin{align}
+V(\hat{y}_{new}|\mathbf{X}) &= V(\mathbf{x}_{new}'\hat{\beta}|\mathbf{X}) \\
+&= E[(\mathbf{x}_{new}'\hat{\beta})^2|\mathbf{X}] - E[\mathbf{x}_{new}'\hat{\beta}|\mathbf{X}]^2 \\
+&= E[\mathbf{x}_{new}'\hat{\beta}\hat{\beta}'\mathbf{x}_{new}|\mathbf{X}] - (\mathbf{x}_{new}'\beta)^2 \\
+&= \mathbf{x}_{new}'E[\hat{\beta}\hat{\beta}'|\mathbf{X}]\mathbf{x}_{new} - \mathbf{x}_{new}'\beta\beta'\mathbf{x}_{new} \\
+\end{align}
+Bruker nå at 
+\begin{align}
+E[\hat{\beta}\hat{\beta}'|\mathbf{X}] &= V(\hat{\beta}|\mathbf{X})+E[\hat{\beta}|\mathbf{X}]E[\hat{\beta}|\mathbf{X}]' \\
+&= \sigma^2(\mathbf{X'}\mathbf{X})^{-1} + \beta\beta'
+\end{align}
+slik at
+\begin{align}
+V(\hat{y}_{new}|\mathbf{X}) &=\mathbf{x}_{new}'(\sigma^2(\mathbf{X'}\mathbf{X})^{-1} + \beta\beta')\mathbf{x}_{new} -\mathbf{x}_{new}'\beta\beta'\mathbf{x}_{new} \\
+&=\sigma^2\mathbf{x}_{new}'(\mathbf{X'}\mathbf{X})^{-1}\mathbf{x}_{new} + \mathbf{x}_{new}'\beta\beta'\mathbf{x}_{new}-\mathbf{x}_{new}'\beta\beta'\mathbf{x}_{new} \\
+&=\sigma^2\mathbf{x}_{new}'(\mathbf{X'}\mathbf{X})^{-1}\mathbf{x}_{new}
+ \end{align}
+Tror det bør samsvare med variasjon jeg observerer når jeg sampler verdier av $\hat{\beta}$ og plotter linjer.. det vet jeg ikke om det gjør .. 
+\subsection{Residual}
+Bruker residual til å estimere varians til feilledd,
+\begin{align}
+\hat{\sigma}^2 &= \frac{1}{N}\sum\hat{u}_n^2 \\
+&= \frac{1}{N}\sum(y_n-\mathbf{x}_n'\hat{\beta})^2 \\
+&= \frac{1}{N}(\mathbf{y}-\mathbf{X}\hat{\beta})'(\mathbf{y}-\mathbf{X}\hat{\beta}) \\
+&= \frac{1}{N}(\mathbf{y}'\mathbf{y}-2\mathbf{y}'\mathbf{X}\hat{\beta} + \hat{\beta}'\mathbf{X}'\mathbf{X}\hat{\beta}
+\end{align}
+der 
+\begin{align}
+\hat{\beta}'\mathbf{X}'\mathbf{X}\hat{\beta} &= \mathbf{y}'\mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y} \\
+&=\mathbf{y}'\mathbf{X}\hat{\beta}
+\end{align}
+slik at
+\begin{align}
+\hat{\sigma}^2 = \mathbf{y}'\mathbf{y}-\mathbf{y}'\mathbf{X}\hat{\beta}
+\end{align}
+\section{Hypotesetester}
+Knytte til test-prinsipp fra MLE...
+\subsection{Lineære restriksjoner av koeffisient}
+tror jeg vil ha t-test som special case av F-test
+\subsection{Diagnose}
+funksjonell form. vet ikke helt hva annet jeg vil teste..
+\section{Funksjonell form}
+Vi forsøker å tilnærme oss funksjonen $\mathbb{E}[y|\mathbf{x}]$. Vi har sett litt på i hvilke tilfeller forskjellene i observert utfall for ulik nivå av \textit{behandling} kan ha kausal tolkning. Uansett er jeg interessert i å beskrive hvordan funksjonen endrer seg når variabler endres. I praksis bruker vi lineær regresjon. Det kan håndtere ikke-linearitet ved å først transformere variablene. Tolke den estimerte funksjonen; endring i forhold til opprinnelige størrelser.
+\subsubsection{Logaritmer}
+Vi kan transformere den avhengige variabelen. Mange utfall er strengt positive, så da kan ikke feilledd være normalfordelt siden det er begrenset nedenfra. OLS er også veldig sensitiv for ekstremverdier, så greit å få skalert ned høye numerisk verdier av utfallet. Dessuten vil det ofte være slik at gjennomsnittlig utfall vokser omtrent proposjonalt med med variablene i stedet for lineært. Skal nå se hvordan vi tolker koeffisient der vi har tatt logaritmisk transformasjon av forklaringsvariabel og/eller utfall.
+
+Vi bruker at logaritmer har omtrent prosentvis tolkning for små endringer. Dette følger av første-orders taylor ekspansjon av logaritmen evaluert i $x=1$,
+\begin{align}
+log(x) \approx log(1)+\frac{d}{dx}log(x)|_{x=1}(x-1) = x-1,
+\end{align}
+slik at $\Delta log(x) := log(x_1)-log(x_0) = log(x_1/x_0) \approx x_1/x_0-1 := \Delta x /x_0$.
+\subsubsection{Log-level}
+Har modell $\log(y)=\beta_0+\beta_1x +u,  E(u|x)=0$. Det følger at $\beta_1 = \frac{d}{dx}E[\log(y)]$. Okay, men vi er interessert i hvordan det endrer forventningsverdi til $y$. Observerer at 
+\begin{align}
+&\Delta E \log(y)  =  \beta_1 \Delta x \\
+&\implies 100\cdot\beta \approx 100\cdot E\frac{\Delta y}{y_0} := \%E \Delta y
+\end{align}
+Det kan tolkes som prosentvis endring i forventet utfall når $x$ endres med én enhet. Hvis jeg vil finne eksakt prosentvis endring så kan jeg bruke
+\begin{align}
+&\Delta E \log(y) = \beta_1 \Delta x \\
+&\exp(\Delta E \log(y)) = \exp(\beta_1 \Delta x) \\
+&\Delta E \log(y) = \exp(\beta_1 \Delta x) \\
+&\% \Delta E \log(y) = 100\cdot(\exp(\beta_1 \Delta x) -1)
+\end{align}
+Det er nødvendig å være litt forsiktig når vi bruker denne spesifikasjonen til å predikere verdi av y. Det kan være fristende å bruke
+\begin{align}
+&\widehat{logy} = \mathbf{x}'\hat{\beta} \\
+&\hat{y} = \exp(\mathbf{x}'\hat{\beta})
+\end{align} 
+men dette er dårlig estimat på $E[y|x]$. For å se dette, observer at
+\begin{align}
+E[y|x]=E[\exp(\mathbf{x}'\beta+u)|\mathbf{x}]=\exp(\mathbf{x}'\beta)E[\exp(u)]
+\end{align}
+der $E[e^u] =\alpha_0 \neq 0$. For å bruke spesifikasjonen til å predikere verdi av $y$ må vi skalere opp $\hat{y}=\mathbf{x}'\hat{\beta}$ med $\hat{\alpha}_0 = E_{\hat{P}_N}[e^u] = \frac{1}{N}\sum_n e^{\hat{u}_n}$
+\subsubsection{Log-log}
+Kan toles som elastistet. Følger av at
+\begin{align}
+&\Delta E \log(y) = \beta_1 \Delta \log(x) \\
+&\implies \beta_1 \approx \%\Delta E y / \%\Delta x
+\end{align}
+\section{Fordeling til feilledd}
+Vi trenger bare momentbetingelsene for å konsistent estimere helningskoeffisientene og de er asymptotisk normalfordelte fra CLT. I utgangspunktet trenger vi ikke bry oss så mye om fordelingen til $\mathbf{u} := [u_1,u_2,...,u_N]'$ dersom vi kun vil ha mål sentraltendens i betingede fordelinger. Når vi estimerer med MLE antar vi gjerne at $\mathbb{V}[u|x]=\sigma^2$ og at observasjon er iid slik at $\mathbb{V}[\mathbf{u}|X] = \sigma^2I$. Hvis det er heteroskedastisitet så blir dette målet på standardfeilen ikke riktig. I praksis har det ikke så mye å si og jeg skal vise at vi kan finne en mer generell formel for standardfeilen som ikke avhenger av den antagelsen. Videre kan vi også finne alternativ estimator som utnytter at noen observasjoner er mer informative om verdien til $\beta$ for de feilleddet til observasjonen har mindre varians. Mer generelt så kan det være ønskelig å transformere variablene slik at de oppfyller $G-M$ antagelser og vi får mer effektiv estimering... tror ikke dette er så veldig relevant i praksis, men jeg tar det litt raskt.
+\subsection{Generalisert minste kvadrat}
+Vi kan skrive $\mathbb{V}[\mathbf{u}|X] = \sigma^2\psi$. Vi har altså en parameter som er skalert med en matrise som kan avhenge av $X$. Jeg vil transformere variabelen $\mathbf{u}$ slik at skaleringsfaktoren reduserer til $I$. Merk først hvordan vi kan gå fram for å standardisere i én dimensjon,
+\begin{align}
+&\mathbb{V}[u|x]=a\sigma^2 \\
+&\implies \mathbb{V}[\frac{u}{\sqrt{a}}|x]=\frac{1}{a}\mathbb{V}[u|x]=\sigma^2
+\end{align}
+Jeg bare skalerer variabelen med den inverse av kvadratoren av skaleringsfaktoren i uttrykket for variansen. Kan greit generalisere dette ved å finne $A$ slik at $\psi^{-1}=A'A$.\footnote{Dette kan f.eks. gjøres med cholesky dekomponering. Eksisterer alltid fordi $\psi$ er positiv semi definit (analog til positiv skalar), men er ikke unik.} Kan da transformere modellen
+\begin{align}
+A\mathbf{y} = A[X\beta+\mathbf{u}] \\
+\mathbf{y}^* = X^*\beta +\mathbf{u}^*
+\end{align}
+og observere at 
+\begin{align}
+\mathbb{V}[Au|X] &= A\mathbb{V}[u|X]A' \\
+&=A\sigma^2\psi A' \\
+&=\sigma^2A(A'A)^{-1}A' \\
+&=\sigma^2AA^{-1}(A')^{-1}A' \\
+&=\sigma^2I
+\end{align}
+\subsection{Vektet minste kvadrat}
+Hvis vi utelukker seriekorrelasjon er $\psi$ en diagonalmatrise. I mange tilfeller er det rimelig at varians til feilledd\footnote{Siden feilledd kan tolkes som avvik fra sentraltendens i betinget fordeling så tilsvarer det varians i betinget fordeling.} avhenger av de observerte variablene. For eksempel er spredningen til mange variabler større for menn enn for kvinner. Det kan også være slik at størrelse avhenger av kontinuerlig variabel (mer variasjon i forbruk for rikinger). Vi kan generelt modellere dette som
+\begin{align}
+\mathbb{V}[u|X] = \sigma^2\psi=\sigma^2 diag(h_n)^2
+\end{align}
+der $h_n^2 := h(x_n)$. Tror det vil være en eller annen deterministisk funksjon av variablene.. Uansett, bare skalrerer alle observasjoner med kvadratet av den inverse for å redusere $\psi$ til $I$,
+\begin{align}
+\frac{y_n}{h_n} = \frac{x_n}{h_n}\beta+\frac{u_n}{h_n}
+\end{align}
+I praksis så er det stor utfordring at $h_n$ må estimerers. Hvis vi ikke påfører mer struktur så blir det like mange parametre som observasjoner. Litt usikker på hvordan jeg går frem i praksis. Et enkelt eksempel er grupperte observasjoner det jeg kun ser gjennomsnitt i gruppen, men antar at $u\sim IID(0,\sigma^2)$. Da vil $u_i := \frac{1}{N(i)}\sum u_i$ og $h_i^2 = \frac{\sigma}{N}$. Legger med vekt på grupper med flere observasjoner.
+\subsubsection{Feasible generalisert minste kvadrat}
+\section{Robust estimering (sandwich)}
+Vi brukte i utgangspunktet antagelse om at feilleddene var $iid$ for å beregne covariansmatrisen til estimatoren av koeffisientvektoren. Vi kan utvide til $E[\mathbf{u}\mathbf{u}']=\mathbf{\Omega}$ på ukjent form. Hvis matrisen er diagonal er det kun heteroskedastisitet. Hvis det også er kovarians mellom feilleddene er det såkalt autokorrelasjon. Vi har et uttrykk for variansen til koeffisientestimatoren,
+\begin{align}
+V(\hat{\beta}-\beta)=(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{\Omega}\mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}
+\end{align}
+som ligner på en sandwich der $\mathbf{X}'\mathbf{\Omega}\mathbf{X}$ er fyllet i midten. Det er en utfordring at vi ikke kan konsistent estimere $\mathbf{\Omega}$ siden den har mer enn $N$ parametere og vokser med utvalgsstørrelsen. Selve fyllet derimot er en $K\times K$-matrise som kan estimeres konsistent likevel. Finnes ulike kandidater for $\hat{\mathbf{\Omega}}$.
+\section{Annet}
+\subsubsection{Regresjonsanatomi}
+\begin{align}
+&cov(y_i,\tilde{x}_{ki}) = cov(\mathbf{x}'\beta+u,\tilde{x}_{ki})=\beta_k var(\tilde{x}_{ki}) \\
+& \implies \beta_k = \frac{cov(y_i,\tilde{x}_{ki})}{var(\tilde{x}_{ki})}
+\end{align}
+hmmm. frischhh
+\subsubsection{Anova (flytt til betinget fordeling/L2)}
+\begin{align}
+V(y) &= V(E[y|x]+u) =V(E[y|x])+V(u)
+\end{align}
+der $V(u)=E[u^2] = E[E[u^2|x] = E[V[u^2|x]$.
+\subsubsection{Generalisert lineær modell, flytte hvor?}
+Utvide... fordeling til u (eg betinget fordeling av y); ikke bare normal, andre medlem av eksponentialfordeling.
+Dessuten utvide til linkfunksjon... mer utvidet måte å modellere E[y|x]. Vet ikke hvor relevant og spennende dette egentlig er.. vet faen ingen ting.
+\subsubsection{Saturated model}
+Benchmark, start punkt. Så forenkle. Utvide til eksponering av behandling som kan ta mange verdier. Se på heterogen behandlingseffekt..
