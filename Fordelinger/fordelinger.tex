@@ -1,4 +1,5 @@
 \chapter{Noen kjente fordelinger}
+
 \section{Normalfordeling}
 Normalfordelingen dukker opp ofte som følge av sentralgrenseteoremet. Summen av tilfeldige avvik har en tendens til å jevne seg ut slik at tyngden blir konsentrert rundt sentraltendensen. Det er likevel litt fascinerende at det asymptotisk har eksakt normalfordeling uavhengig av den underliggende fordelingen til hvert avvik. Det er en familie med fordelinger som er unikt bestemt av to parametre. Tetthet til standardnormal er:
 \begin{align}
@@ -78,7 +79,8 @@ V(\mathbf{A}^{-1}\mathbf{x})&=E[\mathbf{A}^{-1}\mathbf{x}(\mathbf{A}^{-1}\mathbf
 hm
 \subsection{F-fordeling}
 hm
-\section{Fordelinger fra bernoulli-prosess}
+\section{Fordelinger fra bernoulliprosess}
+En bernoulliprosess er en følge $(X_1, X_2, \ldots)$ av uavhengige bernoullifordelte variabler med samme parameter $p$. Dette er et veldig anvendelig rammeverk siden vi ofte har situasjoner der utfallene kan deles inn i \textit{treff} eller \textit{ikke-treff}. 
 \subsection{Binomialfordeling}
 Sannsynlighet for $k$ treff av $N$ uavhengige $Y_n \sim Bernoulli(P)$ er 
 \begin{align}
@@ -106,13 +108,14 @@ p(x;p) = p(1-p)^{x-1}
 Formelen blir enklere fordi det bare er én måte vi kan bomme $x-1$ ganger på $x-1$ forsøk. Da bommer vi hver eneste gang inntil vi treffer. Tror jeg vil vise at det er en fordeling uten hukommelse...
 \subsection{Multinomialfordeling}
 Generalisering av binomialfordeling der det er $K$ kategorier i stedet for bare 2. Kan tenke på det som sannsynlighet for antall baller med ulike farger fra en urne etter $N$ trekk med andeler $p_1,p_2,...,p_K$. Tenker at det er en tilfeldig vektor $(X_1, X_2, ..., X_K)$ som angir antall i hver kategori og at vi kan beskrive pmf til denne. 
-\section{Fordelinger fra poisson-prosess}
+\section{Fordelinger fra poissonprosess}
+I poissonprosess kan hver $t\in \mathbb{R}$ være treff eller ikke-treff.\footnote{Kan generaliseres til $\mathbb{R}^k$ og brukes til å betrakte for eksempel areal i stedet for tid.}. 
 \subsection{Poissonfordeling}
 Poissonfordeling gir oss sannsynlighet for antall treff per tidsenhet,
 \begin{align}
 p(x;\lambda) = \frac{\lambda^x}{\lambda!}e^{-\lambda}
 \end{align}
-der $\lambda$ er en intensitetparameter. Vi kan utvide til å finne antall treff på lengre intervall ved å skalere intensiteten, $\lambda'=\lambda\cdot t$, der $t$ er antallet tidsenheter i det nye intervallet. 
+der $\lambda$ er en intensitetparameter. Denne fordelingen er litt analog til binomialfordeling, men har ikke øvre grense på antall treff. Vi kan utvide til å finne antall treff på lengre intervall ved å skalere intensiteten, $\lambda'=\lambda\cdot \tau$, der $\tau$ er antallet tidsenheter i det nye intervallet. 
 
 Kan motivere som kontinuerlig tilnærming til binomialfordeling når $p$ er lav og $N$ er høy.. 
 
@@ -125,7 +128,7 @@ Kan bruke dette til å vise at det er en gyldig $pmf$,
 \sum_{x=0}^{\infty}\frac{\lambda^x}{\lambda!}e^{-\lambda} = e^{-\lambda}\sum_{x=0}^{\infty}\frac{\lambda^x}{\lambda!}=e^{-\lambda}e^{\lambda}=1
 \end{align}
 \subsection{Eksponentialfordeling}
-Lengde mellom treff i poissonfordeling. Bruke til å modellere varighet av noe.
+Lengde mellom treff i poissonprosses
 \begin{align}
 f(x;\theta) = \theta e^{-\theta x}
 \end{align}

@@ -196,3 +196,73 @@ Merk at dette er en lokal metode som bare kjenner helning til funksjon akkurat d
 \subsubsection{Stokastisk gradient descent}
 Denne fremgangsmåten bruker kun subset av treningsdata når den evaluerer hvordan kostnaden blir påvirker av valg av parameter. Når vi evaluerer i ulike subsets får vi ulike kostnadsfunksjoner slik at gradient hopper litt rundt om kring, men i gjennomsnitt så vil den konvergere mot global minimum. Kan være effektiv fordi den bruker mindre data og dermed kjører raskere, selv om det tar flere steg og en litt mindre ryddig vei mot målet. Også fordel at den kan hoppe ut at av blindveier.
 \section{Betinget optimering}
+\chapter{Differensialligninger}
+Differensialligninger er veldig nyttig for å modellere virkeligheten. Det er ofte enklere å beskrive hva som påvirker endringsraten i en variabel enn dens absolutte verdi. Vi kan for eksempel anta at vekstraten til en populasjon er proposjonal med størrelsen på populasjonen (eller med et mål på ledig kapasistet). Differensialligninger er ligninger der den ukjente er en funksjon og der det inngår en derivert av funksjonen i ligningen. Anvendt matematikk er i praksis modellering og differensialligninger er måten modellene er konstruert.
+\section{Differensligninger}
+Differensligninger er modeller i diskret tid der variabelen $x$ i en periode $t$ avhenger av verdien den tok i perioden før.\footnote{Tror det også kan avhenge av tidligere periode. Avgrenser til å se på første ordens differensligninger}. Generelt kan ligningen skrives på formen
+\begin{align}
+F(t,x_t, x_{t-1})=0.
+\end{align}
+Dersom denne ligningen kan løses eksplisitt for $x_t$ får vi funksjonen
+\begin{align}
+f(x_t)=f(t,x_{t-1}).
+\end{align}
+Hvis vi kjenner $f(\cdot)$ og en initialverdi $x_0$ kan vi finne verdi av variabelen på hver tidspunkt gjennom sekvensiell substitusjon,
+\begin{align}
+&f(x_1) = f(1,x_0) \\
+&f(x_2) = f(2, x_1) = f(2,(f(1,x_0)) \\
+&f(x_3) = f(3,x_2) = f(3,f(2,(f(1,x_0)))) \\
+&\cdots
+\end{align}
+Dette er praktisk for simulering, men for å studere løsningen vil vi gjerne ha et eksplisitt utrykk for $f(x_t)$ som funksjon av $t$ og noen parametre. Vi vil studere om variabelen konvergerer mot likevekt, hvorvidt likevekten er stabil og hvordan dette avhenger av parametre. Kanskje mer om dette en annen gang.
+\subsection{Første ordens differensialligninger}
+Jeg vil klassifisere ulike typer differensialligninger og finne (og memorisere...) algoritmer for å løse de analytisk. Litt terminologi:
+\begin{itemize}
+\item Ordinær hvis den kun har én uavhengig variabel (i praksis tid $t$) , ellers partiell
+\item Orden er høyeste grad av deriverte som inngår i ligningen
+\item Lineær hvis avhenger lineært av argumentene (de deriverte), $a_1 y' + \dots a_n y^{(n)}=y$. Alltid enklere å jobbe med lineære ligninger..
+\item Ligningssystem hvis flere ukjente, f.eks. både $y(t)$ og $x(t)$. 
+\item En løsning er en funksjon som tilfredstiller lingingen på et intervall. Kan representeres som en kurve i $ty$-diagram. Vanskelig å finne løsninger, men kan alltids sjekke om det utgjør en løsning ved å substituere det inn i differensialligningen.
+\item I praksis er det en familie av løsninger og finner unik løsning gjennom kunnskap om initialverdi. Vet at den er unik hvis kurvene ikke krysser... 
+\end{itemize}
+\subsubsection{Generelt om løsninger}
+Retningsdiagram, grafer, generelle løsninger, spesifikk løsning dersom informasjon at krysser gjennom gitt punkt i $tx$-diagram (i praksis initialverdi-problem) med mer.
+
+Generell form på første ordens differensialligninger
+\begin{align}
+\dot{x}=F(t,x)
+\end{align}
+
+Løsning på et intervall $I$ dersom for alle $t \in I$ så holder ligningen over når vi deriverer $x(t)$... Kan ha closed form eksplisitt løsning, men dette er bare i spesialtilfelle. Kan likevel undersøke egenskaper til løsningen og hvordan det avhenger av parametre, samt finne verdier numerisk og visualisere egenskaper ved systemet.
+\subsubsection{Separable}
+Vi kan begynne med å betrakte separable første ordens differensialligninger som generelt kan utrykkes på formen
+\begin{align}
+\dot{x}=f(t)g(x).
+\end{align}
+Disse kan løses gjennom \footnote{bør kunne vise dette mer formelt med substitusjon i integrasjon. Kan huske ved at $\dot{x}=\frac{dx}{dt}$ og gjøre vanlig algebra, men ukomfortabel med dette}
+\begin{align}
+\int\frac{1}{g(x)}dx &= \int f(t)dt + C \\
+G(x) &= F(t) + C \\
+x &= G^{-1}(F(t)+C)
+\end{align}
+Merk også at det er konstante løsninger $x(t)=a$ for alle røtter av $g(x)$, altså verdier $x=a$ der $g(a)=0$. Enkelt eksempel:
+\begin{align}
+\dot{x}&=f(t)x, \quad x>0 \\
+\int \frac{1}{x}dx &= \int f(t)dt + C_1 \\
+\ln x &= F(t)+C_1 \\
+x &= e^{F(t)}e^{C_1} \\
+x &= Ce^{F(t)} 
+\end{align}
+\subsubsection{Lineære}
+Vi kan også finne eksplisitt løsning for lineære første ordens differensialligninger på formen
+\begin{align}
+\dot{x}+a(t)x=b(t).
+\end{align}
+For å løse disse bruker vi et triks der vi skalerer begge sider med en såkalt integrerende konstant slik at venstresiden får formen $\frac{d}{dt}[u(t)v(t)] = v\dot{u}+\dot{v}u$. Vi ganger altså med $v$ der $\frac{d}{dt}va(t)=v$.  Eksempel der $a(t)=a$,
+\begin{align}
+\dot{x}+ax&=b(t) \\
+e^{at}[\dot{x}+ax]&=e^{at}b(t) \\
+e^{at}\dot{x}+ae^{at}x &=e^{at}b(t) \\
+\frac{d}{dt}[e^{at}x] &= e^{at}b(t) \\
+e^{at}x &= \int e^{at}b(t)dt + C
+\end{align}
